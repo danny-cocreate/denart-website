@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+
+export async function getStaticPaths() {
+	const events = await getCollection('events');
+	return events.map((event) => ({
+		params: { slug: event.slug },
+		props: { event },
+	}));
+}
+
+const { event } = Astro.props;
+const { Content } = await event.render();
+---
+
+<PageLayout title={event.data.title}>
+	<article class="max-w-4xl mx-auto py-12 px-6">
+		<h1 class="text-4xl font-bold text-gray-800 mb-4">{event.data.title}</h1>
+		<div class="text-gray-600 mb-6">
+			<p>Date: {event.data.date.toLocaleDateString()}</p>
+			<p>Location: {event.data.location}</p>
+		</div>
+		{event.data.image && (
+			<img src={event.data.image} alt={event.data.title} class="w-full h-64 object-cover rounded-lg mb-6" />
+		)}
+		<div class="prose prose-lg max-w-none">
+			<Content />
+		</div>
+	</article>
+</PageLayout>

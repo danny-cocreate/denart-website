@@ -1,0 +1,21 @@
+---
+interface GalleryItem {
+	src: string;
+	alt: string;
+	slug: string;
+}
+
+interface Props {
+	items: GalleryItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+	{items.map((item) => (
+		<a href={`/gallery/${item.slug}`} class="block overflow-hidden rounded-lg hover:opacity-90 transition-opacity">
+			<img src={item.src} alt={item.alt} class="w-full h-64 object-cover" />
+		</a>
+	))}
+</div>
