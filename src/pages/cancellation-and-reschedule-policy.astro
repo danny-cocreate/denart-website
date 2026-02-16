@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Cancellation and Reschedule Policy" description="DenArt studio cancellation and rescheduling policies for body painting sessions, classes, and events.">
+	<main class="max-w-4xl mx-auto section-loose px-6 bg-dark">
+		<h1 class="text-4xl font-bold mb-8" style="color: var(--color-text-primary);">Cancellation and Reschedule Policy</h1>
+		
+		<div class="max-w-none">
+			<h2 class="text-2xl font-bold mt-8 mb-6" style="color: var(--color-text-primary);">Body Painting Sessions</h2>
+			<div class="space-y-4" style="color: var(--color-text-secondary);">
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Reschedule</h3>
+					<p>We can accommodate a request to reschedule if we receive the request at least 7 days prior to your scheduled session. We understand that unexpected things happen so we allow you reschedule once for no additional cost, after that a rescheduling fee (minus $50 of cancellation fee) is required to secure a new date.</p>
+				</div>
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Cancellation</h3>
+					<p>We will issue a full refund (minus $50 of cancellation fee) if we receive the cancellation notice at least 7 days prior to the scheduled session.</p>
+				</div>
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Late: Less than 15 minutes</h3>
+					<p>If the client comes within 15 minutes after the scheduled start time, we will start the session as soon as s/he arrive, but we will not extend the finish time beyond the scheduled finish time.</p>
+				</div>
+				<div class="p-4 bg-surface rounded-lg border border-red-900/50" style="background-color: rgba(124, 58, 58, 0.2);">
+					<h3 class="font-semibold mb-2" style="color: #f87171;">Late: 15 minutes or more</h3>
+					<p style="color: #fca5a5;">If the client doesn't come within 15 minutes after the scheduled start time, s/he forfeits the scheduled session. The client will not get a refund and will not be able to reschedule the session.</p>
+				</div>
+			</div>
+
+			<h2 class="text-2xl font-bold mt-12 mb-6" style="color: var(--color-text-primary);">In-Person Classes</h2>
+			<div class="space-y-4" style="color: var(--color-text-secondary);">
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Reschedule</h3>
+					<p>You can reschedule to a class in a later date if we receive your request 7 days from the class date or earlier ($50 rescheduling fee applies). Unfortunately, we cannot accommodate any rescheduling request received later than 7 days prior to the class start time.</p>
+				</div>
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Cancellation</h3>
+					<p>We will issue a refund (minus $50 of cancellation fee) if we receive the cancellation notice at least 7 days prior to the scheduled session. Unfortunately, we cannot accommodate any cancelation request received later than 7 days prior to the class start time.</p>
+				</div>
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Late: Less than 15 minutes</h3>
+					<p>If the student comes within 15 minutes after the class start time, s/he will be allowed to join the class and the instructor will try to accommodate him/her as much as s/he can without slowing down the class.</p>
+				</div>
+				<div class="p-4 bg-surface rounded-lg border border-red-900/50" style="background-color: rgba(124, 58, 58, 0.2);">
+					<h3 class="font-semibold mb-2" style="color: #f87171;">Late: More than 15 minutes</h3>
+					<p style="color: #fca5a5;">If the student comes 15 minutes after the class start time, s/he forfeits his/her spot and will not be allowed to join the class because that will disrupt the experience for other students.</p>
+				</div>
+				<div class="p-4 bg-surface rounded-lg border border-blue-900/50" style="background-color: rgba(58, 78, 124, 0.2);">
+					<h3 class="font-semibold mb-2" style="color: #93c5fd;">Partner Purchases</h3>
+					<p style="color: #bfdbfe;">If you purchased your class from one of our partners (CourseHorse, Fever, Groupon, IfOnly) then our Refund & Cancellation policy applies to your purchase. If you are entitled to a refund, or have any questions, please contact their customer service team.</p>
+				</div>
+			</div>
+
+			<h2 class="text-2xl font-bold mt-12 mb-6" style="color: var(--color-text-primary);">Virtual Classes</h2>
+			<div class="space-y-4" style="color: var(--color-text-secondary);">
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Reschedule</h3>
+					<p>You can reschedule to a class in a later date if we receive your request 3 days from the class date or earlier ($25 rescheduling fee applies). Unfortunately, we cannot accommodate any rescheduling request received later than 72 hours prior to the class start time.</p>
+				</div>
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Cancellation</h3>
+					<p>We will issue a refund (minus $25 of cancellation fee) if we receive the cancellation notice at least 3 days prior to the scheduled session. Unfortunately, we cannot accommodate any cancelation request received later than 72 hours prior to the class start time.</p>
+				</div>
+			</div>
+
+			<h2 class="text-2xl font-bold mt-12 mb-6" style="color: var(--color-text-primary);">Events or Commercial Projects</h2>
+			<div class="space-y-4" style="color: var(--color-text-secondary);">
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Cancellation</h3>
+					<p>We will issue a full refund (minus cancellation fee 15% of the value of the project) if the client notify us at least 7 days prior to your scheduled event. The client is responsible for any travel and logistical expense that we incur for the project which we will deduct from the amount refunded.</p>
+				</div>
+				<div class="p-4 bg-surface rounded-lg border" style="border-color: var(--color-border);">
+					<h3 class="font-semibold mb-2" style="color: var(--color-text-primary);">Reschedule</h3>
+					<p>We can accommodate a request to reschedule if we receive the client's request at least 7 days prior to your scheduled session. Rescheduling fee (15% of the value of the project) is required to secure a new date.</p>
+				</div>
+			</div>
+		</div>
+	</main>
+</BaseLayout>

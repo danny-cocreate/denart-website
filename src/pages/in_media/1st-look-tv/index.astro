@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="1st Look TV | DenArt Media" description="DenArt body painting studio featured on NBC's 1st Look TV">
+  <main class="max-w-4xl mx-auto py-16 px-6 bg-deepest">
+    <a href="/in_media/" class="inline-flex items-center text-brand-gold hover:text-brand-gold-hover mb-8">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Back to Media
+    </a>
+
+    <article>
+      <h1 class="text-4xl font-bold text-white mb-4">1st Look TV</h1>
+      <p class="text-lg text-gray-400 mb-8">NBC | TV, United States</p>
+
+      <div class="aspect-video mb-8 rounded-xl overflow-hidden bg-gray-900">
+        <iframe 
+          src="https://player.vimeo.com/video/51375813" 
+          class="w-full h-full"
+          frameborder="0" 
+          allow="autoplay; fullscreen; picture-in-picture" 
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <div class="prose prose-lg prose-invert max-w-none">
+        <p>We were featured on 1st Look TV (NBC) as part of an episode called "Teach me", where they feature interesting classes from all over the country such as improv, dj, rum tasting, etc.</p>
+        <p>For NY, they came to our studio to feature our body painting class.</p>
+      </div>
+    </article>
+  </main>
+</BaseLayout>

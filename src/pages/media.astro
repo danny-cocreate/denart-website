@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const mediaAppearances = [
+  {
+    outlet: "TODAY show",
+    network: "NBC",
+    type: "TV, United States",
+    link: "/2012/06/20/on-today-show/",
+    date: "2012"
+  },
+  {
+    outlet: "1st Look TV",
+    network: "NBC",
+    type: "TV, United States",
+    link: "/2012/10/14/on-1st-look-tv/",
+    date: "2012"
+  },
+  {
+    outlet: "Last Call with Carson Daly Show",
+    network: "NBC",
+    type: "TV, United States",
+    link: "/2010/09/03/on-last-call-with-carson-daly/",
+    date: "2010"
+  },
+  {
+    outlet: "CBS2 News",
+    network: "CBS",
+    type: "TV, United States",
+    link: "/news/on-cbs-news-unique-valentines-ideas/",
+    date: ""
+  },
+  {
+    outlet: "TAFF",
+    network: "Prosieben network",
+    type: "TV, Germany",
+    link: "/2011/02/24/on-taff-prosieben-tv-network-show/",
+    date: "2011"
+  },
+  {
+    outlet: "Dahsyat Okezone",
+    network: "RCTI, VOA network",
+    type: "TV, Indonesia",
+    link: "/2011/01/31/on-rcti-dahsyat-okezone/",
+    date: "2011"
+  },
+  {
+    outlet: "NY1 News",
+    network: "NY1 News",
+    type: "TV, United States",
+    link: "https://denartny.com/2011/07/22/on-ny1-promoting-upcoming-show/",
+    date: "2011"
+  },
+  {
+    outlet: "Makeup Artist Magazine",
+    network: "Key Publishing",
+    type: "Trade Magazine, Global",
+    link: "http://makeupmag.com/article/id/676/",
+    date: ""
+  },
+  {
+    outlet: "FORTH Magazine",
+    network: "",
+    type: "Art and Literary Magazine, United States",
+    link: "http://forthmagazine.com/art/2009/06/body-art-by-dsetia/",
+    date: "2009"
+  },
+  {
+    outlet: "GALO Magazine",
+    network: "",
+    type: "Art Magazine, United States & Poland",
+    link: "/2011/08/17/danny-on-galo-magazine/",
+    date: "2011"
+  }
+];
+
+const recognitions = [
+  {
+    title: "Jury for World Fine Art Body Painting Award",
+    organization: "World Body Painting Festival, Bella Volen, International Fine Art Bodypainting Association",
+    description: "Danny Setiawan was part of the jury for the first Fine Art Body Painting Award 2011 presented at The World Body Painting Festival. This award was made possible in corporation with Bella Volen and I-FAB (International Fine Art Bodypainting Association).",
+    link: "http://www.bella-volen.com/Fine-Art-Body-Painting-Award.html"
+  },
+  {
+    title: "SUA Unique Art Awards 2011",
+    organization: "Society of Unique Artists",
+    description: "Danny Setiawan received the Creative Art Award for Unique Painting. The Society of Unique Artists introduced the Unique Art Awards on July 16, 2011 at the Jerome L Green Space in Lower Manhattan, New York City.",
+    link: "http://www.suartists.org"
+  }
+];
+---
+
+<BaseLayout title="Media Appearances | DenArt Body Painting Studio" description="DenArt has been featured on NBC's TODAY show, 1st Look TV, CBS News, German and Indonesian television, and various art magazines.">
+  <!-- Hero Header -->
+  <section class="relative bg-gray-900 py-20 px-6 overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(107,33,168,0.3)_0%,_transparent_60%)]"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(212,175,55,0.1)_0%,_transparent_50%)]"></div>
+    <div class="max-w-4xl mx-auto relative z-10 text-center">
+      <span class="inline-block px-4 py-2 bg-brand-purple/20 text-brand-gold rounded-full text-sm font-medium mb-4 border border-brand-purple/30">
+        As Seen On
+      </span>
+      <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">Media Appearances</h1>
+      <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+        DenArt has been featured on national television, international networks, and art publications worldwide.
+      </p>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto py-16 px-6 bg-dark">
+    <!-- Media Logos -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-20 opacity-60">
+      <div class="text-center">
+        <span class="text-2xl font-bold text-white block">TODAY</span>
+        <span class="text-sm text-gray-400">NBC</span>
+      </div>
+      <div class="text-center">
+        <span class="text-2xl font-bold text-white block">1st Look</span>
+        <span class="text-sm text-gray-400">NBC</span>
+      </div>
+      <div class="text-center">
+        <span class="text-2xl font-bold text-white block">NBC</span>
+        <span class="text-sm text-gray-400">Carson Daly</span>
+      </div>
+      <div class="text-center">
+        <span class="text-2xl font-bold text-white block">ProSieben</span>
+        <span class="text-sm text-gray-400">Germany</span>
+      </div>
+      <div class="text-center">
+        <span class="text-2xl font-bold text-white block">RCTI</span>
+        <span class="text-sm text-gray-400">Indonesia</span>
+      </div>
+    </div>
+
+    <!-- Media Appearances -->
+    <section class="mb-20">
+      <h2 class="text-3xl font-bold text-white mb-8 text-center">Select Media Appearances</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        {mediaAppearances.map((appearance) => (
+          <a 
+            href={appearance.link} 
+            class="group block p-6 bg-surface-dark rounded-xl border border-gray-800 hover:border-brand-purple transition-all duration-300"
+          >
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-xl font-bold text-white group-hover:text-brand-purple transition-colors mb-2">
+                  {appearance.outlet}
+                </h3>
+                <p class="text-gray-400">{appearance.network} | {appearance.type}</p>
+              </div>
+              {appearance.date && (
+                <span class="text-sm text-brand-gold bg-brand-gold/10 px-3 py-1 rounded-full">
+                  {appearance.date}
+                </span>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Recognitions -->
+    <section>
+      <h2 class="text-3xl font-bold text-white mb-8 text-center">Recognitions</h2>
+      <div class="space-y-6">
+        {recognitions.map((recognition) => (
+          <div class="p-8 bg-surface-dark rounded-xl border border-gray-800">
+            <h3 class="text-2xl font-bold text-white mb-2">{recognition.title}</h3>
+            <p class="text-brand-purple font-medium mb-4">{recognition.organization}</p>
+            <p class="text-gray-400 mb-4 leading-relaxed">{recognition.description}</p>
+            {recognition.link && (
+              <a 
+                href={recognition.link} 
+                target="_blank" 
+                rel="noopener"
+                class="text-brand-gold hover:text-yellow-400 font-medium"
+              >
+                Learn more →
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Press Inquiries -->
+    <section class="mt-20 text-center py-16 bg-gradient-to-br from-brand-purple/10 to-transparent rounded-2xl border border-brand-purple/20">
+      <h2 class="text-2xl font-bold text-white mb-4">Press Inquiries</h2>
+      <p class="text-gray-400 mb-6 max-w-xl mx-auto">
+        Interested in featuring DenArt? Contact us for press kits, high-resolution images, and interview requests.
+      </p>
+      <a href="/contact" class="inline-block bg-brand-purple hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
+        Contact Us
+      </a>
+    </section>
+  </main>
+</BaseLayout>

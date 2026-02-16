@@ -1,0 +1,192 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+	const classes = await getCollection('classes');
+	return classes.map((classItem) => ({
+		params: { slug: classItem.slug },
+		props: { classItem },
+	}));
+}
+
+const { classItem } = Astro.props;
+const { Content } = await classItem.render();
+const galleryImages = classItem.data.galleryImages || [];
+---
+
+<BaseLayout title={classItem.data.title} description={classItem.data.description}>
+	<!-- Hero with Background Image -->
+	<section class="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+		{classItem.data.heroImage && (
+			<img 
+				src={classItem.data.heroImage} 
+				alt={classItem.data.title}
+				class="absolute inset-0 w-full h-full object-cover"
+			/>
+		)}
+		<div class="absolute inset-0 bg-black/60"></div>
+		<div class="relative z-10 text-center px-6">
+			<span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-4 uppercase tracking-wide border border-white/30 text-white/80">
+				Class
+			</span>
+			<h1 class="text-4xl md:text-6xl font-bold text-white mb-4">{classItem.data.title}</h1>
+			{classItem.data.tagline && (
+				<p class="text-xl md:text-2xl text-gray-200 mb-4">{classItem.data.tagline}</p>
+			)}
+			{classItem.data.price && (
+				<p class="text-3xl md:text-4xl font-bold text-brand-gold mb-6">{classItem.data.price}</p>
+			)}
+			{classItem.data.duration && (
+				<p class="text-lg text-gray-300 mb-6">{classItem.data.duration}</p>
+			)}
+			<div class="flex flex-wrap justify-center gap-4">
+				<a 
+					href="/get-a-quote" 
+					class="inline-block font-semibold py-3 px-8 rounded transition-colors no-underline"
+					style="background-color: var(--color-brand-red) !important; color: #fff !important;"
+				>
+					Book Now
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<!-- Main Content -->
+	<article class="bg-deepest text-text-primary">
+		<div class="max-w-4xl mx-auto py-16 px-6">
+			<div class="prose prose-lg prose-invert max-w-none 
+				prose-headings:text-text-primary 
+				prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-4
+				prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-3
+				prose-p:text-text-secondary prose-p:leading-relaxed
+				prose-li:text-text-secondary
+				prose-a:text-brand-red prose-a:no-underline hover:prose-a:text-brand-red-light
+				prose-blockquote:border-brand-red prose-blockquote:bg-surface/50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-lg prose-blockquote:not-italic
+				prose-strong:text-text-primary">
+				<Content />
+			</div>
+			
+			<!-- Gallery Thumbnails -->
+			{galleryImages.length > 0 && (
+				<section class="mt-16">
+					<h2 class="text-2xl font-bold text-white mb-6">Gallery</h2>
+					<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+						{galleryImages.map((img, index) => (
+							<button 
+								class="aspect-square overflow-hidden rounded-lg cursor-pointer group"
+								onclick={`openLightbox('${img}', ${index})`}
+								aria-label={`View image ${index + 1}`}
+							>
+								<img 
+									src={img} 
+									alt={`${classItem.data.title} - Image ${index + 1}`}
+									class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+									loading="lazy"
+								/>
+							</button>
+						))}
+					</div>
+				</section>
+			)}
+			
+			<!-- Schedule & CTA Section -->
+			<div class="mt-16 p-8 bg-surface rounded-xl border border-border">
+				<h3 class="text-2xl font-bold text-white mb-4 text-center">Ready to join this class?</h3>
+				{classItem.data.schedule && classItem.data.schedule.length > 0 && (
+					<div class="mb-6">
+						<p class="text-gray-400 text-center mb-4">Upcoming sessions:</p>
+						<div class="flex flex-wrap justify-center gap-3">
+							{classItem.data.schedule.map((date) => (
+								<span class="px-4 py-2 bg-brand-red/20 text-brand-red-light rounded font-medium border border-brand-red/30">
+									{date}
+								</span>
+							))}
+						</div>
+					</div>
+				)}
+				<div class="text-center">
+					<a 
+						href="/get-a-quote" 
+						class="inline-block font-semibold py-3 px-8 rounded transition-colors no-underline"
+						style="background-color: var(--color-brand-red) !important; color: #fff !important;"
+					>
+						Book Now
+					</a>
+				</div>
+			</div>
+		</div>
+	</article>
+
+	<!-- Lightbox Modal -->
+	<div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4" onclick="closeLightbox(event)">
+		<button 
+			class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors"
+			onclick="closeLightbox(event)"
+			aria-label="Close lightbox"
+		>
+			&times;
+		</button>
+		<button 
+			id="lightbox-prev"
+			class="absolute left-4 text-white text-4xl hover:text-gray-300 transition-colors"
+			onclick="prevImage(event)"
+			aria-label="Previous image"
+		>
+			&#8249;
+		</button>
+		<img 
+			id="lightbox-img" 
+			src="" 
+			alt="Gallery image" 
+			class="max-w-full max-h-[90vh] object-contain rounded-lg"
+		/>
+		<button 
+			id="lightbox-next"
+			class="absolute right-4 text-white text-4xl hover:text-gray-300 transition-colors"
+			onclick="nextImage(event)"
+			aria-label="Next image"
+		>
+			&#8250;
+		</button>
+	</div>
+
+	<script is:inline define:vars={{ galleryImages }}>
+		let currentIndex = 0;
+		const images = galleryImages;
+
+		function openLightbox(src, index) {
+			currentIndex = index;
+			document.getElementById('lightbox-img').src = src;
+			document.getElementById('lightbox').classList.remove('hidden');
+			document.getElementById('lightbox').classList.add('flex');
+			document.body.style.overflow = 'hidden';
+		}
+
+		function closeLightbox(event) {
+			if (event.target.id === 'lightbox' || event.target.tagName === 'BUTTON') {
+				document.getElementById('lightbox').classList.add('hidden');
+				document.getElementById('lightbox').classList.remove('flex');
+				document.body.style.overflow = '';
+			}
+		}
+
+		function prevImage(event) {
+			event.stopPropagation();
+			currentIndex = (currentIndex - 1 + images.length) % images.length;
+			document.getElementById('lightbox-img').src = images[currentIndex];
+		}
+
+		function nextImage(event) {
+			event.stopPropagation();
+			currentIndex = (currentIndex + 1) % images.length;
+			document.getElementById('lightbox-img').src = images[currentIndex];
+		}
+
+		// Make functions global
+		window.openLightbox = openLightbox;
+		window.closeLightbox = closeLightbox;
+		window.prevImage = prevImage;
+		window.nextImage = nextImage;
+	</script>
+</BaseLayout>

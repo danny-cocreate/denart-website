@@ -1,0 +1,21 @@
+---
+title: "Amanda Palmer At Ny Public Library"
+images:
+  - src: "/images/events/amanda-palmer-at-ny-public-library/Screen-Shot-2015-08-29-at-2.39.32-PM.avif"
+    alt: "Amanda Palmer At Ny Public Library"
+  - src: "/images/events/amanda-palmer-at-ny-public-library/AFP-at-NYPL-07.avif"
+    alt: "Amanda Palmer At Ny Public Library"
+  - src: "/images/events/amanda-palmer-at-ny-public-library/AFP-at-NYPL-06.avif"
+    alt: "Amanda Palmer At Ny Public Library"
+  - src: "/images/events/amanda-palmer-at-ny-public-library/AFP-at-NYPL-05.avif"
+    alt: "Amanda Palmer At Ny Public Library"
+  - src: "/images/events/amanda-palmer-at-ny-public-library/AFP-at-NYPL-04.avif"
+    alt: "Amanda Palmer At Ny Public Library"
+  - src: "/images/events/amanda-palmer-at-ny-public-library/AFP-at-NYPL-03.avif"
+    alt: "Amanda Palmer At Ny Public Library"
+  - src: "/images/events/amanda-palmer-at-ny-public-library/AFP-at-NYPL-02.avif"
+    alt: "Amanda Palmer At Ny Public Library"
+  - src: "/images/events/amanda-palmer-at-ny-public-library/AFP-at-NYPL-01.avif"
+    alt: "Amanda Palmer At Ny Public Library"
+---
+

@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Get a Body Painting Quote" description="Request a quote for body painting services, events, or commercial projects.">
+	<main class="max-w-5xl mx-auto section-loose px-6 bg-dark">
+		<h1 class="text-4xl font-bold text-white mb-4">Get a Quote</h1>
+		<p class="text-xl text-gray-300 mb-8">Tell us about your project and we'll get back to you with a custom quote.</p>
+		
+		<div class="grid md:grid-cols-2 gap-12">
+			<!-- Quote Form -->
+			<div>
+				<form class="space-y-6">
+					<div>
+						<label for="name" class="block text-sm font-medium text-gray-300 mb-1">Name *</label>
+						<input 
+							type="text" 
+							id="name" 
+							name="name" 
+							class="w-full px-4 py-3 border border-gray-700 bg-surface rounded-lg focus:ring-2 focus:ring-brand-purple focus:border-transparent text-white placeholder-gray-500 transition-colors"
+							required
+						/>
+					</div>
+					<div>
+						<label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email *</label>
+						<input 
+							type="email" 
+							id="email" 
+							name="email" 
+							class="w-full px-4 py-3 border border-gray-700 bg-surface rounded-lg focus:ring-2 focus:ring-brand-purple focus:border-transparent text-white placeholder-gray-500 transition-colors"
+							required
+						/>
+					</div>
+					<div>
+						<label for="phone" class="block text-sm font-medium text-gray-300 mb-1">Phone</label>
+						<input 
+							type="tel" 
+							id="phone" 
+							name="phone" 
+							class="w-full px-4 py-3 border border-gray-700 bg-surface rounded-lg focus:ring-2 focus:ring-brand-purple focus:border-transparent text-white placeholder-gray-500 transition-colors"
+						/>
+					</div>
+					<div>
+						<label for="service" class="block text-sm font-medium text-gray-300 mb-1">Service Type *</label>
+						<select 
+							id="service" 
+							name="service" 
+							class="w-full px-4 py-3 border border-gray-700 bg-surface rounded-lg focus:ring-2 focus:ring-brand-purple focus:border-transparent text-white transition-colors"
+							required
+						>
+							<option value="" class="bg-surface">Select a service...</option>
+							<option value="fine-art" class="bg-surface">Fine Art Body Painting (Private Session)</option>
+							<option value="maternity" class="bg-surface">Maternity Belly Painting</option>
+							<option value="event" class="bg-surface">Body Painting for Event</option>
+							<option value="commercial" class="bg-surface">Commercial Project</option>
+							<option value="class" class="bg-surface">Private Class or Workshop</option>
+							<option value="other" class="bg-surface">Other</option>
+						</select>
+					</div>
+					<div>
+						<label for="date" class="block text-sm font-medium text-gray-300 mb-1">Preferred Date</label>
+						<input 
+							type="date" 
+							id="date" 
+							name="date" 
+							class="w-full px-4 py-3 border border-gray-700 bg-surface rounded-lg focus:ring-2 focus:ring-brand-purple focus:border-transparent text-white transition-colors"
+						/>
+					</div>
+					<div>
+						<label for="details" class="block text-sm font-medium text-gray-300 mb-1">Project Details *</label>
+						<textarea 
+							id="details" 
+							name="details" 
+							rows="5"
+							placeholder="Tell us about your vision, the occasion, number of people, design ideas, etc."
+							class="w-full px-4 py-3 border border-gray-700 bg-surface rounded-lg focus:ring-2 focus:ring-brand-purple focus:border-transparent text-white placeholder-gray-500 transition-colors"
+							required
+						></textarea>
+					</div>
+					<button 
+						type="submit" 
+						class="btn btn-primary w-full"
+					>
+						Request Quote
+					</button>
+				</form>
+			</div>
+
+			<!-- Info Sidebar -->
+			<div class="space-y-8">
+				<div class="p-6 bg-surface border border-gray-800 rounded-xl">
+					<h2 class="text-xl font-bold text-white mb-4">What to Include</h2>
+					<ul class="space-y-3 text-gray-300">
+						<li class="flex items-start gap-3">
+							<span class="text-brand-gold mt-1">•</span>
+							<span>Type of body painting you're interested in</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-brand-gold mt-1">•</span>
+							<span>Preferred date and time</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-brand-gold mt-1">•</span>
+							<span>Number of people to be painted</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-brand-gold mt-1">•</span>
+							<span>Design ideas or references</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-brand-gold mt-1">•</span>
+							<span>If for an event: event type and guest count</span>
+						</li>
+						<li class="flex items-start gap-3">
+							<span class="text-brand-gold mt-1">•</span>
+							<span>Any special requirements</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="p-6 bg-surface border border-gray-800 rounded-xl">
+					<h2 class="text-xl font-bold text-white mb-4">Contact Directly</h2>
+					<p class="text-gray-300 mb-3">
+						<strong>Phone:</strong> <a href="tel:646-926-1202" class="text-brand-gold hover:text-white transition-colors">646-926-1202</a>
+					</p>
+					<p class="text-gray-300 mb-4">
+						<strong>Location:</strong> CoCreate Space, 99 Kingsland Ave #102, Brooklyn, NY 11222
+					</p>
+					<a 
+						href="/contact" 
+						class="text-brand-gold hover:text-white font-semibold transition-colors"
+					>
+						Visit Contact Page →
+					</a>
+				</div>
+
+				<!-- Testimonial -->
+				<div class="p-6 border-l-4 border-brand-purple bg-surface rounded-r-xl">
+					<blockquote class="text-gray-300 italic">
+						"This was FANTASTIC! I bought this as a gift for my wife and we absolutely loved the experience. I was able to see her transformed into a work of art as a living canvas. Danny was excellent in doing the painting and the photography. It provided an excellent memory for my wife and I to share and the pictures look fantastic."
+					</blockquote>
+					<p class="text-gray-500 mt-3">— via Yelp</p>
+				</div>
+			</div>
+		</div>
+	</main>
+</BaseLayout>

@@ -1,0 +1,192 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const mediaAppearances = [
+  {
+    slug: "today-show",
+    outlet: "TODAY show",
+    network: "NBC",
+    type: "TV, United States",
+    thumbnail: "/images/media/today-show.jpg"
+  },
+  {
+    slug: "1st-look-tv",
+    outlet: "1st Look TV",
+    network: "NBC",
+    type: "TV, United States",
+    thumbnail: "/images/media/1st-look.jpg"
+  },
+  {
+    slug: "carson-daly",
+    outlet: "Last Call with Carson Daly Show",
+    network: "NBC",
+    type: "TV, United States",
+    thumbnail: "/images/media/carson-daly.jpg"
+  },
+  {
+    slug: "cbs2-news",
+    outlet: "CBS2 News",
+    network: "CBS",
+    type: "TV, United States",
+    thumbnail: "/images/media/cbs2.jpg"
+  },
+  {
+    slug: "taff-prosieben",
+    outlet: "TAFF",
+    network: "Prosieben network",
+    type: "TV, Germany",
+    thumbnail: "/images/media/taff.jpg"
+  },
+  {
+    slug: "rcti-okezone",
+    outlet: "Dahsyat Okezone",
+    network: "RCTI, VOA network",
+    type: "TV, Indonesia",
+    thumbnail: "/images/media/okezone.jpg"
+  },
+  {
+    slug: "ny1-news",
+    outlet: "NY1 News",
+    network: "NY1 News",
+    type: "TV, United States",
+    thumbnail: "/images/media/ny1.jpg"
+  },
+  {
+    slug: "makeup-artist-magazine",
+    outlet: "Makeup Artist Magazine",
+    network: "Key Publishing",
+    type: "Trade Magazine, Global",
+    thumbnail: "/images/media/makeup-artist.jpg"
+  },
+  {
+    slug: "galo-magazine",
+    outlet: "GALO Magazine",
+    network: "",
+    type: "Art Magazine, United States & Poland",
+    thumbnail: "/images/media/galo-magazine.jpg"
+  }
+];
+
+const awards = [
+  {
+    title: "Creative Art Award - Unique Painting",
+    organization: "SUA Unique Art Awards",
+    year: "2011",
+    description: "Danny Setiawan received the Creative Art Award Unique Painting for his innovative body painting work."
+  },
+  {
+    title: "Jury Member",
+    organization: "World Fine Art Body Painting Award",
+    year: "2011",
+    description: "Served as jury member for the first Fine Art Body Painting Award at the World Body Painting Festival."
+  }
+];
+---
+
+<BaseLayout title="Media Appearances | DenArt Body Painting Studio" description="DenArt has been featured on NBC's TODAY show, 1st Look TV, CBS News, German and Indonesian television, and various art magazines.">
+  <!-- Hero Header -->
+  <section class="relative bg-deepest py-20 px-6 overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,49,49,0.15)_0%,_transparent_60%)]"></div>
+    <div class="absolute inset-0 bg-[radial_gradient(ellipse_at_bottom,_rgba(204,49,49,0.08)_0%,_transparent_50%)]"></div>
+    <div class="max-w-4xl mx-auto relative z-10 text-center">
+      <span class="inline-block px-4 py-2 bg-brand-red/20 text-brand-red rounded-full text-sm font-medium mb-4 border border-brand-red/30">
+        As Seen On
+      </span>
+      <h1 class="text-4xl md:text-6xl font-bold text-text-primary mb-6">Media Appearances</h1>
+      <p class="text-xl text-text-secondary max-w-2xl mx-auto">
+        DenArt has been featured on national television, international networks, and art publications worldwide.
+      </p>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto py-16 px-6 bg-deepest">
+    <!-- Media Logos -->
+    <div class="flex flex-nowrap justify-center items-center gap-x-16 mb-20 opacity-90 overflow-hidden">
+      <img src="/images/logos/logo-today.png" alt="TODAY Show" class="h-20 w-auto" />
+      <img src="/images/logos/logo-1stlook.png" alt="1st Look" class="h-20 w-auto" />
+      <img src="/images/logos/logo-nbc.png" alt="NBC" class="h-20 w-auto" />
+      <img src="/images/logos/logo-prosieben.png" alt="ProSieben" class="h-20 w-auto" />
+      <img src="/images/logos/logo-taff.png" alt="TAFF" class="h-20 w-auto" />
+      <img src="/images/logos/logo-rcti.png" alt="RCTI" class="h-20 w-auto" />
+      <img src="/images/logos/logo-carson.png" alt="Carson Daly" class="h-20 w-auto" />
+      <img src="/images/logos/logo-makeup.png" alt="Make Up Artist" class="h-20 w-auto" />
+    </div>
+
+    <!-- Media Appearances with Thumbnails -->
+    <section class="mb-20">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {mediaAppearances.map((appearance) => (
+          <a 
+            href={`/in_media/${appearance.slug}/`}
+            class="group block bg-surface rounded-xl border border-border-default hover:border-brand-red transition-all duration-300 overflow-hidden"
+          >
+            {appearance.thumbnail ? (
+              <div class="aspect-video bg-gray-800 overflow-hidden">
+                <picture>
+                  <source srcset={appearance.thumbnail.replace('.jpg', '.avif')} type="image/avif" />
+                  <source srcset={appearance.thumbnail.replace('.jpg', '.webp')} type="image/webp" />
+                  <img 
+                    src={appearance.thumbnail} 
+                    alt={appearance.outlet}
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </picture>
+              </div>
+            ) : (
+              <div class={`aspect-video bg-gradient-to-br ${appearance.color} flex items-center justify-center`}>
+                <span class="text-3xl font-bold text-white/90">{appearance.initials}</span>
+              </div>
+            )}
+            <div class="p-5">
+              <div class="flex items-start justify-between mb-2">
+                <h3 class="text-lg font-bold text-text-primary group-hover:text-brand-red transition-colors">
+                  {appearance.outlet}
+                </h3>
+              </div>
+              <p class="text-sm text-text-muted">{appearance.network}{appearance.network && appearance.type ? ' | ' : ''}{appearance.type}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Awards Section -->
+    <section class="mb-20">
+      <h2 class="text-3xl font-bold text-text-primary mb-8 text-center">Awards</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        {awards.map((award) => (
+          <div class="p-8 bg-void-lighter/50 border border-zinc-800/50 rounded-xl hover:border-brand-red/30 hover:-translate-y-1 transition-all duration-300">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 rounded-full bg-brand-red/20 flex items-center justify-center">
+                <svg class="w-6 h-6 text-brand-red" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-text-primary">{award.title}</h3>
+                <p class="text-brand-red font-medium">{award.organization}</p>
+              </div>
+            </div>
+            <p class="text-text-muted">{award.description}</p>
+            {award.year && (
+              <span class="inline-block mt-4 text-sm text-brand-red bg-brand-red/10 px-3 py-1 rounded-full border border-brand-red/20">
+                {award.year}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Press Inquiries -->
+    <section class="mt-20 text-center py-16 bg-void-lighter/30 rounded-2xl border border-zinc-800/50">
+      <h2 class="text-2xl font-bold text-text-primary mb-4">Press Inquiries</h2>
+      <p class="text-text-muted mb-6 max-w-xl mx-auto">
+        Interested in featuring DenArt? Contact us for press kits, high-resolution images, and interview requests.
+      </p>
+      <a href="/contact" class="inline-block bg-brand-red hover:bg-brand-red-hover text-text-primary px-8 py-3 rounded-lg font-medium transition-colors">
+        Contact Us
+      </a>
+    </section>
+  </main>
+</BaseLayout>

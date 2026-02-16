@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import ServiceLayout from '../../layouts/ServiceLayout.astro';
+import FAQ from '../../components/FAQ.astro';
 
 export async function getStaticPaths() {
 	const services = await getCollection('services');
@@ -12,16 +13,106 @@ export async function getStaticPaths() {
 
 const { service } = Astro.props;
 const { Content } = await service.render();
+
+// Default FAQs for body painting services
+const defaultFAQs = [
+	{
+		question: "Is body painting safe?",
+		answer: "Yes! We use only professional-grade, skin-safe paints from brands like Ben Nye, Kryolan, and Mehron. These are specifically formulated for skin application and are hypoallergenic."
+	},
+	{
+		question: "How long does a body painting session take?",
+		answer: "Session length varies depending on the complexity of the design. A simple design may take 1-2 hours, while full-body artwork can take 4-6 hours. We'll discuss timing when you book."
+	},
+	{
+		question: "What types of paint do you use?",
+		answer: "We use water-based body paints from professional brands: Ben Nye, Kryolan, and Mehron. These paints are FDA-compliant, non-toxic, and easy to remove with soap and water."
+	},
+	{
+		question: "How do I prepare for my session?",
+		answer: "Avoid applying lotion on the day of your session as it affects paint adhesion. Eat beforehand and stay hydrated. Bring loose clothing to wear after, and hair ties if you have long hair."
+	},
+	{
+		question: "How do I remove the body paint?",
+		answer: "Our paints wash off easily with soap and water in the shower. Some colors may require a bit of scrubbing. Rubbing alcohol or baby wipes can help with stubborn areas."
+	}
+];
+
+const faqs = service.data.faqs || defaultFAQs;
 ---
 
 <ServiceLayout title={service.data.title} description={service.data.description}>
-	<article class="max-w-4xl mx-auto py-12 px-6">
-		<h1 class="text-4xl font-bold text-gray-800 mb-4">{service.data.title}</h1>
-		{service.data.image && (
-			<img src={service.data.image} alt={service.data.title} class="w-full h-64 object-cover rounded-lg mb-6" />
+	<!-- Dark Hero Header -->
+	<section class="relative bg-gray-900 py-16 md:py-24 px-6 overflow-hidden">
+		<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(107,33,168,0.2)_0%,_transparent_60%)]"></div>
+		<div class="max-w-4xl mx-auto relative z-10">
+			<div class="text-center">
+				<span class="inline-block px-4 py-2 bg-brand-purple/20 text-brand-gold rounded-full text-sm font-medium mb-6 border border-brand-purple/30">
+					Service
+				</span>
+				<h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 font-playfair">{service.data.title}</h1>
+				{service.data.tagline && (
+					<p class="text-xl md:text-2xl text-brand-gold/90 max-w-2xl mx-auto font-light">{service.data.tagline}</p>
+				)}
+				{service.data.packages && service.data.packages.length > 0 && (
+					<div class="mt-8 flex flex-wrap justify-center gap-4">
+						{service.data.packages.map((pkg) => (
+							<div class="bg-surface/80 backdrop-blur rounded-xl p-4 border border-border">
+								<p class="text-2xl font-bold text-brand-gold">{pkg.price}</p>
+								<p class="text-sm text-text-secondary">{pkg.name}</p>
+							</div>
+						))}
+					</div>
+				)}
+				<div class="mt-8">
+					<a 
+						href="/get-a-quote" 
+						class="inline-block bg-brand-red hover:bg-brand-red-hover text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-brand-red/25 hover:-translate-y-1 text-lg"
+					>
+						Book Now
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Main Content -->
+	<article class="max-w-4xl mx-auto py-12 md:py-16 px-6 bg-dark">
+		{service.data.heroImage && (
+			<div class="relative mb-12 rounded-2xl overflow-hidden shadow-2xl">
+				<img src={service.data.heroImage} alt={service.data.title} class="w-full h-80 md:h-96 object-cover" />
+				<div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
+			</div>
 		)}
-		<div class="prose prose-lg max-w-none">
+		<div class="prose prose-lg prose-invert max-w-none 
+			prose-headings:font-playfair 
+			prose-h1:text-3xl prose-h1:mt-10 prose-h1:mb-4 prose-h1:text-text-primary
+			prose-h2:text-2xl prose-h2:mt-14 prose-h2:mb-5 prose-h2:text-text-primary prose-h2:border-b prose-h2:border-border-default prose-h2:pb-3
+			prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4 prose-h3:text-brand-gold/90
+			prose-p:text-text-secondary prose-p:leading-relaxed prose-p:mb-5
+			prose-li:text-text-secondary prose-li:marker:text-brand-purple-light
+			prose-strong:text-text-primary prose-strong:font-semibold
+			prose-blockquote:border-l-4 prose-blockquote:border-brand-purple prose-blockquote:bg-surface/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
+			prose-a:text-brand-gold hover:prose-a:text-brand-gold-hover prose-a:transition-colors
+			prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8">
 			<Content />
+		</div>
+		
+		<!-- FAQ Section -->
+		<div class="mt-20 pt-10 border-t border-border-default">
+			<FAQ items={faqs} title="Frequently Asked Questions" />
+		</div>
+
+		<!-- CTA Section -->
+		<div class="mt-16 p-8 md:p-12 bg-gradient-to-br from-brand-purple/20 via-brand-purple/10 to-brand-gold/10 rounded-2xl text-center border border-brand-purple/30 shadow-xl">
+			<h3 class="text-2xl md:text-3xl font-bold text-text-primary mb-4 font-playfair">Ready to book this service?</h3>
+			<p class="text-text-secondary mb-8 text-lg max-w-lg mx-auto">Contact us to schedule your body painting session. We'll help bring your vision to life.</p>
+			<a 
+				href="/get-a-quote" 
+				class="inline-block bg-brand-red hover:bg-brand-red-hover text-white font-semibold py-4 px-10 rounded-lg transition-all duration-300 shadow-lg hover:shadow-brand-red/25 hover:-translate-y-1 text-lg"
+			>
+				Get a Quote
+			</a>
 		</div>
 	</article>
 </ServiceLayout>

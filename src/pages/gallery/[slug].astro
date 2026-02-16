@@ -12,19 +12,61 @@ export async function getStaticPaths() {
 
 const { item } = Astro.props;
 const { Content } = await item.render();
+const images = item.data.images || [];
+const heroImage = images[0];
 ---
 
 <GalleryLayout title={`${item.data.title} | Gallery`} description={item.data.description}>
-	<article class="max-w-4xl mx-auto py-12 px-6">
-		<h1 class="text-4xl font-bold text-gray-800 mb-4">{item.data.title}</h1>
-		{item.data.category && (
-			<span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm mb-4">
-				{item.data.category}
-			</span>
-		)}
-		<img src={item.data.image} alt={item.data.title} class="w-full h-96 object-cover rounded-lg mb-6" />
-		<div class="prose prose-lg max-w-none">
-			<Content />
-		</div>
-	</article>
+	<main class="min-h-screen" style="background-color: var(--color-bg-deepest);">
+		<!-- Dark Hero Header -->
+		<section class="relative py-16 px-6 overflow-hidden" style="background: radial-gradient(ellipse at top, rgba(204, 49, 49, 0.25) 0%, transparent 60%), var(--color-bg-deepest);">
+			<div class="max-w-4xl mx-auto relative z-10">
+				{item.data.category && (
+					<span class="inline-block px-3 py-1 rounded-full text-sm mb-4 border" style="background: rgba(204, 49, 49, 0.2); color: var(--color-brand-gold); border-color: rgba(204, 49, 49, 0.3);">
+						{item.data.category}
+					</span>
+				)}
+				<h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: var(--color-text-primary);">{item.data.title}</h1>
+			</div>
+		</section>
+
+		<article class="max-w-4xl mx-auto py-12 px-6" style="background-color: var(--color-bg-deepest);">
+			{heroImage && (
+				<picture class="block mb-6">
+					<source srcset={heroImage.src} type="image/avif" />
+					<source srcset={heroImage.src.replace('.avif', '.webp')} type="image/webp" />
+					<img 
+						src={heroImage.src.replace('.avif', '.jpg')} 
+						alt={heroImage.alt || item.data.title} 
+						class="w-full max-h-[600px] object-contain rounded-lg"
+					/>
+				</picture>
+			)}
+			
+			{images.length > 1 && (
+				<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+					{images.slice(1).map((img) => (
+						<picture>
+							<source srcset={img.src} type="image/avif" />
+							<source srcset={img.src.replace('.avif', '.webp')} type="image/webp" />
+							<img 
+								src={img.src.replace('.avif', '.jpg')} 
+								alt={img.alt || item.data.title} 
+								class="w-full h-48 object-cover rounded-lg"
+								loading="lazy"
+							/>
+						</picture>
+					))}
+				</div>
+			)}
+			
+			<div class="prose prose-lg max-w-none prose-invert prose-dark">
+				<Content />
+			</div>
+			
+			<div class="mt-8">
+				<a href="/gallery" style="color: var(--color-brand-gold);" class="hover:opacity-80 transition-opacity">&larr; Back to Gallery</a>
+			</div>
+		</article>
+	</main>
 </GalleryLayout>

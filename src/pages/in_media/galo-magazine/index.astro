@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="GALO Magazine | DenArt Media" description="DenArt body painting studio featured in GALO Magazine">
+  <main class="max-w-4xl mx-auto py-16 px-6 bg-deepest">
+    <a href="/in_media/" class="inline-flex items-center text-brand-gold hover:text-brand-gold-hover mb-8">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Back to Media
+    </a>
+
+    <article>
+      <h1 class="text-4xl font-bold text-white mb-4">GALO Magazine</h1>
+      <p class="text-lg text-gray-400 mb-8">Art Magazine, US & Poland</p>
+
+      <div class="aspect-video mb-8 rounded-xl overflow-hidden bg-gray-900">
+        <picture>
+          <source srcset="/images/media/galo-magazine.avif" type="image/avif" />
+          <source srcset="/images/media/galo-magazine.webp" type="image/webp" />
+          <img src="/images/media/galo-magazine.jpg" alt="GALO Magazine" class="w-full h-full object-cover" />
+        </picture>
+      </div>
+
+      <div class="prose prose-lg prose-invert max-w-none">
+        <p>Danny was interviewed by Olga Zapisek for GALO magazine.</p>
+        <p>GALO Magazine is an online weekly magazine for curious and imaginative readers and artists alike who want to explore the artistic depths of NYC and Poland.</p>
+      </div>
+    </article>
+  </main>
+</BaseLayout>

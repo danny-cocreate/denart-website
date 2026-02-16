@@ -1,15 +1,80 @@
 ---
-import PageLayout from '../layouts/PageLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<PageLayout title="About Us | DenArt" description="Learn about DenArt face painting services">
-	<div class="max-w-4xl mx-auto py-12 px-6">
-		<h1 class="text-4xl font-bold text-gray-800 mb-6">About DenArt</h1>
-		<div class="prose prose-lg max-w-none">
-			<p class="text-gray-600">
-				Welcome to DenArt, your premier destination for professional face painting and event services.
-				We bring creativity and joy to every event we attend.
+<BaseLayout title="About DenArt studio" description="DenArt studio is the first retail body painting studio in NY. We empower through art.">
+	<main class="max-w-4xl mx-auto section-loose px-6 bg-dark">
+		<h1 class="text-4xl font-bold text-white mb-8">About DenArt Studio</h1>
+		
+		<div class="prose prose-lg prose-invert max-w-none mb-16">
+			<p class="text-xl text-gray-300 mb-6">
+				DenArt studio is the first retail body painting studio in NY. We are the first company that make the body painting experience available for the general public, where anyone can just come in and experience body painting then photographed. Before we came into the picture, this kind of experience was only available for professional models as part of elaborate productions.
+			</p>
+			
+			<p class="text-gray-300 mb-6">
+				DenArt studio started when Danny Setiawan experimented with body painting as a medium to increase the relevancy of his art so he can make more impact through it.
+			</p>
+			
+			<p class="text-gray-300 mb-6">
+				In 2009, Ekaterina Dorozhkina joined DenArt studio and turned it from a merely artistic endeavor into a business.
+			</p>
+			
+			<p class="text-xl font-semibold text-brand-gold mb-6">
+				DenArt studio exist to empower through art. We believe in the power of art to change lives for both the creators and the audience.
+			</p>
+			
+			<p class="text-gray-300">
+				In addition to our passion in creating beautiful and engaging art to empower the public, DenArt studio aspires to inspire other artists to experiment with new ways to monetize their talents so they can create more art.
 			</p>
 		</div>
-	</div>
-</PageLayout>
+
+		<h2 class="text-3xl font-bold text-white mb-12">DenArt Studio Team</h2>
+		
+		<div class="grid md:grid-cols-2 gap-12">
+			<!-- Danny -->
+			<div class="text-center p-6 rounded-xl bg-surface border border-gray-800">
+				<img 
+					src="/images/team/danny.jpg" 
+					alt="Danny Setiawan" 
+					class="w-48 h-64 object-cover rounded-lg mx-auto mb-6 shadow-lg"
+				/>
+				<h3 class="text-2xl font-bold text-white mb-2">Danny Setiawan</h3>
+				<p class="text-brand-gold font-semibold mb-4">Co-founder, Master painter</p>
+				<p class="text-gray-300 text-left">
+					Danny Setiawan is an Indonesian born visual artist who combines traditional and digital media in his art.
+				</p>
+				<p class="text-gray-300 text-left mt-4">
+					Danny immigrated to the United States in 1997, and earned his Masters of Fine Arts degree in multimedia from Parsons School of Design in New York in 2003.
+				</p>
+				<p class="text-gray-300 text-left mt-4">
+					In many of his recent works, Danny uses human body as his canvas. Some of his creations, immediately recognizable replications of great paintings of the past, are tributes to his predecessors.
+				</p>
+				<p class="text-gray-300 text-left mt-4">
+					Danny's work has been featured on TV shows and magazines in the US, Europe and Asia.
+				</p>
+			</div>
+
+			<!-- Lina -->
+			<div class="text-center p-6 rounded-xl bg-surface border border-gray-800">
+				<img 
+					src="/images/team/lina.jpg" 
+					alt="Lina Rozina" 
+					class="w-48 h-48 object-cover rounded-full mx-auto mb-6 shadow-lg"
+				/>
+				<h3 class="text-2xl font-bold text-white mb-2">Lina Rozina</h3>
+				<p class="text-brand-gold font-semibold mb-4">Studio Manager, Body Painter</p>
+				<p class="text-gray-300 text-left">
+					Lina is a Russian-Born and Brooklyn-based visual artist who started painting around the same time she first started walking. A lifelong artist with an Illustration degree from Syracuse University and longterm experience in everything from fashion design & book illustration to art teaching, she became obsessed with exploring the extents and abilities of painting, first experimenting with changing surfaces and then venturing from the 2D form into the limitless 3D world.
+				</p>
+				<p class="text-gray-300 text-left mt-4">
+					In body painting Lina found the beauty of working with the curves of a breathing form, and the social reward of bringing art directly into someone's life, skin first. She loves to collaborate, experiment, and push creative boundaries, and she revels in the beauty and empowerment that body painting can bring into someone's life.
+				</p>
+				<p class="text-left mt-4">
+					<a href="https://linarozina.com" class="text-brand-gold hover:text-white font-semibold transition-colors" target="_blank" rel="noopener">
+						See more of Lina's art →
+					</a>
+				</p>
+			</div>
+		</div>
+	</main>
+</BaseLayout>

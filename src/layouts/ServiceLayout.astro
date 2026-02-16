@@ -12,3 +12,64 @@ const { title, description } = Astro.props;
 <BaseLayout title={title} description={description}>
 	<slot />
 </BaseLayout>
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="fixed inset-0 z-[9999] bg-black/95 hidden items-center justify-center cursor-zoom-out" role="dialog" aria-modal="true" aria-label="Image lightbox">
+	<button id="lightbox-close" class="absolute top-4 right-4 text-white/70 hover:text-white text-4xl font-light z-10 w-12 h-12 flex items-center justify-center" aria-label="Close lightbox">&times;</button>
+	<img id="lightbox-img" src="" alt="" class="max-h-[90vh] max-w-[90vw] object-contain" />
+</div>
+
+<script>
+	const lightbox = document.getElementById('lightbox');
+	const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+	const closeBtn = document.getElementById('lightbox-close');
+
+	// Find all images in article/prose and make them clickable
+	document.querySelectorAll('article img, .prose img').forEach(img => {
+		img.style.cursor = 'zoom-in';
+		img.classList.add('lightbox-trigger');
+		(img as HTMLElement).role = 'button';
+		(img as HTMLElement).tabIndex = 0;
+		img.addEventListener('click', () => {
+			lightboxImg.src = (img as HTMLImageElement).src;
+			lightboxImg.alt = (img as HTMLImageElement).alt;
+			lightbox.classList.remove('hidden');
+			lightbox.classList.add('flex');
+			document.body.style.overflow = 'hidden';
+		});
+		img.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
+				lightboxImg.src = (img as HTMLImageElement).src;
+				lightboxImg.alt = (img as HTMLImageElement).alt;
+				lightbox.classList.remove('hidden');
+				lightbox.classList.add('flex');
+				document.body.style.overflow = 'hidden';
+			}
+		});
+	});
+
+	function closeLightbox() {
+		lightbox.classList.add('hidden');
+		lightbox.classList.remove('flex');
+		document.body.style.overflow = '';
+	}
+
+	closeBtn?.addEventListener('click', closeLightbox);
+	lightbox?.addEventListener('click', (e) => {
+		if (e.target === lightbox) closeLightbox();
+	});
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape') closeLightbox();
+	});
+</script>
+
+<style is:global>
+	.lightbox-trigger {
+		transition: transform 0.2s ease, opacity 0.2s ease;
+	}
+	.lightbox-trigger:hover {
+		transform: scale(1.02);
+		opacity: 0.9;
+	}
+</style>

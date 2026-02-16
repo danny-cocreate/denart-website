@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const classes = await getCollection('classes');
+
+// Sort by order
+const sortedClasses = classes.sort((a, b) => (a.data.order || 99) - (b.data.order || 99));
+---
+
+<BaseLayout title="Body Painting Classes" description="Interactive body painting classes in Brooklyn, NYC - couples UV painting, speed friending, and professional workshops.">
+  <!-- Dark Hero Header -->
+  <section class="relative bg-dark py-20 px-6 overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(204,49,49,0.15)_0%,_transparent_60%)]"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(204,49,49,0.08)_0%,_transparent_50%)]"></div>
+    <div class="max-w-4xl mx-auto relative z-10 text-center">
+      <span class="inline-block px-4 py-2 bg-brand-red/20 text-text-primary rounded-full text-sm font-medium mb-4 border border-brand-red/30">
+        Learn & Create
+      </span>
+      <h1 class="text-4xl md:text-6xl font-bold text-text-primary mb-6">Body Painting Classes</h1>
+      <p class="text-xl text-text-secondary max-w-2xl mx-auto">
+        Join our interactive body painting experiences in Brooklyn. Perfect for couples, singles, and creative souls.
+      </p>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto py-16 px-6 bg-deepest">
+    <div class="grid md:grid-cols-2 gap-8">
+      {sortedClasses.map((classItem) => (
+        <a href={`/classes/${classItem.slug}`} class="group block bg-surface rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-border-default">
+          <div class="aspect-video overflow-hidden relative">
+            {classItem.data.heroImage ? (
+              <img 
+                src={classItem.data.heroImage} 
+                alt={classItem.data.title}
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+            ) : (
+              <div class="w-full h-full bg-gradient-to-br from-brand-red/30 to-brand-red/20 flex items-center justify-center">
+                <span class="text-4xl">🎨</span>
+              </div>
+            )}
+            {classItem.data.category && (
+              <span class="absolute top-4 right-4 px-3 py-1 bg-deepest/80 text-text-primary text-xs font-medium rounded-full uppercase tracking-wide">
+                {classItem.data.category}
+              </span>
+            )}
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="text-xl font-bold text-text-primary group-hover:text-brand-gold transition-colors">
+                {classItem.data.title}
+              </h3>
+              {classItem.data.price && (
+                <span class="text-brand-gold font-semibold">{classItem.data.price}</span>
+              )}
+            </div>
+            {classItem.data.tagline && (
+              <p class="text-brand-red-light text-sm mb-3">{classItem.data.tagline}</p>
+            )}
+            <div class="flex items-center gap-4 text-sm text-text-muted mb-3">
+              {classItem.data.duration && (
+                <span class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  {classItem.data.duration}
+                </span>
+              )}
+            </div>
+            <p class="text-text-secondary text-sm line-clamp-2">{classItem.data.description}</p>
+            <div class="mt-4 flex items-center text-brand-red group-hover:text-brand-gold transition-colors">
+              <span class="text-sm font-medium">View class details</span>
+              <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- Gift Certificate CTA -->
+    <section class="mt-24 text-center">
+      <div class="bg-gradient-to-br from-brand-red/20 to-brand-red/10 rounded-2xl p-12 border border-brand-red/30">
+        <h2 class="text-3xl font-bold text-text-primary mb-4">Give the Gift of Art</h2>
+        <p class="text-text-secondary max-w-2xl mx-auto mb-8">
+          Our classes make unforgettable gifts. Purchase a gift certificate and let them choose their experience.
+        </p>
+        <a 
+          href="/gift-certificate" 
+          class="inline-block bg-brand-red hover:bg-brand-red-hover text-text-primary font-semibold py-4 px-8 rounded-lg transition-all duration-300 shadow-lg"
+        >
+          View Gift Certificates
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

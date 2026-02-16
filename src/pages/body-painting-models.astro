@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const models = [
+  { name: 'Alisa S', location: 'New York, NY' },
+  { name: 'Karina', location: 'New York, NY' },
+  { name: 'Mona', location: 'New York, NY' },
+  { name: 'Brooke', location: 'New York, NY' },
+  { name: 'Samantha B', location: 'New York, NY', image: 'https://denartny.com/wp-content/uploads/2010/05/Samantha.jpg' },
+  { name: 'Stormy L', location: 'New York, NY' },
+  { name: 'Shea', location: 'New York, NY' },
+  { name: 'Sha Lynne', location: 'New York, NY' },
+  { name: 'Lauren B', location: 'New York, NY' },
+  { name: 'Olivia A', location: 'New York, NY', image: 'https://denartny.com/wp-content/uploads/2010/05/olivia.jpg' },
+  { name: 'Stevie Tosh', location: 'New York, NY' },
+  { name: 'Nephelle Milos', location: 'New York, NY', image: 'https://denartny.com/wp-content/uploads/2010/05/Nephelle.jpg' },
+  { name: 'Kristen Ortiz', location: 'Los Angeles, CA' },
+  { name: 'Ksanka', location: 'Los Angeles, CA' },
+  { name: 'Kristy B', location: 'Erie, PA | New York, NY' },
+  { name: 'Stella Shine', location: 'Los Angeles, CA' },
+  { name: 'Yarley', location: 'Los Angeles, CA' },
+  { name: 'Micaela Rose', location: 'San Diego, CA' },
+  { name: 'Elina Zavala', location: 'New York, NY' },
+  { name: 'Courtney Elmore', location: 'Los Angeles, CA' },
+  { name: 'Mackenzie', location: 'Austin, TX' },
+  { name: 'Kindra Marie', location: 'San Diego, CA' },
+  { name: 'Crystal Eileen', location: 'Rocky Mount, NC' },
+  { name: 'Cam Fan', location: 'New York, NY' },
+];
+
+const nyModels = models.filter(m => m.location.includes('New York'));
+const laModels = models.filter(m => m.location.includes('Los Angeles'));
+const otherModels = models.filter(m => !m.location.includes('New York') && !m.location.includes('Los Angeles'));
+---
+
+<BaseLayout title="Body Painting Models | DenArt Studio" description="Meet our preferred body painting models at DenArt Studio. Professional models for fine art body painting in NYC and beyond.">
+  <!-- Hero Header -->
+  <section class="relative py-20 px-6 overflow-hidden" style="background: radial-gradient(ellipse at top, rgba(204, 49, 49, 0.25) 0%, transparent 60%), radial-gradient(ellipse at bottom, rgba(204, 49, 49, 0.1) 0%, transparent 50%), var(--color-bg-deepest);">
+    <div class="max-w-4xl mx-auto relative z-10 text-center">
+      <span class="inline-block px-4 py-2 rounded-full text-sm font-medium mb-4 border" style="background: rgba(204, 49, 49, 0.15); color: var(--color-brand-gold); border-color: rgba(204, 49, 49, 0.3);">
+        Preferred Partners
+      </span>
+      <h1 class="text-4xl md:text-6xl font-bold mb-6" style="color: var(--color-text-primary);">Body Painting Models</h1>
+      <p class="text-xl max-w-2xl mx-auto" style="color: var(--color-text-secondary);">
+        We highly recommend these talented professionals for their beauty, talent, and dedication to the art of body painting.
+      </p>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto py-16 px-6" style="background-color: var(--color-bg-dark);">
+    <!-- Intro -->
+    <div class="max-w-3xl mx-auto text-center mb-16">
+      <p class="text-lg leading-relaxed" style="color: var(--color-text-secondary);">
+        Below is the list of models that we prefer to work with in body painting projects. 
+        We highly recommend them for their beauty, talent and professionalism. Each model 
+        brings their unique presence and artistry to our body painting sessions.
+      </p>
+      <div class="mt-8 p-6 rounded-xl border" style="background: rgba(204, 49, 49, 0.1); border-color: rgba(204, 49, 49, 0.3);">
+        <p style="color: var(--color-brand-gold);">
+          <strong>Interested in becoming a model?</strong>
+        </p>
+        <a href="/become-a-model" class="inline-block mt-3 px-6 py-3 rounded-lg font-semibold transition-colors" style="background: var(--color-brand-purple); color: var(--color-text-primary);">
+          Apply Now →
+        </a>
+      </div>
+    </div>
+
+    <!-- New York Models -->
+    <section class="mb-16">
+      <div class="flex items-center gap-4 mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold" style="color: var(--color-text-primary);">New York, NY</h2>
+        <div class="flex-grow h-px" style="background: var(--color-border);"></div>
+        <span class="text-sm" style="color: var(--color-text-muted);">{nyModels.length} models</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {nyModels.map((model) => (
+          <div class="group p-6 rounded-xl border text-center transition-all hover:scale-105" style="background: var(--color-bg-dark); border-color: var(--color-border);">
+            {model.image ? (
+              <div class="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-2" style="border-color: var(--color-brand-purple);">
+                <img 
+                  src={model.image} 
+                  alt={model.name}
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ) : (
+              <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center border-2" style="background: rgba(204, 49, 49, 0.15); border-color: var(--color-brand-purple);">
+                <span class="text-2xl" style="color: var(--color-brand-gold);">{model.name.charAt(0)}</span>
+              </div>
+            )}
+            <h3 class="font-bold text-lg" style="color: var(--color-text-primary);">{model.name}</h3>
+            <p class="text-sm mt-1" style="color: var(--color-text-muted);">{model.location}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Los Angeles Models -->
+    <section class="mb-16">
+      <div class="flex items-center gap-4 mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold" style="color: var(--color-text-primary);">Los Angeles, CA</h2>
+        <div class="flex-grow h-px" style="background: var(--color-border);"></div>
+        <span class="text-sm" style="color: var(--color-text-muted);">{laModels.length} models</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {laModels.map((model) => (
+          <div class="group p-6 rounded-xl border text-center transition-all hover:scale-105" style="background: var(--color-bg-dark); border-color: var(--color-border);">
+            <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center border-2" style="background: rgba(204, 49, 49, 0.15); border-color: var(--color-brand-purple);">
+              <span class="text-2xl" style="color: var(--color-brand-gold);">{model.name.charAt(0)}</span>
+            </div>
+            <h3 class="font-bold text-lg" style="color: var(--color-text-primary);">{model.name}</h3>
+            <p class="text-sm mt-1" style="color: var(--color-text-muted);">{model.location}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Other Locations -->
+    <section class="mb-16">
+      <div class="flex items-center gap-4 mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold" style="color: var(--color-text-primary);">Other Locations</h2>
+        <div class="flex-grow h-px" style="background: var(--color-border);"></div>
+        <span class="text-sm" style="color: var(--color-text-muted);">{otherModels.length} models</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {otherModels.map((model) => (
+          <div class="group p-6 rounded-xl border text-center transition-all hover:scale-105" style="background: var(--color-bg-dark); border-color: var(--color-border);">
+            <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center border-2" style="background: rgba(204, 49, 49, 0.15); border-color: var(--color-brand-purple);">
+              <span class="text-2xl" style="color: var(--color-brand-gold);">{model.name.charAt(0)}</span>
+            </div>
+            <h3 class="font-bold text-lg" style="color: var(--color-text-primary);">{model.name}</h3>
+            <p class="text-sm mt-1" style="color: var(--color-text-muted);">{model.location}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="mt-20 py-16 px-6 rounded-2xl text-center" style="background: linear-gradient(135deg, rgba(204, 49, 49, 0.15) 0%, rgba(204, 49, 49, 0.05) 100%); border: 1px solid rgba(204, 49, 49, 0.3);">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--color-text-primary);">Become a DenArt Model</h2>
+      <p class="text-lg max-w-2xl mx-auto mb-8" style="color: var(--color-text-secondary);">
+        Are you interested in being painted as a living canvas? Join our network of professional 
+        models and experience the transformative art of body painting.
+      </p>
+      <a href="/become-a-model" class="inline-block px-8 py-4 rounded-lg font-semibold text-lg transition-all hover:scale-105" style="background: var(--color-brand-purple); color: var(--color-text-primary);">
+        Apply to Become a Model
+      </a>
+    </section>
+  </main>
+</BaseLayout>

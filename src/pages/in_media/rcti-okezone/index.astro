@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Dahsyat Okezone | DenArt Media" description="DenArt body painting studio featured on RCTI Dahsyat Okezone">
+  <main class="max-w-4xl mx-auto py-16 px-6 bg-deepest">
+    <a href="/in_media/" class="inline-flex items-center text-brand-gold hover:text-brand-gold-hover mb-8">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Back to Media
+    </a>
+
+    <article>
+      <h1 class="text-4xl font-bold text-white mb-4">Dahsyat Okezone</h1>
+      <p class="text-lg text-gray-400 mb-8">RCTI, VOA | TV, Indonesia</p>
+
+      <div class="aspect-video mb-8 rounded-xl overflow-hidden bg-gray-900">
+        <iframe 
+          src="https://player.vimeo.com/video/50959985" 
+          class="w-full h-full"
+          frameborder="0" 
+          allow="autoplay; fullscreen; picture-in-picture" 
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <div class="prose prose-lg prose-invert max-w-none">
+        <p>This is a profile piece done by Voice of America for TV stations in Indonesia. This piece was aired on RCTI, one of the major Indonesian TV networks, on January 31st 2011.</p>
+      </div>
+    </article>
+  </main>
+</BaseLayout>

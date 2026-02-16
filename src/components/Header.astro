@@ -4,12 +4,62 @@
 <header class="w-full py-4 px-6 bg-white shadow-sm">
 	<nav class="max-w-7xl mx-auto flex justify-between items-center">
 		<a href="/" class="text-2xl font-bold text-gray-800">DenArt</a>
-		<ul class="flex gap-6">
+		<ul class="flex gap-6 items-center">
 			<li><a href="/" class="text-gray-600 hover:text-gray-900">Home</a></li>
-			<li><a href="/services" class="text-gray-600 hover:text-gray-900">Services</a></li>
+			<li class="relative group">
+				<button class="text-gray-600 hover:text-gray-900 flex items-center gap-1 cursor-pointer" id="services-toggle">
+					Services <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+				</button>
+				<ul class="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md py-2 hidden" id="services-dropdown">
+					<li><a href="/services/fine-art-body-painting" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Fine Art Body Painting</a></li>
+					<li><a href="/services/maternity-belly-painting" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Maternity Belly Painting</a></li>
+					<li><a href="/services/body-painting-for-events" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Event Body Painting</a></li>
+					<li><a href="/services/hypnotic-body-painting" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Hypnotic Body Painting</a></li>
+					<li><a href="/services/for-your-events" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">For Your Events</a></li>
+					<li><a href="/services/commercial-project" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Commercial Project</a></li>
+				</ul>
+			</li>
 			<li><a href="/gallery" class="text-gray-600 hover:text-gray-900">Gallery</a></li>
-			<li><a href="/about" class="text-gray-600 hover:text-gray-900">About</a></li>
-			<li><a href="/contact" class="text-gray-600 hover:text-gray-900">Contact</a></li>
+			<li class="relative group">
+				<button class="text-gray-600 hover:text-gray-900 flex items-center gap-1 cursor-pointer" id="classes-toggle">
+					Classes and Events <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+				</button>
+				<ul class="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md py-2 hidden" id="classes-dropdown">
+					<li><a href="/classes/uv-body-paint-couples" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Paint in the Dark UV Class for Couples</a></li>
+					<li><a href="/classes/speed-friending" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Speed Friending x Body Painting</a></li>
+					<li><a href="/classes/private-party" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Private party at our studio</a></li>
+				</ul>
+			</li>
+			<li><a href="/in_media" class="text-gray-600 hover:text-gray-900">In Media</a></li>
 		</ul>
 	</nav>
 </header>
+
+<script>
+	const servicesToggle = document.getElementById('services-toggle');
+	const servicesDropdown = document.getElementById('services-dropdown');
+	const classesToggle = document.getElementById('classes-toggle');
+	const classesDropdown = document.getElementById('classes-dropdown');
+
+	servicesToggle?.addEventListener('click', (e) => {
+		e.preventDefault();
+		servicesDropdown?.classList.toggle('hidden');
+		classesDropdown?.classList.add('hidden');
+	});
+
+	classesToggle?.addEventListener('click', (e) => {
+		e.preventDefault();
+		classesDropdown?.classList.toggle('hidden');
+		servicesDropdown?.classList.add('hidden');
+	});
+
+	document.addEventListener('click', (e) => {
+		const target = e.target as Node;
+		if (!servicesToggle?.contains(target) && !servicesDropdown?.contains(target)) {
+			servicesDropdown?.classList.add('hidden');
+		}
+		if (!classesToggle?.contains(target) && !classesDropdown?.contains(target)) {
+			classesDropdown?.classList.add('hidden');
+		}
+	});
+</script>

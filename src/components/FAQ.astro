@@ -1,0 +1,51 @@
+---
+interface FAQItem {
+	question: string;
+	answer: string;
+}
+
+interface Props {
+	items: FAQItem[];
+	title?: string;
+}
+
+const { items, title = "Frequently Asked Questions" } = Astro.props;
+
+// Generate JSON-LD for FAQPage schema
+const faqSchema = {
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	"mainEntity": items.map(item => ({
+		"@type": "Question",
+		"name": item.question,
+		"acceptedAnswer": {
+			"@type": "Answer",
+			"text": item.answer
+		}
+	}))
+};
+---
+
+<section class="py-4">
+	<h2 class="text-2xl md:text-3xl font-bold text-text-primary mb-8 font-playfair">{title}</h2>
+	
+	<div class="space-y-4">
+		{items.map((item) => (
+			<details class="group bg-surface/60 rounded-xl border border-border-default overflow-hidden hover:border-border-hover transition-colors">
+				<summary class="flex justify-between items-center cursor-pointer p-5 md:p-6 font-semibold text-text-secondary hover:text-brand-gold transition-colors">
+					<span class="pr-4 leading-snug">{item.question}</span>
+					<span class="ml-4 transform group-open:rotate-180 transition-transform flex-shrink-0 text-brand-purple-light">
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+						</svg>
+					</span>
+				</summary>
+				<div class="px-5 md:px-6 pb-5 md:pb-6 text-text-secondary">
+					<p class="leading-relaxed">{item.answer}</p>
+				</div>
+			</details>
+		))}
+	</div>
+	
+	<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</section>
