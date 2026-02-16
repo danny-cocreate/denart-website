@@ -1,6 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import GalleryGrid from '../../components/GalleryGrid.astro';
+import CTAButton from '../../components/CTAButton.astro';
 
 const galleryItems = await getCollection('gallery');
 
@@ -16,26 +19,56 @@ const categories = {
 galleryItems.forEach((item) => {
 	const cat = item.data.category || 'misc';
 	if (categories[cat]) {
-		categories[cat].items.push(item);
+		categories[cat].items.push({
+			slug: item.slug,
+			title: item.data.title,
+			src: (item.data.images?.[0]?.src || `/images/gallery/${item.slug}/${item.slug.split('/').pop()}.jpg`).replace('.avif', '.jpg'),
+			alt: item.data.images?.[0]?.alt || item.data.title
+		});
 	} else {
-		categories['misc'].items.push(item);
+		categories['misc'].items.push({
+			slug: item.slug,
+			title: item.data.title,
+			src: (item.data.images?.[0]?.src || `/images/gallery/${item.slug}/${item.slug.split('/').pop()}.jpg`).replace('.avif', '.jpg'),
+			alt: item.data.images?.[0]?.alt || item.data.title
+		});
 	}
 });
+
+const featuredWorks = [
+	{
+		slug: 'starry-night-after-van-gogh',
+		title: 'Starry Night',
+		subtitle: 'After Van Gogh',
+		src: '/images/gallery/starry-night-after-van-gogh/starry-night.jpg'
+	},
+	{
+		slug: 'kiss-after-klimt',
+		title: 'The Kiss',
+		subtitle: 'After Klimt',
+		src: '/images/gallery/misc/IMG_6419ds-web.jpg'
+	},
+	{
+		slug: 'persistence-of-memory',
+		title: 'Persistence of Memory',
+		subtitle: 'After Dalí',
+		src: '/images/gallery/misc/IMG_8297ds-web.jpg'
+	}
+];
 ---
 
 <BaseLayout title="Body Painting Gallery" description="View our gallery of body painting artwork - art history reproductions, original designs, and UV/glow paintings.">
-	<!-- Dark Hero Header -->
+	<!-- Hero Header -->
 	<section class="relative bg-gray-900 py-20 px-6 overflow-hidden">
 		<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(107,33,168,0.3)_0%,_transparent_60%)]"></div>
 		<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(212,175,55,0.1)_0%,_transparent_50%)]"></div>
-		<div class="max-w-4xl mx-auto relative z-10 text-center">
-			<span class="inline-block px-4 py-2 bg-brand-purple/20 text-brand-gold rounded-full text-sm font-medium mb-4 border border-brand-purple/30">
-				Portfolio
-			</span>
-			<h1 class="text-4xl md:text-6xl font-bold text-white mb-6">Body Painting Gallery</h1>
-			<p class="text-xl text-gray-300 max-w-2xl mx-auto">
-				Explore our collection of body painting artwork, from classic art reproductions to original designs.
-			</p>
+		<div class="max-w-4xl mx-auto relative z-10">
+			<SectionHeader
+				label="Portfolio"
+				title="Body Painting"
+				titleAccent="Gallery"
+				subtitle="Explore our collection of body painting artwork, from classic art reproductions to original designs."
+			/>
 		</div>
 	</section>
 
@@ -48,95 +81,52 @@ galleryItems.forEach((item) => {
 						<div class="flex-grow h-px bg-gray-700"></div>
 						<span class="text-gray-400 text-sm">{category.items.length} works</span>
 					</div>
-					<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-						{category.items.slice(0, 12).map((item) => {
-							const imageSrc = item.data.images?.[0]?.src || `/images/gallery/${item.slug}/${item.slug.split('/').pop()}.jpg`;
-							const imageAlt = item.data.images?.[0]?.alt || item.data.title;
-							return (
-								<a href={`/gallery/${item.slug}`} class="group block">
-									<div class="aspect-square overflow-hidden rounded-xl bg-dark shadow-lg hover:shadow-2xl transition-all duration-500 relative">
-										<img 
-											src={imageSrc.replace('.avif', '.jpg')} 
-											alt={imageAlt}
-											class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
-											loading="lazy"
-										/>
-										<!-- Hover overlay -->
-										<div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-										<!-- Title on hover -->
-										<div class="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-											<h3 class="text-white font-bold truncate">{item.data.title}</h3>
-										</div>
-									</div>
-									<p class="mt-3 text-sm text-gray-300 group-hover:text-brand-purple transition-colors font-medium truncate">
-										{item.data.title}
-									</p>
-								</a>
-								);
-							})}
+					<GalleryGrid 
+						items={category.items.slice(0, 12)} 
+						columns={4} 
+						showTitles={true}
+						aspectRatio="square"
+					/>
+					{category.items.length > 12 && (
+						<div class="mt-8 text-center">
+							<CTAButton href={`/gallery/category/${key}`} variant="secondary">
+								View all {category.items.length} pieces
+							</CTAButton>
 						</div>
-						{category.items.length > 12 && (
-							<p class="mt-8 text-center">
-								<a href={`/gallery/category/${key}`} class="inline-flex items-center gap-2 text-brand-purple hover:text-purple-800 font-semibold px-6 py-3 rounded-lg hover:bg-brand-purple/10 transition-colors">
-									View all {category.items.length} pieces
-									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-									</svg>
-								</a>
-							</p>
-						)}
-					</section>
-				)
-			))}
+					)}
+				</section>
+			)
+		))}
 
 		<!-- Featured Pieces -->
 		<section class="mt-24 py-16 bg-gray-900/50 -mx-6 px-6 rounded-2xl">
 			<div class="max-w-7xl mx-auto">
-				<div class="text-center mb-12">
-					<h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Featured Works</h2>
-					<div class="w-20 h-1 bg-brand-gold mx-auto rounded-full"></div>
-				</div>
-				<div class="grid md:grid-cols-3 gap-8">
-					<a href="/gallery/starry-night-after-van-gogh" class="group">
-						<div class="overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500">
-							<img 
-								src="/images/gallery/starry-night-after-van-gogh/starry-night.jpg" 
-								alt="Starry Night after Van Gogh"
-								class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700"
-							/>
-						</div>
-						<h3 class="mt-5 text-xl font-bold text-white group-hover:text-brand-purple transition-colors">Starry Night</h3>
-						<p class="text-gray-400">After Van Gogh</p>
-					</a>
-					<a href="/gallery/kiss-after-klimt" class="group">
-						<div class="overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500">
-							<img 
-								src="/images/gallery/misc/IMG_6419ds-web.jpg" 
-								alt="The Kiss after Klimt"
-								class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700"
-							/>
-						</div>
-						<h3 class="mt-5 text-xl font-bold text-white group-hover:text-brand-purple transition-colors">The Kiss</h3>
-						<p class="text-gray-400">After Klimt</p>
-					</a>
-					<a href="/gallery/persistence-of-memory" class="group">
-						<div class="overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500">
-							<img 
-								src="/images/gallery/misc/IMG_8297ds-web.jpg" 
-								alt="Persistence of Memory after Dali"
-								class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700"
-							/>
-						</div>
-						<h3 class="mt-5 text-xl font-bold text-white group-hover:text-brand-purple transition-colors">Persistence of Memory</h3>
-						<p class="text-gray-400">After Dalí</p>
-					</a>
-				</div>
+				<SectionHeader
+					title="Featured"
+					titleAccent="Works"
+					class="mb-12"
+				/>
+				<GalleryGrid 
+					items={featuredWorks.map(work => ({
+						slug: work.slug,
+						title: work.title,
+						src: work.src,
+						alt: work.title
+					}))}
+					columns={3}
+					showTitles={true}
+					aspectRatio="video"
+				/>
 			</div>
 		</section>
 
 		<!-- Location -->
 		<section class="mt-20 text-center">
-			<h2 class="text-3xl font-bold text-white mb-6">Visit Our Studio</h2>
+			<SectionHeader
+				title="Visit Our"
+				titleAccent="Studio"
+				class="mb-6"
+			/>
 			<p class="text-gray-400 mb-2 text-lg">CoCreate Space</p>
 			<p class="text-gray-400 mb-2">99 Kingsland Ave #102, Brooklyn, NY 11222</p>
 			<a href="tel:646-926-1202" class="text-red-500 hover:text-red-400 text-xl font-medium transition-colors mb-6 inline-block">646-926-1202</a>
