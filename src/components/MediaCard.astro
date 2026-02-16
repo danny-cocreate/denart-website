@@ -1,0 +1,54 @@
+---
+export interface Props {
+  slug: string;
+  outlet: string;
+  network?: string;
+  type?: string;
+  thumbnail?: string;
+  initials?: string;
+  color?: string;
+  class?: string;
+}
+
+const {
+  slug,
+  outlet,
+  network = '',
+  type = '',
+  thumbnail,
+  initials,
+  color = 'from-brand-red to-accent',
+  class: className = '',
+} = Astro.props;
+
+// Build subtitle from network and type
+const subtitleParts = [network, type].filter(Boolean);
+const subtitle = subtitleParts.join(' | ');
+---
+
+<a 
+  href={`/in_media/${slug}/`}
+  class={`group block rounded-xl border border-zinc-800 hover:border-brand-red transition-all duration-300 overflow-hidden ${className}`}
+>
+  {thumbnail ? (
+    <div class="aspect-video bg-gray-800 overflow-hidden">
+      <img 
+        src={thumbnail} 
+        alt={outlet}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    </div>
+  ) : (
+    <div class={`aspect-video bg-gradient-to-br ${color} flex items-center justify-center`}>
+      <span class="text-3xl font-bold text-white/90">{initials || outlet.charAt(0)}</span>
+    </div>
+  )}
+  <div class="p-5 bg-void-light">
+    <h3 class="text-lg font-bold text-sand group-hover:text-brand-red transition-colors mb-1">
+      {outlet}
+    </h3>
+    {subtitle && (
+      <p class="text-sm text-sand-muted">{subtitle}</p>
+    )}
+  </div>
+</a>

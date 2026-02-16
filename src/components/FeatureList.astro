@@ -1,0 +1,38 @@
+---
+interface Props {
+  items: string[];
+  iconColor?: 'red' | 'gold';
+  columns?: 1 | 2;
+  class?: string;
+}
+
+const { 
+  items, 
+  iconColor = 'red', 
+  columns = 1,
+  class: className = '' 
+} = Astro.props;
+
+const iconColorClass = iconColor === 'red' ? 'text-brand-red' : 'text-brand-gold';
+
+const gridClass = columns === 2 ? 'grid md:grid-cols-2 gap-4' : 'space-y-4';
+---
+
+<ul class={`${gridClass} ${className}`}>
+  {items.map((item) => (
+    <li class="flex items-start gap-3">
+      <svg 
+        class={`w-6 h-6 flex-shrink-0 mt-0.5 ${iconColorClass}`} 
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M5 13l4 4L19 7"></path>
+      </svg>
+      <span class="text-sand-muted">{item}</span>
+    </li>
+  ))}
+</ul>

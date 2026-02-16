@@ -1,6 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import Card from '../../components/Card.astro';
 
 export async function getStaticPaths() {
 	const classes = await getCollection('classes');
@@ -41,13 +44,9 @@ const galleryImages = classItem.data.galleryImages || [];
 				<p class="text-lg text-gray-300 mb-6">{classItem.data.duration}</p>
 			)}
 			<div class="flex flex-wrap justify-center gap-4">
-				<a 
-					href="/get-a-quote" 
-					class="inline-block font-semibold py-3 px-8 rounded transition-colors no-underline"
-					style="background-color: var(--color-brand-red) !important; color: #fff !important;"
-				>
+				<CTAButton href="/get-a-quote" variant="primary">
 					Book Now
-				</a>
+				</CTAButton>
 			</div>
 		</div>
 	</section>
@@ -91,11 +90,16 @@ const galleryImages = classItem.data.galleryImages || [];
 			)}
 			
 			<!-- Schedule & CTA Section -->
-			<div class="mt-16 p-8 bg-surface rounded-xl border border-border">
-				<h3 class="text-2xl font-bold text-white mb-4 text-center">Ready to join this class?</h3>
+			<Card class="mt-16 text-center">
+				<SectionHeader
+					title="Ready to join this"
+					titleAccent="class?"
+					centered={true}
+					class="mb-6"
+				/>
 				{classItem.data.schedule && classItem.data.schedule.length > 0 && (
 					<div class="mb-6">
-						<p class="text-gray-400 text-center mb-4">Upcoming sessions:</p>
+						<p class="text-gray-400 mb-4">Upcoming sessions:</p>
 						<div class="flex flex-wrap justify-center gap-3">
 							{classItem.data.schedule.map((date) => (
 								<span class="px-4 py-2 bg-brand-red/20 text-brand-red-light rounded font-medium border border-brand-red/30">
@@ -105,16 +109,10 @@ const galleryImages = classItem.data.galleryImages || [];
 						</div>
 					</div>
 				)}
-				<div class="text-center">
-					<a 
-						href="/get-a-quote" 
-						class="inline-block font-semibold py-3 px-8 rounded transition-colors no-underline"
-						style="background-color: var(--color-brand-red) !important; color: #fff !important;"
-					>
-						Book Now
-					</a>
-				</div>
-			</div>
+				<CTAButton href="/get-a-quote" variant="primary">
+					Book Now
+				</CTAButton>
+			</Card>
 		</div>
 	</article>
 

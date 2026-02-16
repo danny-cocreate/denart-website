@@ -1,21 +1,67 @@
 ---
 interface GalleryItem {
-	src: string;
-	alt: string;
-	slug: string;
+  src: string;
+  alt: string;
+  slug: string;
+  title?: string;
 }
 
 interface Props {
-	items: GalleryItem[];
+  items: GalleryItem[];
+  columns?: 2 | 3 | 4;
+  showTitles?: boolean;
+  aspectRatio?: 'square' | 'video' | '4/5';
+  class?: string;
 }
 
-const { items } = Astro.props;
+const { 
+  items, 
+  columns = 4,
+  showTitles = false,
+  aspectRatio = 'square',
+  class: className = ''
+} = Astro.props;
+
+const gridCols = {
+  2: 'grid-cols-1 sm:grid-cols-2',
+  3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+  4: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+}[columns];
+
+const aspectClass = {
+  square: 'aspect-square',
+  video: 'aspect-video',
+  '4/5': 'aspect-[4/5]'
+}[aspectRatio];
 ---
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-	{items.map((item) => (
-		<a href={`/gallery/${item.slug}`} class="block overflow-hidden rounded-lg hover:opacity-90 transition-opacity">
-			<img src={item.src} alt={item.alt} class="w-full h-64 object-cover" />
-		</a>
-	))}
+<div class={`grid ${gridCols} gap-4 md:gap-6 ${className}`}>
+  {items.map((item) => (
+    <a 
+      href={`/gallery/${item.slug}`} 
+      class="group block"
+    >
+      <div class={`${aspectClass} overflow-hidden rounded-xl bg-void-light border border-zinc-800 shadow-lg transition-all duration-500 group-hover:shadow-2xl group-hover:border-brand-red/30 relative`}>
+        <img 
+          src={item.src} 
+          alt={item.alt} 
+          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+          loading="lazy"
+        />
+        {/* Hover overlay */}
+        <div class="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        {/* Title on hover */}
+        {showTitles && item.title && (
+          <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <h3 class="font-display text-white font-bold truncate">{item.title}</h3>
+          </div>
+        )}
+      </div>
+      {showTitles && item.title && (
+        <p class="mt-3 text-sm text-sand-muted group-hover:text-brand-red transition-colors font-medium truncate">
+          {item.title}
+        </p>
+      )}
+    </a>
+  ))}
 </div>

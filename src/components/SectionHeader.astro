@@ -1,0 +1,36 @@
+---
+export interface Props {
+  label?: string;
+  title: string;
+  titleAccent?: string;
+  subtitle?: string;
+  centered?: boolean;
+  class?: string;
+}
+
+const {
+  label,
+  title,
+  titleAccent,
+  subtitle,
+  centered = true,
+  class: className = '',
+} = Astro.props;
+
+const alignClass = centered ? 'text-center' : 'text-left';
+const mxAuto = centered ? 'mx-auto' : '';
+---
+
+<div class={`${alignClass} ${className}`}>
+  {label && (
+    <p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-4">{label}</p>
+  )}
+  <h2 class="font-display text-4xl md:text-5xl text-sand">
+    {title}{titleAccent && <span class="italic font-normal"> {titleAccent}</span>}
+  </h2>
+  {subtitle && (
+    <p class="text-sand-muted text-lg mt-4 max-w-2xl leading-relaxed ${mxAuto}">{subtitle}</p>
+  )}
+  <!-- Decorative Line -->
+  <div class={`w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mt-8 ${centered ? 'mx-auto' : ''}`}></div>
+</div>

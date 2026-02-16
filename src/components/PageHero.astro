@@ -1,0 +1,158 @@
+---
+export interface Props {
+  title: string;
+  subtitle?: string;
+  badge?: {
+    text: string;
+  };
+  description?: string;
+  bgImage?: string;
+  bgAlt?: string;
+  cta?: {
+    primary?: {
+      text: string;
+      href: string;
+    };
+    secondary?: {
+      text: string;
+      href: string;
+    };
+  };
+  scrollIndicator?: boolean;
+  class?: string;
+}
+
+const {
+  title,
+  subtitle,
+  badge,
+  description,
+  bgImage,
+  bgAlt = '',
+  cta,
+  scrollIndicator = false,
+  class: className = '',
+} = Astro.props;
+---
+
+<section class={`relative min-h-[92vh] flex items-center justify-center overflow-hidden ${className}`}>
+  <!-- Background Image with Gradient Overlay -->
+  {bgImage && (
+    <div class="absolute inset-0">
+      <img 
+        src={bgImage} 
+        alt={bgAlt}
+        class="w-full h-full object-cover scale-105"
+        style="animation: heroScale 20s ease-in-out infinite alternate;"
+      />
+      <!-- Gradient overlays as specified -->
+      <div class="absolute inset-0 bg-gradient-to-b from-void/70 via-void/50 to-void"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-void/80 via-transparent to-void/80"></div>
+    </div>
+  )}
+
+  <!-- Hero Content -->
+  <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
+    <!-- Semi-transparent background for legibility -->
+    <div class="absolute inset-0 -mx-6 -my-4 bg-black/80 backdrop-blur-sm rounded-2xl"></div>
+    <div class="relative py-12">
+      <!-- Badge / Subtitle -->
+      {badge && (
+        <p class="text-brand-red text-xs uppercase tracking-[0.3em] mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 200ms; animation-fill-mode: forwards;">
+          {badge.text}
+        </p>
+      )}
+      
+      {subtitle && !badge && (
+        <p class="text-brand-red text-xs uppercase tracking-[0.3em] mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 200ms; animation-fill-mode: forwards;">
+          {subtitle}
+        </p>
+      )}
+
+      <!-- Main Headline -->
+      <h1 class="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-semibold text-sand mb-8 leading-[0.95] opacity-0 animate-fade-in-up" style="animation-delay: 400ms; animation-fill-mode: forwards;" set:html={title}>
+      </h1>
+
+      <!-- Decorative Line -->
+      <div class="w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto mb-8 opacity-0 animate-fade-in-up" style="animation-delay: 600ms; animation-fill-mode: forwards;"></div>
+
+      <!-- Description -->
+      {description && (
+        <p class="text-lg md:text-xl text-sand/80 max-w-2xl mx-auto mb-12 leading-relaxed opacity-0 animate-fade-in-up" style="animation-delay: 700ms; animation-fill-mode: forwards;">
+          {description}
+        </p>
+      )}
+
+      <!-- CTAs -->
+      {(cta?.primary || cta?.secondary) && (
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0 animate-fade-in-up" style="animation-delay: 900ms; animation-fill-mode: forwards;">
+          {cta.primary && (
+            <a 
+              href={cta.primary.href}
+              class="group relative inline-flex items-center gap-2 font-semibold uppercase tracking-wider bg-brand-red px-8 py-4 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-brand-red/30 hover:-translate-y-0.5"
+            >
+              <span class="relative z-10 text-white">{cta.primary.text}</span>
+              <svg class="w-4 h-4 relative z-10 text-white transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          )}
+          {cta.secondary && (
+            <a 
+              href={cta.secondary.href}
+              class="group inline-flex items-center gap-2 font-semibold uppercase tracking-wider text-sand border border-sand/30 px-8 py-4 rounded-lg backdrop-blur-sm bg-white/5 hover:bg-white/10 hover:border-brand-red/50 transition-all duration-300"
+            >
+              <span>{cta.secondary.text}</span>
+              <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  {scrollIndicator && (
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in" style="animation-delay: 1.5s; animation-fill-mode: forwards;">
+      <div class="flex flex-col items-center gap-2 text-sand/40">
+        <span class="text-xs uppercase tracking-widest">Scroll</span>
+        <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
+      </div>
+    </div>
+  )}
+</section>
+
+<style>
+  @keyframes heroScale {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 1s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>

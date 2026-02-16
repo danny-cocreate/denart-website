@@ -1,13 +1,14 @@
 ---
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
+import PageHero from '../../components/PageHero.astro';
 
 export async function getStaticPaths() {
-	const events = await getCollection('events');
-	return events.map((event) => ({
-		params: { slug: event.slug },
-		props: { event },
-	}));
+  const events = await getCollection('events');
+  return events.map((event) => ({
+    params: { slug: event.slug },
+    props: { event },
+  }));
 }
 
 const { event } = Astro.props;
@@ -16,46 +17,48 @@ const images = event.data.images || [];
 ---
 
 <PageLayout title={event.data.title}>
-	<main class="bg-dark min-h-screen">
-		<!-- Dark Hero Header -->
-		<section class="relative bg-gray-900 py-16 px-6 overflow-hidden">
-			<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(107,33,168,0.3)_0%,_transparent_60%)]"></div>
-			<div class="max-w-4xl mx-auto relative z-10">
-				<span class="inline-block px-4 py-2 bg-brand-purple/20 text-brand-gold rounded-full text-sm font-medium mb-4 border border-brand-purple/30">
-					Event
-				</span>
-				<h1 class="text-4xl md:text-5xl font-bold text-white mb-4">{event.data.title}</h1>
-				{event.data.date && (
-					<p class="text-gray-400 text-xl">{event.data.date}</p>
-				)}
-			</div>
-		</section>
+  <PageHero
+    badge="Event"
+    title={event.data.title}
+    subtitle={event.data.date}
+    minHeight="min-h-[40vh]"
+    animate={false}
+  />
 
-		<article class="max-w-6xl mx-auto py-12 px-6">
-			{images.length > 0 && (
-				<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-					{images.map((img) => (
-						<picture>
-							<source srcset={img.src} type="image/avif" />
-							<source srcset={img.src.replace('.avif', '.webp')} type="image/webp" />
-							<img 
-								src={img.src.replace('.avif', '.jpg')} 
-								alt={img.alt || event.data.title} 
-								class="w-full h-48 object-cover rounded-lg hover:opacity-90 transition cursor-pointer"
-								loading="lazy"
-							/>
-						</picture>
-					))}
-				</div>
-			)}
-			
-			<div class="prose prose-lg prose-invert max-w-none">
-				<Content />
-			</div>
-			
-			<div class="mt-8">
-				<a href="/events" class="text-red-500 hover:text-red-400">&larr; Back to Events</a>
-			</div>
-		</article>
-	</main>
+  <main class="max-w-6xl mx-auto py-12 md:py-16 px-6 bg-void">
+    {images.length > 0 && (
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+        {images.map((img, index) => (
+          <picture class="block aspect-square overflow-hidden rounded-xl border border-zinc-800">
+            <source srcset={img.src} type="image/avif" />
+            <source srcset={img.src.replace('.avif', '.webp')} type="image/webp" />
+            <img 
+              src={img.src.replace('.avif', '.jpg')} 
+              alt={img.alt || event.data.title} 
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 cursor-pointer"
+              loading={index < 4 ? "eager" : "lazy"}
+            />
+          </picture>
+        ))}
+      </div>
+    )}
+    
+    <article class="prose prose-lg prose-invert max-w-none 
+      prose-headings:font-display
+      prose-h2:text-2xl prose-h2:text-sand prose-h2:mt-10
+      prose-p:text-sand-muted prose-p:leading-relaxed
+      prose-a:text-brand-gold hover:prose-a:text-brand-gold-light
+      prose-img:rounded-xl prose-img:shadow-lg">
+      <Content />
+    </article>
+    
+    <div class="mt-12 pt-8 border-t border-zinc-800">
+      <a href="/events" class="inline-flex items-center gap-2 text-brand-gold hover:text-brand-gold-light transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back to Events
+      </a>
+    </div>
+  </main>
 </PageLayout>

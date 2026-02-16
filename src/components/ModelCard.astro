@@ -1,0 +1,46 @@
+---
+interface Props {
+  name: string;
+  location?: string;
+  image?: string;
+  initials?: string;
+  href?: string;
+  class?: string;
+}
+
+const { 
+  name, 
+  location = 'New York, NY', 
+  image,
+  initials,
+  href,
+  class: className = '' 
+} = Astro.props;
+
+const displayInitials = initials || name.charAt(0);
+const Wrapper = href ? 'a' : 'div';
+---
+
+<Wrapper 
+  {...href ? { href } : {}} 
+  class={`group block p-6 bg-void-light border border-zinc-800 rounded-xl text-center transition-all duration-300 hover:bg-void-lighter hover:border-brand-red/30 hover:scale-105 ${className}`}
+>
+  {image ? (
+    <div class="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-2 border-brand-red">
+      <img 
+        src={image} 
+        alt={name}
+        class="w-full h-full object-cover"
+        loading="lazy"
+      />
+    </div>
+  ) : (
+    <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center border-2 border-brand-red bg-brand-red/15">
+      <span class="text-2xl text-brand-gold">{displayInitials}</span>
+    </div>
+  )}
+  <h3 class="font-display text-lg text-sand font-bold">{name}</h3>
+  {location && (
+    <p class="text-sm mt-1 text-sand-dim">{location}</p>
+  )}
+</Wrapper>

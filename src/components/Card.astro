@@ -1,0 +1,43 @@
+---
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  href?: string;
+  variant?: 'default' | 'stats' | 'social' | 'gift';
+  class?: string;
+}
+
+const {
+  title,
+  subtitle,
+  href,
+  variant = 'default',
+  class: className = '',
+} = Astro.props;
+
+// Variant configurations from index.astro patterns
+const variantClasses = {
+  default: 'p-6 bg-void-light border border-zinc-800 rounded-2xl relative overflow-hidden hover:border-brand-red/30 hover:-translate-y-1 transition-all duration-300',
+  stats: 'p-6 bg-void-light/50 border border-zinc-800 rounded-2xl text-center',
+  social: 'p-6 bg-void-light/30 border border-zinc-800/50 rounded-2xl',
+  gift: 'p-6 bg-void-light border border-zinc-800 rounded-2xl relative overflow-hidden',
+};
+
+const Tag = href ? 'a' : 'div';
+const tagProps = href ? { href, class: `${variantClasses[variant]} ${className}` } : { class: `${variantClasses[variant]} ${className}` };
+---
+
+<Tag {...tagProps}>
+  {variant === 'gift' && (
+    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-red/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+  )}
+  <div class="relative">
+    {title && (
+      <h3 class={`font-display text-3xl text-sand ${variant === 'stats' ? 'mb-2' : 'mb-3'}`}>{title}</h3>
+    )}
+    {subtitle && (
+      <p class="text-sand-muted text-sm leading-relaxed">{subtitle}</p>
+    )}
+    <slot />
+  </div>
+</Tag>

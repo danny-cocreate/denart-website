@@ -1,0 +1,82 @@
+---
+export interface Props {
+  src: string;
+  alt: string;
+  href?: string;
+  aspectRatio?: 'video' | 'square' | 'portrait';
+  overlay?: boolean;
+  caption?: string;
+  network?: string;
+  type?: string;
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  href,
+  aspectRatio = 'video',
+  overlay = false,
+  caption,
+  network,
+  type,
+  class: className = '',
+} = Astro.props;
+
+// Aspect ratio classes
+const aspectClasses = {
+  video: 'aspect-video',
+  square: 'aspect-square',
+  portrait: 'aspect-[3/4]',
+};
+
+// Container classes from in_media page
+const containerClasses = `group block bg-surface rounded-xl border border-border-default hover:border-brand-red transition-all duration-300 overflow-hidden ${className}`;
+
+const content = (
+  <>
+    <div class={`${aspectClasses[aspectRatio]} bg-gray-800 overflow-hidden relative`}>
+      <img 
+        src={src} 
+        alt={alt}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+      {overlay && (
+        <div class="absolute inset-0 bg-void/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+          <div class="w-12 h-12 rounded-full bg-brand-red/90 flex items-center justify-center">
+            <svg class="w-5 h-5 text-void ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path>
+            </svg>
+          </div>
+        </div>
+      )}
+    </div>
+    {(caption || network || type) && (
+      <div class="p-5">
+        {caption && (
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="text-lg font-bold text-text-primary group-hover:text-brand-red transition-colors">
+              {caption}
+            </h3>
+          </div>
+        )}
+        {(network || type) && (
+          <p class="text-sm text-text-muted">
+            {network}{network && type ? ' | ' : ''}{type}
+          </p>
+        )}
+      </div>
+    )}
+  </>
+);
+---
+
+{href ? (
+  <a href={href} class={containerClasses}>
+    {content}
+  </a>
+) : (
+  <div class={containerClasses}>
+    {content}
+  </div>
+)}
