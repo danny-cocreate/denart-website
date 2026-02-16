@@ -1,6 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import Card from '../../components/Card.astro';
 
 const services = await getCollection('services');
 
@@ -31,20 +35,15 @@ const categoryLabels = {
 ---
 
 <BaseLayout title="Body Painting Services" description="Professional body painting services in Brooklyn, NYC - private sessions, events, maternity painting, and more.">
-  <!-- Dark Hero Header -->
-  <section class="relative bg-gray-900 py-16 md:py-24 px-6 overflow-hidden">
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(107,33,168,0.3)_0%,_transparent_60%)]"></div>
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(212,175,55,0.1)_0%,_transparent_50%)]"></div>
-    <div class="max-w-4xl mx-auto relative z-10 text-center">
-      <span class="inline-block px-4 py-2 bg-brand-purple/20 text-brand-gold rounded-full text-sm font-medium mb-6 border border-brand-purple/30">
-        Our Services
-      </span>
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 font-playfair">Body Painting Services</h1>
-      <p class="text-xl text-[#b8b8c4] max-w-2xl mx-auto font-light">
-        Transform yourself or your event with professional body painting services in Brooklyn, NYC.
-      </p>
-    </div>
-  </section>
+  <!-- Hero Header -->
+  <PageHero
+    title="Body Painting Services"
+    subtitle="Our Services"
+    description="Transform yourself or your event with professional body painting services in Brooklyn, NYC."
+    bgImage="/images/danny-mine/hero-danny.avif"
+    bgAlt="Body painting artist Danny working on a model"
+    scrollIndicator={false}
+  />
 
   <main class="max-w-7xl mx-auto py-12 md:py-16 px-6 bg-dark" style="background-color: var(--color-bg-dark);">
     {Object.entries(groupedServices).map(([key, categoryServices]) => (
@@ -57,8 +56,8 @@ const categoryLabels = {
           </div>
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {categoryServices.map((service) => (
-              <a href={`/services/${service.slug}`} class="group block bg-gray-800 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-700">
-                <div class="aspect-video overflow-hidden">
+              <Card href={`/services/${service.slug}`} class="group bg-gray-800">
+                <div class="aspect-video overflow-hidden -m-6 mb-4">
                   {service.data.heroImage ? (
                     <img 
                       src={service.data.heroImage} 
@@ -71,20 +70,18 @@ const categoryLabels = {
                     </div>
                   )}
                 </div>
-                <div class="p-6">
-                  <h3 class="text-xl font-bold text-white mb-2 group-hover:text-brand-gold transition-colors font-playfair">
-                    {service.data.title}
-                  </h3>
-                  {service.data.tagline && (
-                    <p class="text-brand-gold text-sm mb-3 font-medium">{service.data.tagline}</p>
-                  )}
-                  <p class="text-[#a8a8b8] text-sm line-clamp-3 leading-relaxed">{service.data.description}</p>
-                  <div class="mt-4 flex items-center text-[#7b7b8a] group-hover:text-brand-gold transition-colors">
-                    <span class="text-sm font-medium">Learn more</span>
-                    <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-                  </div>
+                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-brand-gold transition-colors font-playfair">
+                  {service.data.title}
+                </h3>
+                {service.data.tagline && (
+                  <p class="text-brand-gold text-sm mb-3 font-medium">{service.data.tagline}</p>
+                )}
+                <p class="text-[#a8a8b8] text-sm line-clamp-3 leading-relaxed">{service.data.description}</p>
+                <div class="mt-4 flex items-center text-[#7b7b8a] group-hover:text-brand-gold transition-colors">
+                  <span class="text-sm font-medium">Learn more</span>
+                  <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                 </div>
-              </a>
+              </Card>
             ))}
           </div>
         </section>
@@ -92,19 +89,18 @@ const categoryLabels = {
     ))}
 
     <!-- CTA Section -->
-    <section class="mt-16 md:mt-20 text-center">
-      <div class="bg-gradient-to-br from-brand-purple/20 to-brand-gold/20 rounded-2xl p-10 md:p-12 border border-brand-purple/30">
-        <h2 class="text-2xl md:text-3xl font-bold text-white mb-4 font-playfair">Ready to Transform?</h2>
-        <p class="text-[#b8b8c4] max-w-2xl mx-auto mb-8 text-lg">
-          Not sure which service is right for you? Get in touch and we'll help you choose the perfect body painting experience.
-        </p>
-        <a 
-          href="/get-a-quote" 
-          class="inline-block bg-brand-purple hover:bg-purple-700 text-white font-semibold py-4 px-10 rounded-lg transition-all duration-300 shadow-lg hover:shadow-purple-500/25 text-lg"
-        >
+    <section class="mt-16 md:mt-20">
+      <Card variant="gift" class="text-center">
+        <SectionHeader
+          title="Ready to"
+          titleAccent="Transform?"
+          subtitle="Not sure which service is right for you? Get in touch and we'll help you choose the perfect body painting experience."
+          class="mb-8"
+        />
+        <CTAButton href="/get-a-quote" variant="primary" size="lg">
           Get a Quote
-        </a>
-      </div>
+        </CTAButton>
+      </Card>
     </section>
   </main>
 </BaseLayout>
