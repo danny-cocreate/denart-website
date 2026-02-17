@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import CTAButton from '../../components/CTAButton.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import Card from '../../components/Card.astro';
+import BookingModal from '../../components/BookingModal.astro';
 
 export async function getStaticPaths() {
 	const classes = await getCollection('classes');
@@ -16,6 +17,8 @@ export async function getStaticPaths() {
 const { classItem } = Astro.props;
 const { Content } = await classItem.render();
 const galleryImages = classItem.data.galleryImages || [];
+const showPrivateNote = classItem.data.showPrivateNote || false;
+const privateNote = classItem.data.privateNote || "";
 ---
 
 <BaseLayout title={classItem.data.title} description={classItem.data.description}>
@@ -34,22 +37,132 @@ const galleryImages = classItem.data.galleryImages || [];
 				Class
 			</span>
 			<h1 class="text-4xl md:text-6xl font-bold text-white mb-4">{classItem.data.title}</h1>
-			{classItem.data.tagline && (
-				<p class="text-xl md:text-2xl text-gray-200 mb-4">{classItem.data.tagline}</p>
-			)}
-			{classItem.data.price && (
-				<p class="text-3xl md:text-4xl font-bold text-brand-gold mb-6">{classItem.data.price}</p>
-			)}
-			{classItem.data.duration && (
-				<p class="text-lg text-gray-300 mb-6">{classItem.data.duration}</p>
-			)}
-			<div class="flex flex-wrap justify-center gap-4">
-				<CTAButton href="/get-a-quote" variant="primary">
-					Book Now
-				</CTAButton>
-			</div>
+			<p class="text-xl md:text-2xl text-gray-200 mb-4">UV Body Painting Class for Couples</p>
 		</div>
 	</section>
+
+	<!-- Intro / Hook Section -->
+	<section class="bg-deepest py-12">
+		<div class="max-w-4xl mx-auto px-6 text-center">
+			<h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Impress Your Date</h2>
+			<p class="text-xl text-gray-300 max-w-2xl mx-auto">
+				Not a typical date activity, this UV body painting class for couples at our studio in Brooklyn, NYC will make your date glow (literally) and talk about it for years. This is a romantic and playful experience where couples spend quality time painting each other in a dark studio lit by black lights.
+			</p>
+		</div>
+	</section>
+
+	<!-- Where / Price / Schedule Info Bar -->
+	{classItem.data.price && (
+		<section class="bg-void-light border-y border-zinc-800 py-10">
+			<div class="max-w-5xl mx-auto px-6">
+				<div class="grid md:grid-cols-3 gap-8">
+					<!-- Schedule -->
+					<div class="text-center group">
+						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
+							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+							</svg>
+						</div>
+						<p class="text-xs uppercase tracking-widest text-gray-500 mb-3">Schedule</p>
+						{classItem.data.schedule && classItem.data.schedule.length > 0 ? (
+							<div class="flex flex-col gap-2">
+								{classItem.data.schedule.slice(0, 3).map((date) => {
+									const parts = date.split('|');
+									const time1 = parts[1]?.trim() || '';
+									const time2 = parts[2]?.trim() || '';
+									const formatTime = (t: string) => {
+										// t is like "6p" or "8:30p"
+										const clean = t.replace('p', '');
+										const hasColon = clean.includes(':');
+										if (hasColon) {
+											const [hrs, mins] = clean.split(':').map(Number);
+											return `${hrs}:${mins.toString().padStart(2, '0')}pm`;
+										}
+										return `${parseInt(clean)}:00pm`;
+									};
+									const addHours = (t: string) => {
+										const clean = t.replace('p', '');
+										const hasColon = clean.includes(':');
+										if (hasColon) {
+											const [hrs, mins] = clean.split(':').map(Number);
+											return `${hrs + 2}:${mins.toString().padStart(2, '0')}pm`;
+										}
+										return `${parseInt(clean) + 2}:00pm`;
+									};
+									return (
+										<div class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 transition-all">
+											<span class="font-medium text-white">{parts[0]?.trim()}</span>
+											<span class="text-gray-400">{formatTime(time1)} - {addHours(time1)} | {formatTime(time2)} - {addHours(time2)}</span>
+										</div>
+									);
+								})}
+								{classItem.data.schedule.length > 3 && (
+									<span class="text-gray-500 text-xs py-1">
+										+{classItem.data.schedule.length - 3} more dates
+									</span>
+								)}
+							</div>
+						) : (
+							<p class="text-gray-400 text-sm">Check calendar for upcoming dates</p>
+						)}
+					</div>
+					
+					<!-- Price & Ticket -->
+					<div class="text-center group">
+						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
+							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+							</svg>
+						</div>
+						<p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Price</p>
+						{classItem.data.earlyBird ? (
+							<p class="text-3xl font-bold text-white mb-3">
+								{classItem.data.price} <span class="text-lg opacity-70">({classItem.data.earlyBird} Early Bird)</span>
+							</p>
+						) : (
+							<p class="text-3xl font-bold text-white mb-3">{classItem.data.price}</p>
+						)}
+						<button 
+							onclick="openBookingModal()"
+							class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-red text-white rounded-lg font-semibold text-sm hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30"
+						>
+							Book Now
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+							</svg>
+						</button>
+						<div class="mt-4 text-sm text-gray-400">
+							🎁 &nbsp;Gift Certificate Available <a href={classItem.data.ticketLink} target="_blank" class="text-brand-red hover:underline ml-1">Buy Now</a>
+						</div>
+					</div>
+					
+					<!-- Where -->
+					<div class="text-center group">
+						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
+							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+							</svg>
+						</div>
+						<p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Where</p>
+						<p class="text-white font-medium">CoCreate Space</p>
+						<p class="text-gray-400 text-sm">99 Kingsland Ave #102</p>
+						<p class="text-gray-400 text-sm">Brooklyn, NY 11222</p>
+						<a 
+							href="https://maps.app.goo.gl/uBkAyZiVJTNQCMdz5"
+							target="_blank"
+							class="text-white hover:text-brand-red text-sm mt-2 inline-block"
+						>
+							Get directions
+						</a>
+					</div>
+				</div>
+				{showPrivateNote && privateNote && (
+					<p class="text-gray-300 text-sm mt-6 text-center" set:html={privateNote} />
+				)}
+			</div>
+		</section>
+	)}
 
 	<!-- Main Content -->
 	<article class="bg-deepest text-text-primary">
@@ -59,7 +172,7 @@ const galleryImages = classItem.data.galleryImages || [];
 				prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-12 prose-h2:mb-4
 				prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-3
 				prose-p:text-text-secondary prose-p:leading-relaxed
-				prose-li:text-text-secondary
+				prose-ul:list-disc prose-ul:pl-6 prose-li:text-text-secondary prose-li:marker:text-brand-red
 				prose-a:text-brand-red prose-a:no-underline hover:prose-a:text-brand-red-light
 				prose-blockquote:border-brand-red prose-blockquote:bg-surface/50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-lg prose-blockquote:not-italic
 				prose-strong:text-text-primary">
@@ -68,19 +181,19 @@ const galleryImages = classItem.data.galleryImages || [];
 			
 			<!-- Gallery Thumbnails -->
 			{galleryImages.length > 0 && (
-				<section class="mt-16">
-					<h2 class="text-2xl font-bold text-white mb-6">Gallery</h2>
-					<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+				<section class="mt-16 py-12">
+					<h2 class="text-2xl font-bold text-white mb-8 text-center">Gallery</h2>
+					<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
 						{galleryImages.map((img, index) => (
 							<button 
-								class="aspect-square overflow-hidden rounded-lg cursor-pointer group"
+								class="aspect-square overflow-hidden rounded-xl cursor-pointer group"
 								onclick={`openLightbox('${img}', ${index})`}
 								aria-label={`View image ${index + 1}`}
 							>
 								<img 
 									src={img} 
 									alt={`${classItem.data.title} - Image ${index + 1}`}
-									class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+									class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
 									loading="lazy"
 								/>
 							</button>
@@ -89,32 +202,85 @@ const galleryImages = classItem.data.galleryImages || [];
 				</section>
 			)}
 			
-			<!-- Schedule & CTA Section -->
-			<Card class="mt-16 text-center">
-				<SectionHeader
-					title="Ready to join this"
-					titleAccent="class?"
-					centered={true}
-					class="mb-6"
-				/>
-				{classItem.data.schedule && classItem.data.schedule.length > 0 && (
-					<div class="mb-6">
-						<p class="text-gray-400 mb-4">Upcoming sessions:</p>
-						<div class="flex flex-wrap justify-center gap-3">
-							{classItem.data.schedule.map((date) => (
-								<span class="px-4 py-2 bg-brand-red/20 text-brand-red-light rounded font-medium border border-brand-red/30">
-									{date}
-								</span>
-							))}
+			<!-- Testimonial Section -->
+			<section class="py-16 bg-void-light/30">
+				<div class="max-w-4xl mx-auto text-center px-6">
+					<blockquote class="text-xl text-gray-300 leading-relaxed mb-6">
+						"This is definitely an intimate activity, excellent for couples, but make sure you are comfortable with other couples in the room! There was a table set with plenty of glowing paints and brushes for our creativity and the instructor offered to help with ideas."
+					</blockquote>
+					<p class="text-gray-500">— Jessie W., Yelp</p>
+				</div>
+			</section>
+			
+			<!-- FAQ Section -->
+			<section class="py-16 px-6 bg-void-light/30">
+				<div class="max-w-4xl mx-auto">
+					<h2 class="text-2xl font-bold text-white mb-10 text-center">Frequently Asked Questions</h2>
+					
+					<div class="space-y-6">
+						<div>
+							<h3 class="text-lg font-semibold text-white mb-2">Is there an age limit to enter the event?</h3>
+							<p class="text-gray-400">Because of the (partial) nudity involved in the event, you need to be at least 18 years old.</p>
+						</div>
+						
+						<div>
+							<h3 class="text-lg font-semibold text-white mb-2">What do I bring to the class?</h3>
+							<p class="text-gray-400">We will provide the supplies for the class, so you don't need to bring anything. We do encourage participants to come with ideas for the design(s) that they'd like to paint on their partner or what they'd like to have painted on themselves.</p>
+						</div>
+						
+						<div>
+							<h3 class="text-lg font-semibold text-white mb-2">Can my friend come to the session?</h3>
+							<p class="text-gray-400">Sorry, this is only for registered students. Having people who don't participate in the class could make some students feel uncomfortable.</p>
+						</div>
+						
+						<div>
+							<h3 class="text-lg font-semibold text-white mb-2">Do I have to be an artist or have some artistic skills?</h3>
+							<p class="text-gray-400">No. Most people who come to this class don't consider themselves as artistic. The focus of this class is to experiment with body painting and have fun. Our professional artist will be able to provide any help that you may need.</p>
+						</div>
+						
+						<div>
+							<h3 class="text-lg font-semibold text-white mb-2">Can I request what will be painted on me?</h3>
+							<p class="text-gray-400">Yes, you have the opportunity to decide (together with your partner) what you will paint and what will be painted on your body.</p>
+						</div>
+						
+						<div>
+							<h3 class="text-lg font-semibold text-white mb-2">Do I have to be nude for this class?</h3>
+							<p class="text-gray-400">No, nudity is not required for this class. Many students prefer to be topless for the class. However, if you don't feel comfortable being topless, you can get the painting on your back and you can cover your front torso.</p>
 						</div>
 					</div>
-				)}
-				<CTAButton href="/get-a-quote" variant="primary">
+				</div>
+			</section>
+			
+			<!-- CTA Section -->
+			<section class="bg-void-light border-y border-zinc-800 py-16 mt-20">
+				<div class="text-center">
+					<h2 class="text-3xl font-display text-white mb-8">Ready to join this class?</h2>
+				<button 
+					onclick="openBookingModal()"
+					class="inline-flex items-center gap-2 px-8 py-4 bg-brand-red text-white rounded-xl font-semibold text-lg hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30"
+				>
 					Book Now
-				</CTAButton>
-			</Card>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+					</svg>
+				</button>
+				<div class="mt-4 text-sm text-gray-400">
+					🎁 &nbsp;Gift Certificate Available <a href={classItem.data.ticketLink} target="_blank" class="text-brand-red hover:underline ml-1">Buy Now</a>
+				</div>
+				</div>
+			</section>
 		</div>
 	</article>
+
+	<!-- Booking Modal -->
+	<BookingModal 
+		classSlug={classItem.slug}
+		classTitle={classItem.data.title}
+		price={classItem.data.price}
+		earlyBird={classItem.data.earlyBird}
+		ticketLink={classItem.data.ticketLink}
+		schedule={classItem.data.schedule || []}
+	/>
 
 	<!-- Lightbox Modal -->
 	<div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4" onclick="closeLightbox(event)">

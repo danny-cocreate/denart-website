@@ -496,10 +496,20 @@ a {
 .prose ul, .prose ol {
   margin-bottom: 1.5em;
   padding-left: 1.5em;
+  list-style-type: disc;
 }
 
 .prose li {
   margin-bottom: 0.5em;
+  list-style-type: disc;
+}
+
+.prose-invert ul, .prose-invert ol {
+  list-style-type: disc;
+}
+
+.prose-invert li::marker {
+  color: var(--color-brand-red);
 }
 
 /* Dark theme prose overrides */
@@ -547,15 +557,15 @@ a {
 }
 
 .prose-invert a {
-  color: var(--color-gold);
+  color: var(--color-brand-red);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
 
 .prose-invert a:hover {
-  color: var(--color-gold-light);
-  border-bottom-color: var(--color-gold);
+  color: var(--color-brand-red-light);
+  border-bottom-color: var(--color-brand-red);
 }
 
 .prose-invert strong {

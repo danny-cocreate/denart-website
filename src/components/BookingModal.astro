@@ -1,0 +1,185 @@
+---
+// Booking Modal Component
+// Opens when clicking "Book Now" buttons on class pages
+// Shows time selection + checkout flow
+
+interface TimeSlot {
+  date: string;
+  time: string;
+  available: boolean;
+}
+
+interface Props {
+  classSlug: string;
+  classTitle: string;
+  price: string;
+  earlyBird?: string;
+  ticketLink: string;
+  schedule: string[];
+}
+
+const { classSlug, classTitle, price, earlyBird, ticketLink, schedule } = Astro.props;
+
+// Parse schedule into time slots
+const timeSlots: TimeSlot[] = schedule.map(dateStr => {
+  // Parse format like "Fri, Feb 6 | 6p | 8:30p" or "Fri, 16 Jan 2026 | 6-8pm"
+  const parts = dateStr.split('|').map(p => p.trim());
+  const datePart = parts[0] || dateStr;
+  const timePart = parts[1] || '6:00 PM';
+  
+  return {
+    date: datePart,
+    time: timePart,
+    available: true
+  };
+});
+---
+
+<!-- Booking Modal -->
+<div id="booking-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="booking-modal-title" role="dialog" aria-modal="true">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeBookingModal()"></div>
+  
+  <!-- Modal Panel -->
+  <div class="relative min-h-screen md:min-h-0 md:flex md:items-center md:justify-center p-4">
+    <div class="relative w-full max-w-2xl bg-void-light border border-zinc-700 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between p-6 border-b border-zinc-800">
+        <div>
+          <h3 id="booking-modal-title" class="text-xl font-semibold text-sand">Book Your Class</h3>
+          <p class="text-sand-muted text-sm mt-1">{classTitle}</p>
+        </div>
+        <button 
+          onclick="closeBookingModal()"
+          class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-zinc-800 transition-colors text-sand-muted hover:text-sand"
+          aria-label="Close modal"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Content -->
+      <div class="p-6 max-h-[70vh] overflow-y-auto">
+        <!-- Price Display -->
+        <div class="flex items-center justify-between p-4 bg-brand-red/10 border border-brand-red/20 rounded-xl mb-6">
+          <div>
+            <p class="text-sand-muted text-sm">Price per couple</p>
+            <p class="text-2xl font-bold text-sand">
+              {price}
+              {earlyBird && <span class="text-base opacity-70"> ({earlyBird} Early Bird)</span>}
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-sand-muted text-sm">Duration</p>
+            <p class="text-sand font-medium">2 hours</p>
+          </div>
+        </div>
+        
+        <!-- Time Selection -->
+        <div class="mb-6">
+          <h4 class="text-sand font-medium mb-4">Select a Date & Time</h4>
+          <div class="grid gap-3">
+            {timeSlots.length > 0 ? (
+              timeSlots.map((slot, index) => (
+                <label class="relative flex items-center p-4 border border-zinc-700 rounded-xl cursor-pointer hover:border-brand-red/50 hover:bg-zinc-800/50 transition-all group">
+                  <input 
+                    type="radio" 
+                    name="time-slot" 
+                    value={index}
+                    class="peer sr-only"
+                    checked={index === 0}
+                  />
+                  <div class="flex-1">
+                    <p class="text-sand font-medium">{slot.date}</p>
+                    <p class="text-sand-muted text-sm">{slot.time}</p>
+                  </div>
+                  <div class="w-6 h-6 rounded-full border-2 border-zinc-600 peer-checked:border-brand-red peer-checked:bg-brand-red flex items-center justify-center transition-all">
+                    <svg class="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                </label>
+              ))
+            ) : (
+              <p class="text-sand-muted text-center py-8">No upcoming sessions scheduled. Please check back soon!</p>
+            )}
+          </div>
+        </div>
+        
+        {/* Show more dates link if there are many */}
+        {timeSlots.length > 5 && (
+          <button 
+            onclick="this.previousElementSibling.classList.toggle('max-h-64'); this.textContent = this.textContent.includes('More') ? 'Show Fewer Dates' : 'Show More Dates';"
+            class="text-brand-red hover:text-brand-red-light text-sm font-medium mb-6 transition-colors"
+          >
+            Show More Dates
+          </button>
+        )}
+        
+        {/* Additional Info */}
+        <div class="space-y-3 text-sm text-sand-muted border-t border-zinc-800 pt-6">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-brand-red flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span>CoCreate Space — 99 Kingsland Ave #102, Brooklyn, NY 11222</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-brand-red flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>Please arrive 10 minutes early</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Footer / CTA */}
+      <div class="p-6 border-t border-zinc-800 bg-zinc-900/50">
+        <a 
+          href={ticketLink}
+          target="_blank"
+          rel="noopener"
+          class="block w-full text-center py-4 bg-brand-red hover:bg-brand-red-hover text-white font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-brand-red/30 hover:-translate-y-0.5"
+          onclick="closeBookingModal()"
+        >
+          Continue to Checkout
+        </a>
+        <p class="text-center text-sand-muted text-xs mt-3">
+          You'll be redirected to our secure checkout page
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  // Make functions globally available
+  window.openBookingModal = function() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      // Set focus for accessibility
+      const firstInput = modal.querySelector('input[type="radio"]');
+      if (firstInput) firstInput.focus();
+    }
+  };
+  
+  window.closeBookingModal = function() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  };
+  
+  // Close on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeBookingModal();
+    }
+  });
+</script>
