@@ -18,7 +18,6 @@ galleryImages:
   - "/images/classes/speed-friending/avif/IMG_1557.avif"
   - "/images/classes/speed-friending/avif/IMG_1566.avif"
   - "/images/classes/speed-friending/avif/IMG_1567.avif"
-  - "/images/classes/speed-friending/avif/IMG_1589.avif"
   - "/images/classes/speed-friending/avif/IMG_1593.avif"
   - "/images/classes/speed-friending/avif/IMG_1595.avif"
   - "/images/classes/speed-friending/avif/IMG_1596.avif"
