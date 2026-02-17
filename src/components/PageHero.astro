@@ -7,6 +7,7 @@ export interface Props {
   };
   description?: string;
   bgImage?: string;
+  bgImages?: string[];
   bgAlt?: string;
   cta?: {
     primary?: {
@@ -20,6 +21,7 @@ export interface Props {
   };
   scrollIndicator?: boolean;
   class?: string;
+  bgSlideDuration?: number;
 }
 
 const {
@@ -28,23 +30,31 @@ const {
   badge,
   description,
   bgImage,
+  bgImages = [],
   bgAlt = '',
   cta,
   scrollIndicator = false,
   class: className = '',
+  bgSlideDuration = 5000,
 } = Astro.props;
+
+// Use bgImages array if provided, otherwise fall back to single bgImage
+const allBgImages = bgImages.length > 0 ? bgImages : (bgImage ? [bgImage] : []);
+const slideCount = allBgImages.length;
 ---
 
 <section class={`relative min-h-[92vh] flex items-center justify-center overflow-hidden ${className}`}>
-  <!-- Background Image with Gradient Overlay -->
-  {bgImage && (
-    <div class="absolute inset-0">
-      <img 
-        src={bgImage} 
-        alt={bgAlt}
-        class="w-full h-full object-cover scale-105"
-        style="animation: heroScale 20s ease-in-out infinite alternate;"
-      />
+  <!-- Background Images with Gradient Overlay -->
+  {allBgImages.length > 0 && (
+    <div class="absolute inset-0 hero-slider" data-slide-count={slideCount} data-duration={bgSlideDuration}>
+      {allBgImages.map((img, index) => (
+        <img 
+          src={img} 
+          alt={bgAlt}
+          class="absolute inset-0 w-full h-full object-cover"
+          style={`animation-delay: ${index * bgSlideDuration}ms;`}
+        />
+      ))}
       <!-- Gradient overlays as specified -->
       <div class="absolute inset-0 bg-gradient-to-b from-void/70 via-void/50 to-void"></div>
       <div class="absolute inset-0 bg-gradient-to-r from-void/80 via-transparent to-void/80"></div>
@@ -127,9 +137,57 @@ const {
 </section>
 
 <style>
-  @keyframes heroScale {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.05); }
+  /* Hero slider animations - 2-6 images */
+  .hero-slider[data-slide-count="2"] img {
+    animation: heroFade2 10s ease-in-out infinite;
+  }
+  .hero-slider[data-slide-count="3"] img {
+    animation: heroFade3 15s ease-in-out infinite;
+  }
+  .hero-slider[data-slide-count="4"] img {
+    animation: heroFade4 20s ease-in-out infinite;
+  }
+  .hero-slider[data-slide-count="5"] img {
+    animation: heroFade5 25s ease-in-out infinite;
+  }
+  .hero-slider[data-slide-count="6"] img {
+    animation: heroFade6 30s ease-in-out infinite;
+  }
+
+  @keyframes heroFade2 {
+    0%, 45% { opacity: 1; }
+    50%, 95% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes heroFade3 {
+    0%, 28% { opacity: 1; }
+    33%, 61% { opacity: 0; }
+    66%, 94% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes heroFade4 {
+    0%, 20% { opacity: 1; }
+    25%, 45% { opacity: 0; }
+    50%, 70% { opacity: 0; }
+    75%, 95% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes heroFade5 {
+    0%, 15% { opacity: 1; }
+    20%, 35% { opacity: 0; }
+    40%, 55% { opacity: 0; }
+    60%, 75% { opacity: 0; }
+    80%, 95% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes heroFade6 {
+    0%, 12% { opacity: 1; }
+    16%, 28% { opacity: 0; }
+    33%, 45% { opacity: 0; }
+    50%, 62% { opacity: 0; }
+    66%, 78% { opacity: 0; }
+    83%, 95% { opacity: 0; }
+    100% { opacity: 0; }
   }
 
   @keyframes fadeInUp {

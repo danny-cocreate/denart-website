@@ -5,6 +5,7 @@ import CTAButton from '../../components/CTAButton.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import Card from '../../components/Card.astro';
 import BookingModal from '../../components/BookingModal.astro';
+import FAQ from '../../components/FAQ.astro';
 
 export async function getStaticPaths() {
 	const classes = await getCollection('classes');
@@ -20,6 +21,55 @@ const galleryImages = classItem.data.galleryImages || [];
 const galleryVideo = classItem.data.galleryVideo || null;
 const showPrivateNote = classItem.data.showPrivateNote || false;
 const privateNote = classItem.data.privateNote || "";
+
+// FAQs data
+const singlesFAQs = [
+  {
+    question: "Is nudity allowed?",
+    answer: "Not for this event. We support body positivity, but since many people come alone, we want to make sure everyone feels comfortable."
+  },
+  {
+    question: "What if somebody at the event makes me feel unsafe or uncomfortable?",
+    answer: "At any point, you can walk away from any interactions that make you feel unsafe or uncomfortable. Our staff will constantly walk around to monitor the interactions to ensure everyone's safety. They will be happy to interfere and remedy the situation if you don't feel comfortable doing so yourself."
+  },
+  {
+    question: "Do I need to have painting experience?",
+    answer: "No, absolutely not! Our interactive UV body painting experience is designed for all levels of experience and is meant to be a fun and creative way to express yourself."
+  },
+  {
+    question: "Can I come with a partner and paint only each other?",
+    answer: "No. This experience is designed to connect you with new people, not to deepen an established connection that you already have."
+  }
+];
+
+const couplesFAQs = [
+  {
+    question: "Is there an age limit to enter the event?",
+    answer: "Because of the (partial) nudity involved in the event, you need to be at least 18 years old."
+  },
+  {
+    question: "What do I bring to the class?",
+    answer: "We will provide the supplies for the class, so you don't need to bring anything. We do encourage participants to come with ideas for the design(s) that they'd like to paint on their partner or what they'd like to have painted on themselves."
+  },
+  {
+    question: "Can my friend come to the session?",
+    answer: "Sorry, this is only for registered students. Having people who don't participate in the class could make some students feel uncomfortable."
+  },
+  {
+    question: "Do I have to be an artist or have some artistic skills?",
+    answer: "No. Most people who come to this class don't consider themselves as artistic. The focus of this class is to experiment with body painting and have fun. Our professional artist will be able to provide any help that you may need."
+  },
+  {
+    question: "Can I request what will be painted on me?",
+    answer: "Yes, you have the opportunity to decide (together with your partner) what you will paint and what will be painted on your body."
+  },
+  {
+    question: "Do I have to be nude for this class?",
+    answer: "No, nudity is not required for this class. Many students prefer to be topless for the class. However, if you don't feel comfortable being topless, you can get the painting on your back and you can cover your front torso."
+  }
+];
+
+const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 ---
 
 <BaseLayout title={classItem.data.title} description={classItem.data.description}>
@@ -241,86 +291,56 @@ const privateNote = classItem.data.privateNote || "";
 			<!-- Testimonial Section -->
 			<section class="py-16 bg-void-light/30">
 				<div class="max-w-4xl mx-auto text-center px-6">
+					<!-- Quote Icon -->
+					<svg class="w-12 h-12 text-brand-red/30 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
+						<path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"></path>
+					</svg>
+					
 					{classItem.data.category === 'singles' ? (
 						<>
-							<blockquote class="text-xl text-gray-300 leading-relaxed mb-6">
+							<blockquote class="font-display text-xl md:text-2xl text-sand leading-relaxed mb-8 italic">
 								"Such a fun and creative way to build authentic connections with new people! Lots of laughs, great vibes, and the body painting activities made it so easy to break the ice. Highly recommend for anyone looking to meet like-minded singles in a low-pressure environment."
 							</blockquote>
-							<p class="text-gray-500">— Simone, Verified Attendee</p>
+							<div class="flex items-center justify-center gap-3 mb-8">
+								<div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-red/30 to-brand-red/10 flex items-center justify-center">
+									<span class="font-display text-lg text-brand-red">S</span>
+								</div>
+								<div class="text-left">
+									<p class="font-display text-sand font-medium">Simone</p>
+									<p class="text-sand-dim text-sm">Verified Attendee</p>
+								</div>
+							</div>
 						</>
 					) : (
 						<>
-							<blockquote class="text-xl text-gray-300 leading-relaxed mb-6">
+							<blockquote class="font-display text-xl md:text-2xl text-sand leading-relaxed mb-8 italic">
 								"This is definitely an intimate activity, excellent for couples, but make sure you are comfortable with other couples in the room! There was a table set with plenty of glowing paints and brushes for our creativity and the instructor offered to help with ideas."
 							</blockquote>
-							<p class="text-gray-500">— Jessie W., Yelp</p>
+							<div class="flex items-center justify-center gap-3 mb-8">
+								<div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-red/30 to-brand-red/10 flex items-center justify-center">
+									<span class="font-display text-lg text-brand-red">J</span>
+								</div>
+								<div class="text-left">
+									<p class="font-display text-sand font-medium">Jessie W.</p>
+									<p class="text-sand-dim text-sm">Yelp</p>
+								</div>
+							</div>
 						</>
 					)}
+					
+					<a href="/testimonials" class="inline-flex items-center gap-2 font-display text-brand-red hover:text-brand-red-light transition-colors group">
+						<span>Read more reviews</span>
+						<svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+						</svg>
+					</a>
 				</div>
 			</section>
 			
 			<!-- FAQ Section -->
-			<section class="py-16 px-6 bg-void-light/30">
-				<div class="max-w-4xl mx-auto">
-					<h2 class="text-2xl font-bold text-white mb-10 text-center">Frequently Asked Questions</h2>
-					
-					<div class="space-y-6">
-						{classItem.data.category === 'singles' ? (
-							<>
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">Is nudity allowed?</h3>
-									<p class="text-gray-400">Not for this event. We support body positivity, but since many people come alone, we want to make sure everyone feels comfortable.</p>
-								</div>
-								
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">What if somebody at the event makes me feel unsafe or uncomfortable?</h3>
-									<p class="text-gray-400">At any point, you can walk away from any interactions that make you feel unsafe or uncomfortable. Our staff will constantly walk around to monitor the interactions to ensure everyone's safety. They will be happy to interfere and remedy the situation if you don't feel comfortable doing so yourself.</p>
-								</div>
-								
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">Do I need to have painting experience?</h3>
-									<p class="text-gray-400">No, absolutely not! Our interactive UV body painting experience is designed for all levels of experience and is meant to be a fun and creative way to express yourself.</p>
-								</div>
-								
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">Can I come with a partner and paint only each other?</h3>
-									<p class="text-gray-400">No. This experience is designed to connect you with new people, not to deepen an established connection that you already have.</p>
-								</div>
-							</>
-						) : (
-							<>
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">Is there an age limit to enter the event?</h3>
-									<p class="text-gray-400">Because of the (partial) nudity involved in the event, you need to be at least 18 years old.</p>
-								</div>
-								
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">What do I bring to the class?</h3>
-									<p class="text-gray-400">We will provide the supplies for the class, so you don't need to bring anything. We do encourage participants to come with ideas for the design(s) that they'd like to paint on their partner or what they'd like to have painted on themselves.</p>
-								</div>
-								
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">Can my friend come to the session?</h3>
-									<p class="text-gray-400">Sorry, this is only for registered students. Having people who don't participate in the class could make some students feel uncomfortable.</p>
-								</div>
-								
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">Do I have to be an artist or have some artistic skills?</h3>
-									<p class="text-gray-400">No. Most people who come to this class don't consider themselves as artistic. The focus of this class is to experiment with body painting and have fun. Our professional artist will be able to provide any help that you may need.</p>
-								</div>
-								
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">Can I request what will be painted on me?</h3>
-									<p class="text-gray-400">Yes, you have the opportunity to decide (together with your partner) what you will paint and what will be painted on your body.</p>
-								</div>
-								
-								<div>
-									<h3 class="text-lg font-semibold text-white mb-2">Do I have to be nude for this class?</h3>
-									<p class="text-gray-400">No, nudity is not required for this class. Many students prefer to be topless for the class. However, if you don't feel comfortable being topless, you can get the painting on your back and you can cover your front torso.</p>
-								</div>
-							</>
-						)}
-					</div>
+			<section class="py-16 bg-void-light/30">
+				<div class="max-w-4xl mx-auto px-6">
+					<FAQ items={faqs} title="Frequently Asked Questions" />
 				</div>
 			</section>
 			

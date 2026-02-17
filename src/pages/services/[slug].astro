@@ -16,6 +16,7 @@ export async function getStaticPaths() {
 
 const { service } = Astro.props;
 const { Content } = await service.render();
+const galleryImages = service.data.galleryImages || [];
 
 // Default FAQs for body painting services
 const defaultFAQs = [
@@ -45,72 +46,315 @@ const faqs = service.data.faqs || defaultFAQs;
 ---
 
 <ServiceLayout title={service.data.title} description={service.data.description}>
-  <PageHero
-    badge="Service"
-    title={service.data.title}
-    subtitle={service.data.tagline}
-    minHeight="min-h-[50vh]"
-    animate={false}
-  >
-    <div slot="cta">
-      {service.data.packages && service.data.packages.length > 0 && (
-        <div class="mt-8 flex flex-wrap justify-center gap-4">
-          {service.data.packages.map((pkg) => (
-            <div class="bg-void-light/80 backdrop-blur rounded-xl p-4 border border-zinc-700">
-              <p class="text-2xl font-bold text-brand-gold">{pkg.price}</p>
-              <p class="text-sm text-sand-muted">{pkg.name}</p>
-            </div>
-          ))}
-        </div>
-      )}
-      <div class="mt-8 flex justify-center gap-4">
-        <CTAButton href="/get-a-quote" variant="primary" size="lg">
-          Book Now
-        </CTAButton>
+  <!-- Hero Section - Side-by-side images like class pages -->
+  <section class="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+    {service.data.heroImages && service.data.heroImages.length > 0 ? (
+      <div class="absolute inset-0 grid grid-cols-2 md:grid-cols-4 gap-1">
+        {[...new Set(service.data.heroImages)].slice(0, 4).map((img) => (
+          <img 
+            src={img} 
+            alt={service.data.title}
+            class="w-full h-full object-cover"
+          />
+        ))}
+        <div class="absolute inset-0 bg-black/60"></div>
       </div>
-    </div>
-  </PageHero>
-
-  <!-- Main Content -->
-  <article class="max-w-4xl mx-auto py-12 md:py-16 px-6 bg-void">
-    {service.data.heroImage && (
-      <div class="relative mb-12 rounded-2xl overflow-hidden shadow-2xl border border-zinc-800">
-        <img src={service.data.heroImage} alt={service.data.title} class="w-full h-80 md:h-96 object-cover" />
-        <div class="absolute inset-0 bg-gradient-to-t from-void/60 to-transparent"></div>
-      </div>
+    ) : service.data.heroImage ? (
+      <>
+        <img 
+          src={service.data.heroImage} 
+          alt={service.data.title}
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-black/60"></div>
+      </>
+    ) : (
+      <div class="absolute inset-0 bg-void"></div>
     )}
     
-    <div class="prose prose-lg prose-invert max-w-none 
-      prose-headings:font-display 
-      prose-h1:text-3xl prose-h1:mt-10 prose-h1:mb-4 prose-h1:text-sand
-      prose-h2:text-2xl prose-h2:mt-14 prose-h2:mb-5 prose-h2:text-sand prose-h2:border-b prose-h2:border-zinc-700 prose-h2:pb-3
-      prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4 prose-h3:text-brand-gold/90
-      prose-p:text-sand-muted prose-p:leading-relaxed prose-p:mb-5
-      prose-li:text-sand-muted prose-li:marker:text-brand-red
-      prose-strong:text-sand prose-strong:font-semibold
-      prose-blockquote:border-l-4 prose-blockquote:border-brand-red prose-blockquote:bg-void-light/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
-      prose-a:text-brand-gold hover:prose-a:text-brand-gold-light prose-a:transition-colors
-      prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8">
-      <Content />
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+      <span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-4 uppercase tracking-wide border border-white/30 text-white/80">
+        Service
+      </span>
+      <h1 class="text-4xl md:text-6xl font-display font-bold text-white mb-4">{service.data.title}</h1>
+      {service.data.tagline && (
+        <p class="text-xl md:text-2xl text-gray-200">{service.data.tagline}</p>
+      )}
     </div>
-    
-    <!-- FAQ Section -->
-    <div class="mt-20 pt-10 border-t border-zinc-800">
-      <FAQ items={faqs} title="Frequently Asked Questions" />
-    </div>
+  </section>
 
-    <!-- CTA Section -->
-    <div class="mt-16 p-8 md:p-12 bg-void-light rounded-2xl text-center border border-zinc-800">
-      <SectionHeader
-        title="Ready to book this service?"
-        subtitle="Contact us to schedule your body painting session. We'll help bring your vision to life."
-        size="md"
-      />
-      <div class="mt-8 flex justify-center">
-        <CTAButton href="/get-a-quote" variant="primary" size="lg">
-          Get a Quote
-        </CTAButton>
+  <!-- Intro Section - Match class page style -->
+  <section class="bg-deepest py-12">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-4">You Are the Masterpiece</h2>
+      <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+        Imagine watching yourself become a living work of art, each brushstroke revealing a new dimension of your natural beauty. Our clients describe the process as liberating, empowering, and surprisingly fun – the kind of experience that makes you feel alive in your skin and reminds you how beautiful you really are.
+      </p>
+    </div>
+  </section>
+
+  <!-- Info Bar - Like class page -->
+  {service.data.packages && service.data.packages.length > 0 && (
+    <section class="bg-void-light border-y border-zinc-800 py-10">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- What's Included -->
+          <div class="text-center group">
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
+              <svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p class="text-xs uppercase tracking-widest text-gray-500 mb-3">What's Included</p>
+            {service.data.packages[0].includes ? (
+              <ul class="text-left text-gray-300 text-sm space-y-2">
+                {service.data.packages[0].includes.slice(0, 4).map((item) => (
+                  <li class="flex items-start gap-2">
+                    <svg class="w-4 h-4 text-brand-red mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>{item}</span>
+                  </li>
+                ))}
+                {service.data.packages[0].includes.length > 4 && (
+                  <li class="text-gray-500 text-xs">+{service.data.packages[0].includes.length - 4} more</li>
+                )}
+              </ul>
+            ) : (
+              <p class="text-gray-400 text-sm">See package details below</p>
+            )}
+          </div>
+          
+          <!-- Price -->
+          <div class="text-center group">
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
+              <svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Price</p>
+            <div class="space-y-2">
+              {service.data.packages.map((pkg) => (
+                <div class="py-2 px-4 rounded-lg bg-zinc-800/50 border border-zinc-700">
+                  <p class="text-2xl font-bold text-white">{pkg.price}</p>
+                  <p class="text-gray-400 text-xs">{pkg.name}</p>
+                </div>
+              ))}
+            </div>
+            <p class="text-gray-500 text-xs mt-3">Rates for personal projects</p>
+          </div>
+          
+          <!-- Where / Contact -->
+          <div class="text-center group">
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
+              <svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Where</p>
+            <p class="text-white font-medium">CoCreate Space</p>
+            <p class="text-gray-400 text-sm">99 Kingsland Ave #102</p>
+            <p class="text-gray-400 text-sm">Brooklyn, NY 11222</p>
+            <a 
+              href="https://maps.app.goo.gl/uBkAyZiVJTNQCMdz5"
+              target="_blank"
+              class="text-white hover:text-brand-red text-sm mt-2 inline-block"
+            >
+              Get directions
+            </a>
+          </div>
+        </div>
+        
+        <div class="mt-8 flex justify-center">
+          <CTAButton href="/schedule-a-session" variant="primary" size="lg">
+            Schedule Session
+          </CTAButton>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Main Content -->
+  <article class="bg-deepest text-text-primary">
+    <div class="max-w-4xl mx-auto py-16 px-6">
+      <div class="prose prose-lg prose-invert max-w-none 
+        prose-headings:font-display 
+        prose-h1:text-3xl prose-h1:mt-10 prose-h1:mb-4 prose-h1:text-sand
+        prose-h2:text-2xl prose-h2:mt-14 prose-h2:mb-5 prose-h2:text-sand prose-h2:border-b prose-h2:border-zinc-700 prose-h2:pb-3
+        prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4 prose-h3:text-brand-gold/90
+        prose-p:text-sand-muted prose-p:leading-relaxed prose-p:mb-5
+        prose-li:text-sand-muted prose-li:marker:text-brand-red
+        prose-strong:text-sand prose-strong:font-semibold
+        prose-blockquote:border-l-4 prose-blockquote:border-brand-red prose-blockquote:bg-void-light/50 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
+        prose-a:text-brand-gold hover:prose-a:text-brand-gold-light prose-a:transition-colors
+        prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8">
+        <Content />
+      </div>
+      
+      <!-- Gallery Section -->
+      {galleryImages.length > 0 && (
+        <section class="mt-16 pt-10 border-t border-zinc-800">
+          <h2 class="text-2xl font-display text-sand mb-4 text-center">Painting Options</h2>
+          <p class="text-sand-muted text-center max-w-2xl mx-auto mb-8">
+            Below are some design ideas for your body painting. Any of these paintings can be done on your front or back upper body. You are free to choose your own design. If your design is more complex than these, our painter can either simplify the design to work with the available time frame or we can extend your session (additional cost).
+          </p>
+          <p class="text-center text-sand-muted text-sm mb-4">
+            Background is added in photoshop when we did the creative retouching on these pictures (not included in this package)
+          </p>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {galleryImages.map((img, index) => (
+              <button 
+                class="aspect-[3/4] overflow-hidden rounded-xl cursor-pointer group"
+                onclick={`openLightbox('${img}', ${index})`}
+                aria-label={`View image ${index + 1}`}
+              >
+                <img 
+                  src={img} 
+                  alt={`Painting option ${index + 1}`}
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  loading="lazy"
+                />
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+      
+      <!-- Testimonials Section -->
+      <section class="mt-16 pt-10 border-t border-zinc-800">
+        <div class="max-w-4xl mx-auto text-center">
+          <!-- Quote Icon -->
+          <svg class="w-12 h-12 text-brand-red/30 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"></path>
+          </svg>
+          
+          <!-- Quote -->
+          <blockquote class="font-display text-xl md:text-2xl text-sand leading-relaxed mb-8 italic">
+            "This was such a unique experience, a great way to appreciate art, and your own body. I was definitely nervous going into it, but both Danny and his assistant Julie were so friendly and personable that it was like chatting with pals...while you are getting this amazing work of art painted on you! Not totally confident in my own figure, yet the painting flattered my body and I got some great photos out of it. I highly recommend this experience, and will definitely consider doing this again in the future, or as a gift. Great confidence booster for all you women out there, do it!!!"
+          </blockquote>
+          
+          <!-- Attribution -->
+          <div class="flex items-center justify-center gap-3 mb-8">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-red/30 to-brand-red/10 flex items-center justify-center">
+              <span class="font-display text-lg text-brand-red">A</span>
+            </div>
+            <div class="text-left">
+              <p class="font-display text-sand font-medium">Alex V.</p>
+              <p class="text-sand-dim text-sm">Brooklyn, NY</p>
+            </div>
+          </div>
+          
+          <a href="/testimonials" class="inline-flex items-center gap-2 font-display text-brand-red hover:text-brand-red-light transition-colors group">
+            <span>Read more reviews</span>
+            <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </a>
+        </div>
+      </section>
+      
+      <!-- FAQ Section -->
+      <div class="mt-20 pt-10 border-t border-zinc-800">
+        <FAQ items={faqs} title="Frequently Asked Questions" />
+      </div>
+
+      <!-- CTA Section -->
+      <div class="mt-16 p-8 md:p-12 bg-void-light rounded-2xl text-center border border-zinc-800">
+        <SectionHeader
+          title="Ready to book this service?"
+          subtitle="Contact us to schedule your body painting session. We'll help bring your vision to life."
+          size="md"
+        />
+        <div class="mt-8 flex justify-center">
+          <CTAButton href="/schedule-a-session" variant="primary" size="lg">
+            Schedule Session
+          </CTAButton>
+        </div>
       </div>
     </div>
   </article>
+
+  <!-- Image Lightbox Modal -->
+  <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4" onclick="closeLightbox(event)">
+    <button 
+      class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors"
+      onclick="closeLightbox(event)"
+      aria-label="Close lightbox"
+    >
+      &times;
+    </button>
+    <button 
+      id="lightbox-prev"
+      class="absolute left-4 text-white text-4xl hover:text-gray-300 transition-colors"
+      onclick="prevImage(event)"
+      aria-label="Previous image"
+    >
+      &#8249;
+    </button>
+    <img 
+      id="lightbox-img" 
+      src="" 
+      alt="Gallery image" 
+      class="max-w-full max-h-[90vh] object-contain rounded-lg"
+    />
+    <button 
+      id="lightbox-next"
+      class="absolute right-4 text-white text-4xl hover:text-gray-300 transition-colors"
+      onclick="nextImage(event)"
+      aria-label="Next image"
+    >
+      &#8250;
+    </button>
+  </div>
+
+  <script is:inline define:vars={{ galleryImages }}>
+    let currentIndex = 0;
+    const images = galleryImages;
+
+    function openLightbox(src, index) {
+      currentIndex = index;
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox').classList.remove('hidden');
+      document.getElementById('lightbox').classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(event) {
+      if (event.target.id === 'lightbox' || event.target.tagName === 'BUTTON') {
+        document.getElementById('lightbox').classList.add('hidden');
+        document.getElementById('lightbox').classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+    }
+
+    function prevImage(event) {
+      event.stopPropagation();
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      document.getElementById('lightbox-img').src = images[currentIndex];
+    }
+
+    function nextImage(event) {
+      event.stopPropagation();
+      currentIndex = (currentIndex + 1) % images.length;
+      document.getElementById('lightbox-img').src = images[currentIndex];
+    }
+
+    window.openLightbox = openLightbox;
+    window.closeLightbox = closeLightbox;
+    window.prevImage = prevImage;
+    window.nextImage = nextImage;
+
+    // Hero image slideshow
+    const heroImages = document.querySelectorAll('[data-index]');
+    if (heroImages.length > 1) {
+      let currentHeroIndex = 0;
+      setInterval(() => {
+        heroImages.forEach((img, index) => {
+          img.style.opacity = index === currentHeroIndex ? '1' : '0';
+        });
+        currentHeroIndex = (currentHeroIndex + 1) % heroImages.length;
+      }, 5000);
+    }
+  </script>
 </ServiceLayout>
