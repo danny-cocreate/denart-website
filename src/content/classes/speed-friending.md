@@ -23,7 +23,7 @@ galleryImages:
   - "/images/classes/speed-friending/avif/IMG_1595.avif"
   - "/images/classes/speed-friending/avif/IMG_1596.avif"
   - "/images/classes/speed-friending/avif/IMG_2359.avif"
-galleryVideo: "/images/classes/speed-friending/avif/video-fixed.mp4"
+  - "/images/classes/speed-friending/IMG_3907.jpeg"
 location:
   name: "CoCreate Space"
   address: "99 Kingsland Ave #102"
