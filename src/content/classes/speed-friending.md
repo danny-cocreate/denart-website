@@ -1,15 +1,29 @@
 ---
 title: "Speed Friending x Body Painting"
-tagline: "A different way to meet and connect"
+tagline: "Body Painting Experience to Connect with Other Singles"
 description: "A non-nude body painting social event for singles. Meet new people through interactive body painting activities."
-heroImage: "/images/classes/speed-friending/hero.jpg"
+heroImage: "/images/classes/speed-friending/avif/hero.avif"
 category: "singles"
 price: "$39"
 earlyBird: "$29"
 duration: "2 hours"
 order: 2
+showPrivateNote: false
 schedule:
-  - "Fri, 16 Jan 2026 | 6-8pm"
+  - "Fri, Jan 16 | 6p"
+  - "Fri, Jan 23 | 6p"
+  - "Fri, Jan 30 | 6p"
+ticketLink: "https://giftup.app/place-order/3627e342-22f4-411a-9308-4f4e132ecf05?platform=Hosted"
+galleryImages:
+  - "/images/classes/speed-friending/avif/IMG_1557.avif"
+  - "/images/classes/speed-friending/avif/IMG_1566.avif"
+  - "/images/classes/speed-friending/avif/IMG_1567.avif"
+  - "/images/classes/speed-friending/avif/IMG_1589.avif"
+  - "/images/classes/speed-friending/avif/IMG_1593.avif"
+  - "/images/classes/speed-friending/avif/IMG_1595.avif"
+  - "/images/classes/speed-friending/avif/IMG_1596.avif"
+  - "/images/classes/speed-friending/avif/IMG_2359.avif"
+galleryVideo: "/images/classes/speed-friending/avif/video-1.mp4"
 location:
   name: "CoCreate Space"
   address: "99 Kingsland Ave #102"
@@ -21,6 +35,7 @@ includes:
   - "Chocolate"
   - "2 hours of structured mini activities in the form of body painting experience to form real connection with other attendees"
   - "Mixer event right after the structured event to allow more connections to happen"
+  - "This is an event, not a class — no experience needed!"
 ---
 
 ## About this event
@@ -38,17 +53,3 @@ Our approach focuses on creating a space for the attendees to play through the v
 ## Who is this for?
 
 Singles between 21 – 40. Although this event involves body painting, you don't have to be an artist to attend. Most attendees paint simple shapes or even use words. The focus of the activities is not on the finished paintings, but on the interaction during the painting activity.
-
-## Frequently Asked Questions
-
-**Is nudity allowed?**
-Not for this event. We support body positivity, but since many people come alone, we want to make sure everyone feels comfortable.
-
-**What if somebody at the event makes me feel unsafe or uncomfortable?**
-At any point, you can walk away from any interactions that make you feel unsafe or uncomfortable. Our staff will constantly walk around to monitor the interactions to ensure everyone's safety. They will be happy to interfere and remedy the situation if you don't feel comfortable doing so yourself.
-
-**Do I need to have painting experience?**
-No, absolutely not! Our interactive UV body painting experience is designed for all levels of experience and is meant to be a fun and creative way to express yourself.
-
-**Can I come with a partner and paint only each other?**
-No. This experience is designed to connect you with new people, not to deepen an established connection that you already have.

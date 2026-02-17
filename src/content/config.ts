@@ -35,6 +35,7 @@ const classesCollection = defineCollection({
 		schedule: z.array(z.string()).optional(),
 		includes: z.array(z.string()).optional(),
 		galleryImages: z.array(z.string()).optional(),
+		galleryVideo: z.string().optional(),
 		location: z.object({
 			name: z.string(),
 			address: z.string(),

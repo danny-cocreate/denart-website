@@ -17,6 +17,7 @@ export async function getStaticPaths() {
 const { classItem } = Astro.props;
 const { Content } = await classItem.render();
 const galleryImages = classItem.data.galleryImages || [];
+const galleryVideo = classItem.data.galleryVideo || null;
 const showPrivateNote = classItem.data.showPrivateNote || false;
 const privateNote = classItem.data.privateNote || "";
 ---
@@ -34,20 +35,31 @@ const privateNote = classItem.data.privateNote || "";
 		<div class="absolute inset-0 bg-black/60"></div>
 		<div class="relative z-10 text-center px-6">
 			<span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-4 uppercase tracking-wide border border-white/30 text-white/80">
-				Class
+				{classItem.data.category === 'singles' ? 'Event' : 'Class'}
 			</span>
 			<h1 class="text-4xl md:text-6xl font-bold text-white mb-4">{classItem.data.title}</h1>
-			<p class="text-xl md:text-2xl text-gray-200 mb-4">UV Body Painting Class for Couples</p>
+			<p class="text-xl md:text-2xl text-gray-200 mb-4">{classItem.data.tagline}</p>
 		</div>
 	</section>
 
 	<!-- Intro / Hook Section -->
 	<section class="bg-deepest py-12">
 		<div class="max-w-4xl mx-auto px-6 text-center">
-			<h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Impress Your Date</h2>
-			<p class="text-xl text-gray-300 max-w-2xl mx-auto">
-				Not a typical date activity, this UV body painting class for couples at our studio in Brooklyn, NYC will make your date glow (literally) and talk about it for years. This is a romantic and playful experience where couples spend quality time painting each other in a dark studio lit by black lights.
-			</p>
+			{classItem.data.category === 'singles' ? (
+				<>
+					<h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Make authentic connections</h2>
+					<p class="text-xl text-gray-300 max-w-2xl mx-auto">
+						A non-nude body painting social event for singles. Meet new people through interactive UV body painting activities designed to help you connect in a fun, low-pressure environment.
+					</p>
+				</>
+			) : (
+				<>
+					<h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Impress Your Date</h2>
+					<p class="text-xl text-gray-300 max-w-2xl mx-auto">
+						Not a typical date activity, this UV body painting class for couples at our studio in Brooklyn, NYC will make your date glow (literally) and talk about it for years. This is a romantic and playful experience where couples spend quality time painting each other in a dark studio lit by black lights.
+					</p>
+				</>
+			)}
 		</div>
 	</section>
 
@@ -71,7 +83,20 @@ const privateNote = classItem.data.privateNote || "";
 									const time1 = parts[1]?.trim() || '';
 									const time2 = parts[2]?.trim() || '';
 									const formatTime = (t: string) => {
-										// t is like "6p" or "8:30p"
+										// t is like "6p" or "8:30p" or "6p - 8p"
+										if (t.includes('-')) {
+											const [start, end] = t.split('-').map(s => s.trim());
+											const formatSingle = (time: string) => {
+												const clean = time.replace('p', '');
+												const hasColon = clean.includes(':');
+												if (hasColon) {
+													const [hrs, mins] = clean.split(':').map(Number);
+													return `${hrs}:${mins.toString().padStart(2, '0')}pm`;
+												}
+												return `${parseInt(clean)}:00pm`;
+											};
+											return `${formatSingle(start)} - ${formatSingle(end)}`;
+										}
 										const clean = t.replace('p', '');
 										const hasColon = clean.includes(':');
 										if (hasColon) {
@@ -80,19 +105,10 @@ const privateNote = classItem.data.privateNote || "";
 										}
 										return `${parseInt(clean)}:00pm`;
 									};
-									const addHours = (t: string) => {
-										const clean = t.replace('p', '');
-										const hasColon = clean.includes(':');
-										if (hasColon) {
-											const [hrs, mins] = clean.split(':').map(Number);
-											return `${hrs + 2}:${mins.toString().padStart(2, '0')}pm`;
-										}
-										return `${parseInt(clean) + 2}:00pm`;
-									};
 									return (
 										<div class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 transition-all">
 											<span class="font-medium text-white">{parts[0]?.trim()}</span>
-											<span class="text-gray-400">{formatTime(time1)} - {addHours(time1)} | {formatTime(time2)} - {addHours(time2)}</span>
+											<span class="text-gray-400">{time2 ? `${formatTime(time1)} - ${formatTime(time2)}` : formatTime(time1)}</span>
 										</div>
 									);
 								})}
@@ -180,14 +196,34 @@ const privateNote = classItem.data.privateNote || "";
 			</div>
 			
 			<!-- Gallery Thumbnails -->
-			{galleryImages.length > 0 && (
+			{(galleryImages.length > 0 || galleryVideo) && (
 				<section class="mt-16 py-12">
 					<h2 class="text-2xl font-bold text-white mb-8 text-center">Gallery</h2>
 					<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-						{galleryImages.map((img, index) => (
+						{galleryVideo && (
+							<button 
+								class="aspect-square overflow-hidden rounded-xl cursor-pointer group relative"
+								onclick={`openVideoLightbox('${galleryVideo}')`}
+								aria-label="Play video"
+							>
+								<img 
+									src={galleryImages.length > 0 ? galleryImages[0] : '/images/classes/placeholder.jpg'} 
+									alt="Event video thumbnail"
+									class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+								/>
+								<div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/30 transition-colors">
+									<div class="w-16 h-16 rounded-full bg-brand-red flex items-center justify-center">
+										<svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+											<path d="M8 5v14l11-7z"/>
+										</svg>
+									</div>
+								</div>
+							</button>
+						)}
+						{galleryImages.slice(galleryVideo ? 1 : 0).map((img, index) => (
 							<button 
 								class="aspect-square overflow-hidden rounded-xl cursor-pointer group"
-								onclick={`openLightbox('${img}', ${index})`}
+								onclick={`openLightbox('${img}', ${galleryVideo ? index + 1 : index})`}
 								aria-label={`View image ${index + 1}`}
 							>
 								<img 
@@ -205,10 +241,21 @@ const privateNote = classItem.data.privateNote || "";
 			<!-- Testimonial Section -->
 			<section class="py-16 bg-void-light/30">
 				<div class="max-w-4xl mx-auto text-center px-6">
-					<blockquote class="text-xl text-gray-300 leading-relaxed mb-6">
-						"This is definitely an intimate activity, excellent for couples, but make sure you are comfortable with other couples in the room! There was a table set with plenty of glowing paints and brushes for our creativity and the instructor offered to help with ideas."
-					</blockquote>
-					<p class="text-gray-500">— Jessie W., Yelp</p>
+					{classItem.data.category === 'singles' ? (
+						<>
+							<blockquote class="text-xl text-gray-300 leading-relaxed mb-6">
+								"Such a fun and creative way to build authentic connections with new people! Lots of laughs, great vibes, and the body painting activities made it so easy to break the ice. Highly recommend for anyone looking to meet like-minded singles in a low-pressure environment."
+							</blockquote>
+							<p class="text-gray-500">— Simone, Verified Attendee</p>
+						</>
+					) : (
+						<>
+							<blockquote class="text-xl text-gray-300 leading-relaxed mb-6">
+								"This is definitely an intimate activity, excellent for couples, but make sure you are comfortable with other couples in the room! There was a table set with plenty of glowing paints and brushes for our creativity and the instructor offered to help with ideas."
+							</blockquote>
+							<p class="text-gray-500">— Jessie W., Yelp</p>
+						</>
+					)}
 				</div>
 			</section>
 			
@@ -218,35 +265,61 @@ const privateNote = classItem.data.privateNote || "";
 					<h2 class="text-2xl font-bold text-white mb-10 text-center">Frequently Asked Questions</h2>
 					
 					<div class="space-y-6">
-						<div>
-							<h3 class="text-lg font-semibold text-white mb-2">Is there an age limit to enter the event?</h3>
-							<p class="text-gray-400">Because of the (partial) nudity involved in the event, you need to be at least 18 years old.</p>
-						</div>
-						
-						<div>
-							<h3 class="text-lg font-semibold text-white mb-2">What do I bring to the class?</h3>
-							<p class="text-gray-400">We will provide the supplies for the class, so you don't need to bring anything. We do encourage participants to come with ideas for the design(s) that they'd like to paint on their partner or what they'd like to have painted on themselves.</p>
-						</div>
-						
-						<div>
-							<h3 class="text-lg font-semibold text-white mb-2">Can my friend come to the session?</h3>
-							<p class="text-gray-400">Sorry, this is only for registered students. Having people who don't participate in the class could make some students feel uncomfortable.</p>
-						</div>
-						
-						<div>
-							<h3 class="text-lg font-semibold text-white mb-2">Do I have to be an artist or have some artistic skills?</h3>
-							<p class="text-gray-400">No. Most people who come to this class don't consider themselves as artistic. The focus of this class is to experiment with body painting and have fun. Our professional artist will be able to provide any help that you may need.</p>
-						</div>
-						
-						<div>
-							<h3 class="text-lg font-semibold text-white mb-2">Can I request what will be painted on me?</h3>
-							<p class="text-gray-400">Yes, you have the opportunity to decide (together with your partner) what you will paint and what will be painted on your body.</p>
-						</div>
-						
-						<div>
-							<h3 class="text-lg font-semibold text-white mb-2">Do I have to be nude for this class?</h3>
-							<p class="text-gray-400">No, nudity is not required for this class. Many students prefer to be topless for the class. However, if you don't feel comfortable being topless, you can get the painting on your back and you can cover your front torso.</p>
-						</div>
+						{classItem.data.category === 'singles' ? (
+							<>
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">Is nudity allowed?</h3>
+									<p class="text-gray-400">Not for this event. We support body positivity, but since many people come alone, we want to make sure everyone feels comfortable.</p>
+								</div>
+								
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">What if somebody at the event makes me feel unsafe or uncomfortable?</h3>
+									<p class="text-gray-400">At any point, you can walk away from any interactions that make you feel unsafe or uncomfortable. Our staff will constantly walk around to monitor the interactions to ensure everyone's safety. They will be happy to interfere and remedy the situation if you don't feel comfortable doing so yourself.</p>
+								</div>
+								
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">Do I need to have painting experience?</h3>
+									<p class="text-gray-400">No, absolutely not! Our interactive UV body painting experience is designed for all levels of experience and is meant to be a fun and creative way to express yourself.</p>
+								</div>
+								
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">Can I come with a partner and paint only each other?</h3>
+									<p class="text-gray-400">No. This experience is designed to connect you with new people, not to deepen an established connection that you already have.</p>
+								</div>
+							</>
+						) : (
+							<>
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">Is there an age limit to enter the event?</h3>
+									<p class="text-gray-400">Because of the (partial) nudity involved in the event, you need to be at least 18 years old.</p>
+								</div>
+								
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">What do I bring to the class?</h3>
+									<p class="text-gray-400">We will provide the supplies for the class, so you don't need to bring anything. We do encourage participants to come with ideas for the design(s) that they'd like to paint on their partner or what they'd like to have painted on themselves.</p>
+								</div>
+								
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">Can my friend come to the session?</h3>
+									<p class="text-gray-400">Sorry, this is only for registered students. Having people who don't participate in the class could make some students feel uncomfortable.</p>
+								</div>
+								
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">Do I have to be an artist or have some artistic skills?</h3>
+									<p class="text-gray-400">No. Most people who come to this class don't consider themselves as artistic. The focus of this class is to experiment with body painting and have fun. Our professional artist will be able to provide any help that you may need.</p>
+								</div>
+								
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">Can I request what will be painted on me?</h3>
+									<p class="text-gray-400">Yes, you have the opportunity to decide (together with your partner) what you will paint and what will be painted on your body.</p>
+								</div>
+								
+								<div>
+									<h3 class="text-lg font-semibold text-white mb-2">Do I have to be nude for this class?</h3>
+									<p class="text-gray-400">No, nudity is not required for this class. Many students prefer to be topless for the class. However, if you don't feel comfortable being topless, you can get the painting on your back and you can cover your front torso.</p>
+								</div>
+							</>
+						)}
 					</div>
 				</div>
 			</section>
@@ -254,7 +327,7 @@ const privateNote = classItem.data.privateNote || "";
 			<!-- CTA Section -->
 			<section class="bg-void-light border-y border-zinc-800 py-16 mt-20">
 				<div class="text-center">
-					<h2 class="text-3xl font-display text-white mb-8">Ready to join this class?</h2>
+					<h2 class="text-3xl font-display text-white mb-8">Ready to join this {classItem.data.category === 'singles' ? 'event' : 'class'}?</h2>
 				<button 
 					onclick="openBookingModal()"
 					class="inline-flex items-center gap-2 px-8 py-4 bg-brand-red text-white rounded-xl font-semibold text-lg hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30"
@@ -282,7 +355,26 @@ const privateNote = classItem.data.privateNote || "";
 		schedule={classItem.data.schedule || []}
 	/>
 
-	<!-- Lightbox Modal -->
+	<!-- Video Lightbox Modal -->
+	<div id="video-lightbox" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center p-4" onclick="closeVideoLightbox(event)">
+		<button 
+			class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors z-10"
+			onclick="closeVideoLightbox(event)"
+			aria-label="Close video"
+		>
+			&times;
+		</button>
+		<video 
+			id="lightbox-video"
+			controls 
+			autoplay 
+			class="max-w-full max-h-[90vh] rounded-lg"
+		>
+			Your browser does not support the video tag.
+		</video>
+	</div>
+
+	<!-- Image Lightbox Modal -->
 	<div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4" onclick="closeLightbox(event)">
 		<button 
 			class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors"
@@ -352,5 +444,29 @@ const privateNote = classItem.data.privateNote || "";
 		window.closeLightbox = closeLightbox;
 		window.prevImage = prevImage;
 		window.nextImage = nextImage;
+		
+		// Video lightbox functions
+		function openVideoLightbox(videoSrc) {
+			const video = document.getElementById('lightbox-video');
+			const lightbox = document.getElementById('video-lightbox');
+			video.src = videoSrc;
+			lightbox.classList.remove('hidden');
+			lightbox.classList.add('flex');
+			video.play();
+		}
+		
+		function closeVideoLightbox(event) {
+			if (event.target.id === 'video-lightbox' || event.target.tagName === 'BUTTON' || event.target.tagName === 'VIDEO') {
+				const video = document.getElementById('lightbox-video');
+				video.pause();
+				video.currentTime = 0;
+				const lightbox = document.getElementById('video-lightbox');
+				lightbox.classList.add('hidden');
+				lightbox.classList.remove('flex');
+			}
+		}
+		
+		window.openVideoLightbox = openVideoLightbox;
+		window.closeVideoLightbox = closeVideoLightbox;
 	</script>
 </BaseLayout>
