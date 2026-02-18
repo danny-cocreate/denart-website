@@ -11,6 +11,8 @@ const services = defineCollection({
     category: z.string().optional(),
     order: z.number().optional(),
     hideIntro: z.boolean().optional(),
+    introTitle: z.string().optional(),
+    introText: z.string().optional(),
     packages: z.array(z.object({
       name: z.string(),
       price: z.string(),

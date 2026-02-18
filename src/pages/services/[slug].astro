@@ -88,9 +88,9 @@ const faqs = service.data.faqs || defaultFAQs;
   {service.data.hideIntro !== true && (
     <section class="bg-deepest py-12">
       <div class="max-w-4xl mx-auto px-6 text-center">
-        <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-4">You Are the Masterpiece</h2>
+        <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-4">{service.data.introTitle || "You Are the Masterpiece"}</h2>
         <p class="text-xl text-gray-300 max-w-2xl mx-auto">
-          Imagine watching yourself become a living work of art, each brushstroke revealing a new dimension of your natural beauty. Our clients describe the process as liberating, empowering, and surprisingly fun – the kind of experience that makes you feel alive in your skin and reminds you how beautiful you really are.
+          {service.data.introText || "Imagine watching yourself become a living work of art, each brushstroke revealing a new dimension of your natural beauty. Our clients describe the process as liberating, empowering, and surprisingly fun – the kind of experience that makes you feel alive in your skin and reminds you how beautiful you really are."}
         </p>
       </div>
     </section>

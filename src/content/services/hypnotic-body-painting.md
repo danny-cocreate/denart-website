@@ -1,14 +1,21 @@
 ---
 title: "Hypnotic Body Painting"
-tagline: "Embody Your Future Self"
+tagline: "Your Body as Your Vision Board"
 description: "Visualize who you're becoming. Paint that future identity onto your present body. Leave with photographic proof of your evolution."
 heroImage: "/images/services/hypnotic/hero.jpg"
 heroImages:
   - "/images/services/hypnotic/hero.jpg"
 category: "private"
 order: 2
-hideIntro: true
+introTitle: "Embody Your Future Self"
+introText: "Visualize who you're becoming. Paint that future identity onto your present body. Leave with photographic proof of your evolution."
 packages:
+  - name: "3 Sessions"
+    price: "$499"
+    includes:
+      - "Save $97"
+      - "Explore different facets of your transformation"
+      - "Check-in calls between sessions"
   - name: "Single Session Experience"
     price: "$199"
     includes:
@@ -16,12 +23,6 @@ packages:
       - "One 2-hour professional UV body painting session bringing your vision to life"
       - "Optional photo documentation (+$400)"
       - "Optional video documentation (+$500)"
-  - name: "3 Sessions"
-    price: "$499"
-    includes:
-      - "Save $97"
-      - "Explore different facets of your transformation"
-      - "Check-in calls between sessions"
   - name: "5 Sessions"
     price: "$750"
     includes:
