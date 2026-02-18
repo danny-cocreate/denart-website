@@ -84,11 +84,16 @@ const { category, items } = Astro.props;
 
   <!-- Lightbox -->
   <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4">
-    <button id="lightbox-close" class="absolute top-4 right-4 text-white text-4xl hover:text-brand-gold transition-colors" aria-label="Close lightbox">&times;</button>
-    <button id="lightbox-prev" class="absolute left-4 text-white text-5xl hover:text-brand-gold transition-colors" aria-label="Previous image">&#8249;</button>
-    <img id="lightbox-img" src="" alt="Gallery image" class="max-h-[90vh] max-w-[90vw] object-contain" />
-    <button id="lightbox-next" class="absolute right-4 text-white text-5xl hover:text-brand-gold transition-colors" aria-label="Next image">&#8250;</button>
-    <div class="absolute bottom-4 text-white text-sm" id="lightbox-counter"></div>
+    <button id="lightbox-close" class="absolute top-4 right-4 text-white text-4xl hover:text-brand-red transition-colors" aria-label="Close lightbox">&times;</button>
+    <button id="lightbox-prev" class="absolute left-4 text-white text-5xl hover:text-brand-red transition-colors" aria-label="Previous image">&#8249;</button>
+    <img id="lightbox-img" src="" alt="Gallery image" class="max-h-[90vh] max-w-[90vw] object-contain opacity-0 scale-95 transition-all duration-300 ease-out" />
+    <button id="lightbox-next" class="absolute right-4 text-white text-5xl hover:text-brand-red transition-colors" aria-label="Next image">&#8250;</button>
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 text-center">
+    <div class="text-gray-400 text-sm" id="lightbox-alt"></div>
+  </div>
+  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-center">
+    <div class="text-white text-sm" id="lightbox-counter"></div>
+  </div>
   </div>
 </BaseLayout>
 
@@ -98,20 +103,30 @@ const { category, items } = Astro.props;
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
   const lightboxCounter = document.getElementById('lightbox-counter');
+  const lightboxAlt = document.getElementById('lightbox-alt');
   let currentIndex = 0;
 
-  // Build images array from data-index
+  // Build images array with alt text from data-index
   const images = Array.from(galleryItems).map(item => {
     const img = item.querySelector('img');
-    return img.src;
+    return { src: img.src, alt: img.alt };
   });
 
   function openLightbox(index) {
     currentIndex = index;
-    lightboxImg.src = images[currentIndex];
+    lightboxImg.classList.remove('opacity-100', 'scale-100');
+    lightboxImg.classList.add('opacity-0', 'scale-95');
+    lightboxImg.src = images[currentIndex].src;
+    lightboxImg.alt = images[currentIndex].alt;
     lightbox.classList.remove('hidden');
     lightbox.classList.add('flex');
     lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+    lightboxAlt.textContent = images[currentIndex].alt;
+    // Trigger animation
+    requestAnimationFrame(() => {
+      lightboxImg.classList.remove('opacity-0', 'scale-95');
+      lightboxImg.classList.add('opacity-100', 'scale-100');
+    });
     document.body.style.overflow = 'hidden';
   }
 
@@ -122,9 +137,20 @@ const { category, items } = Astro.props;
   }
 
   function changeImage(direction) {
-    currentIndex = (currentIndex + direction + images.length) % images.length;
-    lightboxImg.src = images[currentIndex];
-    lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+    // Animate out
+    lightboxImg.classList.remove('opacity-100', 'scale-100');
+    lightboxImg.classList.add('opacity-0', 'scale-95');
+    
+    setTimeout(() => {
+      currentIndex = (currentIndex + direction + images.length) % images.length;
+      lightboxImg.src = images[currentIndex].src;
+      lightboxImg.alt = images[currentIndex].alt;
+      lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+      lightboxAlt.textContent = images[currentIndex].alt;
+      // Animate in
+      lightboxImg.classList.remove('opacity-0', 'scale-95');
+      lightboxImg.classList.add('opacity-100', 'scale-100');
+    }, 150);
   }
 
   // Event listeners

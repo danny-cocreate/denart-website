@@ -23,13 +23,6 @@ const images = event.data.images || [];
 		<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(107,33,168,0.3)_0%,_transparent_60%)]"></div>
 		<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(212,175,55,0.1)_0%,_transparent_50%)]"></div>
 		<div class="max-w-4xl mx-auto relative z-10 text-center">
-			<nav class="text-sm text-gray-400 mb-4">
-				<a href="/gallery" class="hover:text-white transition-colors">Gallery</a>
-				<span class="mx-2">/</span>
-				<a href="/gallery/events" class="hover:text-white transition-colors">Events</a>
-				<span class="mx-2">/</span>
-				<span class="text-white">{event.data.title}</span>
-			</nav>
 			<h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
 				{event.data.title}
 			</h1>
@@ -73,17 +66,22 @@ const images = event.data.images || [];
 		)}
 		
 		<div class="mt-12 text-center">
-			<a href="/gallery/events" class="text-brand-gold hover:opacity-80 transition-opacity">&larr; Back to Events</a>
+			<a href="/gallery/events" class="text-brand-red hover:opacity-80 transition-opacity">&larr; Back to Events</a>
 		</div>
 	</main>
 
 	<!-- Lightbox -->
 	<div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4">
-		<button id="lightbox-close" class="absolute top-4 right-4 text-white text-4xl hover:text-brand-gold transition-colors" aria-label="Close lightbox">&times;</button>
-		<button id="lightbox-prev" class="absolute left-4 text-white text-5xl hover:text-brand-gold transition-colors" aria-label="Previous image">&#8249;</button>
-		<img id="lightbox-img" src="" alt="Gallery image" class="max-h-[90vh] max-w-[90vw] object-contain" />
-		<button id="lightbox-next" class="absolute right-4 text-white text-5xl hover:text-brand-gold transition-colors" aria-label="Next image">&#8250;</button>
-		<div class="absolute bottom-4 text-white text-sm" id="lightbox-counter"></div>
+		<button id="lightbox-close" class="absolute top-4 right-4 text-white text-4xl hover:text-brand-red transition-colors" aria-label="Close lightbox">&times;</button>
+		<button id="lightbox-prev" class="absolute left-4 text-white text-5xl hover:text-brand-red transition-colors" aria-label="Previous image">&#8249;</button>
+		<img id="lightbox-img" src="" alt="Gallery image" class="max-h-[90vh] max-w-[90vw] object-contain opacity-0 scale-95 transition-all duration-300 ease-out" />
+		<button id="lightbox-next" class="absolute right-4 text-white text-5xl hover:text-brand-red transition-colors" aria-label="Next image">&#8250;</button>
+		<div class="absolute top-4 left-1/2 -translate-x-1/2 text-center">
+		<div class="text-gray-400 text-sm" id="lightbox-alt"></div>
+	</div>
+	<div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-center">
+		<div class="text-white text-sm" id="lightbox-counter"></div>
+	</div>
 	</div>
 </BaseLayout>
 
@@ -92,19 +90,29 @@ const images = event.data.images || [];
 	const lightbox = document.getElementById('lightbox');
 	const lightboxImg = document.getElementById('lightbox-img');
 	const lightboxCounter = document.getElementById('lightbox-counter');
+	const lightboxAlt = document.getElementById('lightbox-alt');
 	let currentIndex = 0;
 
 	const images = Array.from(galleryItems).map(item => {
 		const img = item.querySelector('img');
-		return img.src;
+		return { src: img.src, alt: img.alt };
 	});
 
 	function openLightbox(index) {
 		currentIndex = index;
-		lightboxImg.src = images[currentIndex];
+		lightboxImg.classList.remove('opacity-100', 'scale-100');
+		lightboxImg.classList.add('opacity-0', 'scale-95');
+		lightboxImg.src = images[currentIndex].src;
+		lightboxImg.alt = images[currentIndex].alt;
 		lightbox.classList.remove('hidden');
 		lightbox.classList.add('flex');
 		lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+		lightboxAlt.textContent = images[currentIndex].alt;
+		// Trigger animation
+		requestAnimationFrame(() => {
+			lightboxImg.classList.remove('opacity-0', 'scale-95');
+			lightboxImg.classList.add('opacity-100', 'scale-100');
+		});
 		document.body.style.overflow = 'hidden';
 	}
 
@@ -115,9 +123,20 @@ const images = event.data.images || [];
 	}
 
 	function changeImage(direction) {
-		currentIndex = (currentIndex + direction + images.length) % images.length;
-		lightboxImg.src = images[currentIndex];
-		lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+		// Animate out
+		lightboxImg.classList.remove('opacity-100', 'scale-100');
+		lightboxImg.classList.add('opacity-0', 'scale-95');
+		
+		setTimeout(() => {
+			currentIndex = (currentIndex + direction + images.length) % images.length;
+			lightboxImg.src = images[currentIndex].src;
+			lightboxImg.alt = images[currentIndex].alt;
+			lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+			lightboxAlt.textContent = images[currentIndex].alt;
+			// Animate in
+			lightboxImg.classList.remove('opacity-0', 'scale-95');
+			lightboxImg.classList.add('opacity-100', 'scale-100');
+		}, 150);
 	}
 
 	galleryItems.forEach((item, index) => {

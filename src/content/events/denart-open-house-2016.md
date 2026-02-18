@@ -1,6 +1,6 @@
 ---
-title: "Instagram Digest 20"
-date: "2016-12-09"
+title: "DenArt Open House 2016"
+date: ""
 images:
   - src: "/images/events/instagram-digest-20120916/instagram-digest-20120916-17.avif"
     alt: "Instagram Digest 20"

@@ -7,6 +7,9 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://denartny.com',
   output: 'static',
+  devToolbar: {
+    enabled: false,
+  },
   vite: {
     plugins: [tailwindcss()],
   },

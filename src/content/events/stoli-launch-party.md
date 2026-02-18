@@ -1,6 +1,6 @@
 ---
-title: "Instagram Digest 20"
-date: "2029-12-11"
+title: "Stoli New Flavor Launch Event"
+date: ""
 images:
   - src: "/images/events/instagram-digest-20121129/stoli-1.avif"
     alt: "Instagram Digest 20"
