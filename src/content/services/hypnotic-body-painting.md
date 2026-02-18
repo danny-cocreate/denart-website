@@ -34,9 +34,12 @@ packages:
 testimonial: "Thank you so much for the wonderful and insightful experience!"
 testimonialAuthor: "O.R, New York, NY"
 galleryImages:
-  - "/images/gallery/starry-night-after-van-gogh/starry-night.jpg"
-  - "/images/gallery/alone/IMG_2133_ds_800.jpg"
-  - "/images/gallery/anima-sola/IMG_0120_ds800.jpg"
+  - "/images/gallery/glow/IMG_1051ds-web.jpg"
+  - "/images/gallery/glow/IMG_1368.jpg"
+  - "/images/gallery/glow/IMG_1375.jpg"
+  - "/images/gallery/glow/freedom.jpg"
+  - "/images/gallery/glow/glowing-skull.jpg"
+  - "/images/gallery/glow/floral-uv.jpg"
 ---
 
 ## About The Experience

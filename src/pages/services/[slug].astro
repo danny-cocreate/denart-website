@@ -196,13 +196,7 @@ const faqs = service.data.faqs || defaultFAQs;
       <!-- Gallery Section -->
       {galleryImages.length > 0 && (
         <section class="mt-16 pt-10 border-t border-zinc-800">
-          <h2 class="text-2xl font-display text-sand mb-4 text-center">Painting Options</h2>
-          <p class="text-sand-muted text-center max-w-2xl mx-auto mb-8">
-            Below are some design ideas for your body painting. Any of these paintings can be done on your front or back upper body. You are free to choose your own design. If your design is more complex than these, our painter can either simplify the design to work with the available time frame or we can extend your session (additional cost).
-          </p>
-          <p class="text-center text-sand-muted text-sm mb-4">
-            Background is added in photoshop when we did the creative retouching on these pictures (not included in this package)
-          </p>
+          <h2 class="text-2xl font-display text-sand mb-8 text-center">From Past Sessions</h2>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             {galleryImages.map((img, index) => (
               <button 
