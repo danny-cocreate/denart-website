@@ -1,6 +1,6 @@
 ---
 title: "Healing Energy"
-category: "original-design"
+category: "my-body-my-story"
 images:
   - src: "/images/gallery/misc/healing-energy.jpg"
     alt: "Healing Energy"

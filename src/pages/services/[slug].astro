@@ -5,6 +5,7 @@ import PageHero from '../../components/PageHero.astro';
 import CTAButton from '../../components/CTAButton.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import FAQ from '../../components/FAQ.astro';
+import ScheduleModal from '../../components/ScheduleModal.astro';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -167,9 +168,9 @@ const faqs = service.data.faqs || defaultFAQs;
         </div>
         
         <div class="mt-8 flex justify-center">
-          <CTAButton href="/schedule-a-session" variant="primary" size="lg">
+          <button onclick="openScheduleModal()" class="px-8 py-4 bg-brand-red text-white rounded-xl font-semibold text-lg hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30">
             Schedule Session
-          </CTAButton>
+          </button>
         </div>
       </div>
     </section>
@@ -267,9 +268,9 @@ const faqs = service.data.faqs || defaultFAQs;
           size="md"
         />
         <div class="mt-8 flex justify-center">
-          <CTAButton href="/schedule-a-session" variant="primary" size="lg">
+          <button onclick="openScheduleModal()" class="px-8 py-4 bg-brand-red text-white rounded-xl font-semibold text-lg hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30">
             Schedule Session
-          </CTAButton>
+          </button>
         </div>
       </div>
     </div>
@@ -357,4 +358,6 @@ const faqs = service.data.faqs || defaultFAQs;
       }, 5000);
     }
   </script>
+  
+  <ScheduleModal serviceName={service.slug} serviceTitle={service.data.title} />
 </ServiceLayout>

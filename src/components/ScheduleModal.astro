@@ -1,0 +1,258 @@
+---
+// Schedule Session Modal Component
+// Used on service pages for scheduling private sessions
+
+interface Props {
+  serviceName: string;
+  serviceTitle: string;
+}
+
+const { serviceName, serviceTitle } = Astro.props;
+---
+
+<!-- Schedule Session Modal -->
+<div id="schedule-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="schedule-modal-title" role="dialog" aria-modal="true">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeScheduleModal()"></div>
+  
+  <!-- Modal Panel -->
+  <div class="relative min-h-screen md:min-h-0 md:flex md:items-center md:justify-center p-4">
+    <div class="relative w-full max-w-2xl bg-void-light border border-zinc-700 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between p-6 border-b border-zinc-800">
+        <div>
+          <h3 id="schedule-modal-title" class="text-xl font-semibold text-sand">Schedule a Session</h3>
+          <p class="text-sand-muted text-sm mt-1">{serviceTitle}</p>
+        </div>
+        <button 
+          onclick="closeScheduleModal()"
+          class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-zinc-800 transition-colors text-sand-muted hover:text-sand"
+          aria-label="Close modal"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Content -->
+      <div class="p-6 max-h-[70vh] overflow-y-auto">
+        <form id="schedule-form" class="space-y-4">
+          <input type="hidden" name="service" value={serviceName} />
+          
+          <!-- Name -->
+          <div>
+            <label for="schedule-name" class="block text-sm font-medium text-sand mb-1">Name *</label>
+            <input 
+              type="text" 
+              id="schedule-name" 
+              name="name" 
+              required
+              placeholder="E.g. John Doe"
+              class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent"
+            />
+          </div>
+          
+          <!-- Email -->
+          <div>
+            <label for="schedule-email" class="block text-sm font-medium text-sand mb-1">Email Address *</label>
+            <input 
+              type="email" 
+              id="schedule-email" 
+              name="email" 
+              required
+              placeholder="E.g. john@doe.com"
+              class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent"
+            />
+          </div>
+          
+          <!-- Phone -->
+          <div>
+            <label for="schedule-phone" class="block text-sm font-medium text-sand mb-1">Phone</label>
+            <input 
+              type="tel" 
+              id="schedule-phone" 
+              name="phone"
+              placeholder="E.g. +1 300 400 5000"
+              class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent"
+            />
+          </div>
+          
+          <!-- Session Type -->
+          <div>
+            <label for="schedule-session-type" class="block text-sm font-medium text-sand mb-1">Type of Session *</label>
+            <select 
+              id="schedule-session-type" 
+              name="sessionType" 
+              required
+              class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand focus:ring-2 focus:ring-brand-red focus:border-transparent"
+            >
+              <option value="">Select a session type...</option>
+              {serviceName === 'fine-art-body-painting' && (
+                <>
+                  <option value="Fine Art Body Painting Session">Fine Art Body Painting</option>
+                  <option value="Maternity">Maternity</option>
+                  <option value="Ultimate Package">Ultimate Package</option>
+                  <option value="Self-Visualization Session">Self-Visualization</option>
+                </>
+              )}
+              {serviceName === 'hypnotic-body-painting' && (
+                <option value="Hypnotic Body Painting Session">Hypnotic Body Painting Session</option>
+              )}
+              {serviceName === 'maternity-belly-painting' && (
+                <option value="Maternity">Maternity Belly Painting</option>
+              )}
+              {serviceName === 'body-painting-for-events' && (
+                <option value="Event Body Painting">Event Body Painting</option>
+              )}
+            </select>
+          </div>
+          
+          <!-- Preferred Dates -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="schedule-date1" class="block text-sm font-medium text-sand mb-1">Preferred Date 1 *</label>
+              <input 
+                type="date" 
+                id="schedule-date1" 
+                name="date1" 
+                required
+                class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label for="schedule-date2" class="block text-sm font-medium text-sand mb-1">Preferred Date 2</label>
+              <input 
+                type="date" 
+                id="schedule-date2" 
+                name="date2"
+                class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              />
+            </div>
+          </div>
+          
+          <!-- Design Ideas -->
+          <div>
+            <label for="schedule-design" class="block text-sm font-medium text-sand mb-1">What's the design you'd like us to paint?</label>
+            <textarea 
+              id="schedule-design" 
+              name="design"
+              rows="2"
+              placeholder="E.g. Van Gogh's 'Starry Night' or describe your vision..."
+              class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent resize-none"
+            ></textarea>
+          </div>
+          
+          <!-- Promo Code -->
+          <div>
+            <label for="schedule-promo" class="block text-sm font-medium text-sand mb-1">Promo Code</label>
+            <input 
+              type="text" 
+              id="schedule-promo" 
+              name="promoCode"
+              class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand focus:ring-2 focus:ring-brand-red focus:border-transparent"
+            />
+          </div>
+          
+          <!-- Success/Error Message -->
+          <div id="schedule-message" class="hidden p-4 rounded-lg"></div>
+        </form>
+      </div>
+      
+      <!-- Footer / CTA -->
+      <div class="p-6 border-t border-zinc-800 bg-zinc-900/50">
+        <button 
+          type="submit"
+          form="schedule-form"
+          class="w-full py-4 bg-brand-red hover:bg-brand-red-hover text-white font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-brand-red/30 hover:-translate-y-0.5"
+        >
+          Send Request
+        </button>
+        <p class="text-center text-sand-muted text-xs mt-3">
+          We'll get back to you within 24-48 hours
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  window.openScheduleModal = function() {
+    const modal = document.getElementById('schedule-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      const firstInput = modal.querySelector('input[type="text"]');
+      if (firstInput) firstInput.focus();
+    }
+  };
+  
+  window.closeScheduleModal = function() {
+    const modal = document.getElementById('schedule-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  };
+  
+  // Close on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeScheduleModal();
+    }
+  });
+  
+  // Handle form submission
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('schedule-form');
+    const messageEl = document.getElementById('schedule-message');
+    const submitBtn = form?.querySelector('button[type="submit"]');
+    
+    if (form) {
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Show loading state
+        if (submitBtn) {
+          submitBtn.textContent = 'Sending...';
+          submitBtn.disabled = true;
+        }
+        
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
+        
+        try {
+          const response = await fetch('/api/schedule?' + params, {
+            method: 'POST'
+          });
+          
+          const data = await response.json();
+          
+          if (messageEl) {
+            messageEl.classList.remove('hidden');
+            if (data.success) {
+              messageEl.className = 'p-4 rounded-lg bg-green-900/30 border border-green-700 text-green-400';
+              messageEl.textContent = 'Thank you! We\'ll be in touch soon.';
+              form.reset();
+              setTimeout(() => closeScheduleModal(), 2000);
+            } else {
+              messageEl.className = 'p-4 rounded-lg bg-red-900/30 border border-red-700 text-red-400';
+              messageEl.textContent = 'Something went wrong. Please try again or email us directly.';
+            }
+          }
+        } catch (error) {
+          if (messageEl) {
+            messageEl.classList.remove('hidden');
+            messageEl.className = 'p-4 rounded-lg bg-red-900/30 border border-red-700 text-red-400';
+            messageEl.textContent = 'Something went wrong. Please try again or email us directly.';
+          }
+        } finally {
+          if (submitBtn) {
+            submitBtn.textContent = 'Send Request';
+            submitBtn.disabled = false;
+          }
+        }
+      });
+    }
+  });
+</script>

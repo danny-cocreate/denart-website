@@ -67,12 +67,6 @@ This transformative experience is perfect for those who are:
 
 This is a creative experience using hypnotic visualization and body art, not psychotherapy or medical care. You are responsible for your wellbeing and integration. If you are working through intense emotions, please seek additional professional support. By booking, you acknowledge this session is art, not therapy.
 
-## What Others Say
-
-> "Thank you so much for the wonderful and insightful experience!"
->
-> — O.R, New York, NY
-
 ## Multi-Session Packages
 
 As your future self evolves, so does your embodiment practice. Multiple sessions allow you to explore different facets of your transformation and deepen your manifestation journey. Book multiple sessions upfront and save.

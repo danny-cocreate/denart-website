@@ -1,0 +1,155 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import GalleryGrid from '../../components/GalleryGrid.astro';
+
+export async function getStaticPaths() {
+  const galleryItems = await getCollection('gallery');
+  
+  const categories = [
+    { id: 'art-history', name: 'Art History', description: 'Body painting recreations of famous artworks - from Van Gogh to Klimt' },
+    { id: 'asian-influenced', name: 'Asian Influenced', description: 'Traditional Asian art inspired body paintings - dragons, koi, and more' },
+    { id: 'glow', name: 'Glow / UV', description: 'UV reactive body paintings that glow under blacklight' },
+    { id: 'original-design', name: 'Original Design', description: 'Unique body painting designs created specifically for clients' },
+    { id: 'my-body-my-story', name: 'My Body My Story', description: 'Personal body painting stories - meaningful designs with deep meaning' },
+  ];
+  
+  return categories.map(cat => {
+    const items = galleryItems.filter(item => item.data.category === cat.id);
+    return {
+      params: { category: cat.id },
+      props: { 
+        category: cat,
+        items: items.map(item => ({
+          slug: item.slug,
+          title: item.data.title,
+          src: (item.data.images?.[0]?.src || `/images/gallery/${item.slug}/${item.slug.split('/').pop()}.jpg`).replace('.avif', '.jpg'),
+          alt: item.data.images?.[0]?.alt || item.data.title,
+          images: item.data.images?.map(img => img.src?.replace('.avif', '.jpg')) || []
+        }))
+      }
+    };
+  });
+}
+
+const { category, items } = Astro.props;
+---
+
+<BaseLayout title={`${category.name} | Gallery`} description={category.description}>
+  <!-- Hero Header -->
+  <section class="relative bg-gray-900 py-16 px-6 overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(107,33,168,0.3)_0%,_transparent_60%)]"></div>
+    <div class="max-w-4xl mx-auto relative z-10 text-center">
+      <nav class="text-sm text-gray-400 mb-4">
+        <a href="/" class="hover:text-white transition-colors">Home</a>
+        <span class="mx-2">/</span>
+        <a href="/gallery" class="hover:text-white transition-colors">Gallery</a>
+        <span class="mx-2">/</span>
+        <span class="text-white">{category.name}</span>
+      </nav>
+      <SectionHeader
+        title={category.name}
+        subtitle={category.description}
+      />
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto py-16 px-6 bg-dark">
+    <div class="mb-8">
+      <span class="text-gray-400 text-sm">{items.length} {items.length === 1 ? 'piece' : 'pieces'}</span>
+    </div>
+    
+    {items.length > 0 ? (
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="gallery-grid">
+        {items.map((item, index) => (
+          <button 
+            class="aspect-square overflow-hidden rounded-xl cursor-pointer group gallery-item"
+            data-index={index}
+            aria-label={`View ${item.title}`}
+          >
+            <img 
+              src={item.src} 
+              alt={item.alt}
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy"
+            />
+          </button>
+        ))}
+      </div>
+    ) : (
+      <p class="text-gray-400 text-center py-12">No artworks in this category yet.</p>
+    )}
+    
+    <div class="mt-12 text-center">
+      <a href="/gallery" class="text-brand-gold hover:opacity-80 transition-opacity">&larr; Back to Gallery</a>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4">
+    <button id="lightbox-close" class="absolute top-4 right-4 text-white text-4xl hover:text-brand-gold transition-colors" aria-label="Close lightbox">&times;</button>
+    <button id="lightbox-prev" class="absolute left-4 text-white text-5xl hover:text-brand-gold transition-colors" aria-label="Previous image">&#8249;</button>
+    <img id="lightbox-img" src="" alt="Gallery image" class="max-h-[90vh] max-w-[90vw] object-contain" />
+    <button id="lightbox-next" class="absolute right-4 text-white text-5xl hover:text-brand-gold transition-colors" aria-label="Next image">&#8250;</button>
+    <div class="absolute bottom-4 text-white text-sm" id="lightbox-counter"></div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Get all gallery items
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxCounter = document.getElementById('lightbox-counter');
+  let currentIndex = 0;
+
+  // Build images array from data-index
+  const images = Array.from(galleryItems).map(item => {
+    const img = item.querySelector('img');
+    return img.src;
+  });
+
+  function openLightbox(index) {
+    currentIndex = index;
+    lightboxImg.src = images[currentIndex];
+    lightbox.classList.remove('hidden');
+    lightbox.classList.add('flex');
+    lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.add('hidden');
+    lightbox.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  function changeImage(direction) {
+    currentIndex = (currentIndex + direction + images.length) % images.length;
+    lightboxImg.src = images[currentIndex];
+    lightboxCounter.textContent = `${currentIndex + 1} / ${images.length}`;
+  }
+
+  // Event listeners
+  galleryItems.forEach((item, index) => {
+    item.addEventListener('click', () => openLightbox(index));
+  });
+
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  document.getElementById('lightbox-prev').addEventListener('click', () => changeImage(-1));
+  document.getElementById('lightbox-next').addEventListener('click', () => changeImage(1));
+
+  // Close on background click
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('flex')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') changeImage(-1);
+    if (e.key === 'ArrowRight') changeImage(1);
+  });
+</script>

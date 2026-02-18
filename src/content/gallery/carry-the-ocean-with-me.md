@@ -1,6 +1,6 @@
 ---
 title: "Carry The Ocean With Me"
-category: "glow"
+category: "my-body-my-story"
 images:
   - src: "/images/gallery/misc/IMG_8996.jpg"
     alt: "Carry The Ocean With Me"

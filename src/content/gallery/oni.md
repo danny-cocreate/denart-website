@@ -1,6 +1,6 @@
 ---
 title: "Oni"
-category: "asian-influenced"
+category: "my-body-my-story"
 images:
   - src: "/images/gallery/misc/IMG_3859_ds.jpg"
     alt: "Oni"

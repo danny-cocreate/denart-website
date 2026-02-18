@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+
+const events = await getCollection('events');
+
+// Sort by date if available
+const sortedEvents = events.sort((a, b) => {
+  const dateA = a.data.date ? new Date(a.data.date) : new Date(0);
+  const dateB = b.data.date ? new Date(b.data.date) : new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
+
+const eventData = sortedEvents.map(event => ({
+  slug: event.slug,
+  title: event.data.title,
+  date: event.data.date,
+  src: event.data.images?.[0]?.src?.replace('.avif', '.jpg') || '',
+  alt: event.data.images?.[0]?.alt || event.data.title,
+  count: event.data.images?.length || 0
+}));
+---
+
+<BaseLayout title="Events & Projects | Gallery" description="Live body painting events, workshops, and collaborative projects.">
+	<!-- Hero Header -->
+	<section class="relative bg-gray-900 py-16 px-6 overflow-hidden">
+		<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(107,33,168,0.3)_0%,_transparent_60%)]"></div>
+		<div class="max-w-4xl mx-auto relative z-10 text-center">
+			<nav class="text-sm text-gray-400 mb-4">
+				<a href="/" class="hover:text-white transition-colors">Home</a>
+				<span class="mx-2">/</span>
+				<a href="/gallery" class="hover:text-white transition-colors">Gallery</a>
+				<span class="mx-2">/</span>
+				<span class="text-white">Events & Projects</span>
+			</nav>
+			<span class="text-brand-gold text-sm font-semibold tracking-wider uppercase mb-2 block">Portfolio</span>
+			<h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+				Events & <span class="text-brand-red">Projects</span>
+			</h1>
+			<p class="text-gray-400 text-lg max-w-2xl mx-auto">
+				Live body painting events, workshops, and collaborative projects.
+			</p>
+		</div>
+	</section>
+
+	<main class="max-w-6xl mx-auto py-16 px-6">
+		<div class="mb-8">
+			<span class="text-gray-400 text-sm">{eventData.length} events</span>
+		</div>
+		
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+			{eventData.map((event) => (
+				<a href={`/gallery/events/${event.slug}`} class="group block">
+					<div class="relative aspect-[4/3] overflow-hidden rounded-lg mb-4">
+						{event.src ? (
+							<img 
+								src={event.src} 
+								alt={event.alt}
+								class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+							/>
+						) : (
+							<div class="w-full h-full bg-gray-800 flex items-center justify-center">
+								<span class="text-gray-600 text-4xl">📸</span>
+							</div>
+						)}
+						<div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+						<div class="absolute bottom-4 left-4 right-4">
+							<span class="inline-block bg-brand-red text-white text-xs font-bold px-2 py-1 rounded">
+								{event.count} photos
+							</span>
+						</div>
+					</div>
+					<h2 class="text-lg font-bold text-white group-hover:text-brand-gold transition-colors">
+						{event.title}
+					</h2>
+					{event.date && (
+						<p class="text-gray-500 text-sm">{event.date}</p>
+					)}
+				</a>
+			))}
+		</div>
+
+		<div class="mt-12 text-center">
+			<a href="/gallery" class="text-brand-gold hover:opacity-80 transition-opacity">&larr; Back to Gallery</a>
+		</div>
+	</main>
+</BaseLayout>

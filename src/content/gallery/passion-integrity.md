@@ -1,6 +1,6 @@
 ---
 title: "Passion Integrity"
-category: "original-design"
+category: "my-body-my-story"
 images:
   - src: "/images/gallery/original-design/IMG_8189.jpg"
     alt: "Passion Integrity"
