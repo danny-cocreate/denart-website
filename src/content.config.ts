@@ -10,12 +10,15 @@ const services = defineCollection({
     heroImages: z.array(z.string()).optional(),
     category: z.string().optional(),
     order: z.number().optional(),
+    hideIntro: z.boolean().optional(),
     packages: z.array(z.object({
       name: z.string(),
       price: z.string(),
       includes: z.array(z.string()).optional(),
     })).optional(),
     galleryImages: z.array(z.string()).optional(),
+    testimonial: z.string().optional(),
+    testimonialAuthor: z.string().optional(),
     faqs: z.array(z.object({
       question: z.string(),
       answer: z.string(),

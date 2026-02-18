@@ -1,10 +1,13 @@
 ---
 title: "Hypnotic Body Painting"
 tagline: "Embody Your Future Self"
-description: "A transformative experience combining guided visualization, somatic practices, and UV body painting."
+description: "Visualize who you're becoming. Paint that future identity onto your present body. Leave with photographic proof of your evolution."
 heroImage: "/images/services/hypnotic/hero.jpg"
+heroImages:
+  - "/images/services/hypnotic/hero.jpg"
 category: "private"
 order: 2
+hideIntro: true
 packages:
   - name: "Single Session Experience"
     price: "$199"
@@ -25,11 +28,9 @@ packages:
       - "Save $245"
       - "Deep manifestation journey"
       - "Full transformation support"
+testimonial: "Thank you so much for the wonderful and insightful experience!"
+testimonialAuthor: "O.R, New York, NY"
 ---
-
-## Embody Your Future Self
-
-Visualize who you're becoming. Paint that future identity onto your present body. Leave with photographic proof of your evolution.
 
 ## About The Experience
 
@@ -70,3 +71,7 @@ This is a creative experience using hypnotic visualization and body art, not psy
 ## Multi-Session Packages
 
 As your future self evolves, so does your embodiment practice. Multiple sessions allow you to explore different facets of your transformation and deepen your manifestation journey. Book multiple sessions upfront and save.
+
+## Inspirations from Past Sessions
+
+<!-- Gallery placeholder - images would be added here -->

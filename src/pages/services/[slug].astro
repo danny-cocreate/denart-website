@@ -85,14 +85,16 @@ const faqs = service.data.faqs || defaultFAQs;
   </section>
 
   <!-- Intro Section - Match class page style -->
-  <section class="bg-deepest py-12">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-      <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-4">You Are the Masterpiece</h2>
-      <p class="text-xl text-gray-300 max-w-2xl mx-auto">
-        Imagine watching yourself become a living work of art, each brushstroke revealing a new dimension of your natural beauty. Our clients describe the process as liberating, empowering, and surprisingly fun – the kind of experience that makes you feel alive in your skin and reminds you how beautiful you really are.
-      </p>
-    </div>
-  </section>
+  {service.data.hideIntro !== true && (
+    <section class="bg-deepest py-12">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-4">You Are the Masterpiece</h2>
+        <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+          Imagine watching yourself become a living work of art, each brushstroke revealing a new dimension of your natural beauty. Our clients describe the process as liberating, empowering, and surprisingly fun – the kind of experience that makes you feel alive in your skin and reminds you how beautiful you really are.
+        </p>
+      </div>
+    </section>
+  )}
 
   <!-- Info Bar - Like class page -->
   {service.data.packages && service.data.packages.length > 0 && (
@@ -220,7 +222,7 @@ const faqs = service.data.faqs || defaultFAQs;
         </section>
       )}
       
-      <!-- Testimonials Section -->
+      {service.data.testimonial && (
       <section class="mt-16 pt-10 border-t border-zinc-800">
         <div class="max-w-4xl mx-auto text-center">
           <!-- Quote Icon -->
@@ -230,19 +232,20 @@ const faqs = service.data.faqs || defaultFAQs;
           
           <!-- Quote -->
           <blockquote class="font-display text-xl md:text-2xl text-sand leading-relaxed mb-8 italic">
-            "This was such a unique experience, a great way to appreciate art, and your own body. I was definitely nervous going into it, but both Danny and his assistant Julie were so friendly and personable that it was like chatting with pals...while you are getting this amazing work of art painted on you! Not totally confident in my own figure, yet the painting flattered my body and I got some great photos out of it. I highly recommend this experience, and will definitely consider doing this again in the future, or as a gift. Great confidence booster for all you women out there, do it!!!"
+            "{service.data.testimonial}"
           </blockquote>
           
           <!-- Attribution -->
-          <div class="flex items-center justify-center gap-3 mb-8">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-red/30 to-brand-red/10 flex items-center justify-center">
-              <span class="font-display text-lg text-brand-red">A</span>
+          {service.data.testimonialAuthor && (
+            <div class="flex items-center justify-center gap-3 mb-8">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-red/30 to-brand-red/10 flex items-center justify-center">
+                <span class="font-display text-lg text-brand-red">{service.data.testimonialAuthor.charAt(0)}</span>
+              </div>
+              <div class="text-left">
+                <p class="font-display text-sand font-medium">{service.data.testimonialAuthor}</p>
+              </div>
             </div>
-            <div class="text-left">
-              <p class="font-display text-sand font-medium">Alex V.</p>
-              <p class="text-sand-dim text-sm">Brooklyn, NY</p>
-            </div>
-          </div>
+          )}
           
           <a href="/reviews" class="inline-flex items-center gap-2 font-display text-brand-red hover:text-brand-red-light transition-colors group">
             <span>Read more reviews</span>
@@ -252,6 +255,7 @@ const faqs = service.data.faqs || defaultFAQs;
           </a>
         </div>
       </section>
+      )}
       
       <!-- FAQ Section -->
       <div class="mt-20 pt-10 border-t border-zinc-800">
