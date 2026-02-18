@@ -5,6 +5,13 @@ description: "Visualize who you're becoming. Paint that future identity onto you
 heroImage: "/images/services/hypnotic/hero.jpg"
 heroImages:
   - "/images/services/hypnotic/hero.jpg"
+galleryImages:
+  - "/images/services/hypnotic/gallery-1.jpg"
+  - "/images/services/hypnotic/gallery-2.jpg"
+  - "/images/services/hypnotic/gallery-3.jpg"
+  - "/images/services/hypnotic/gallery-4.jpg"
+  - "/images/services/hypnotic/gallery-5.jpg"
+  - "/images/services/hypnotic/gallery-6.jpg"
 category: "private"
 order: 2
 introTitle: "Embody Your Future Self"
@@ -33,13 +40,6 @@ packages:
       - "Full transformation support"
 testimonial: "Thank you so much for the wonderful and insightful experience!"
 testimonialAuthor: "O.R, New York, NY"
-galleryImages:
-  - "/images/gallery/glow/IMG_1051ds-web.jpg"
-  - "/images/gallery/glow/IMG_1368.jpg"
-  - "/images/gallery/glow/IMG_1375.jpg"
-  - "/images/gallery/glow/freedom.jpg"
-  - "/images/gallery/glow/glowing-skull.jpg"
-  - "/images/gallery/glow/floral-uv.jpg"
 ---
 
 ## About The Experience
