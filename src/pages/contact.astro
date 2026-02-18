@@ -1,14 +1,49 @@
 ---
-import PageLayout from '../layouts/PageLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactForm from '../components/ContactForm.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 ---
 
-<PageLayout title="Contact Us | DenArt" description="Get in touch with DenArt for your event needs">
-	<div class="max-w-4xl mx-auto py-12 px-6">
-		<h1 class="text-4xl font-bold text-gray-800 mb-6 text-center">Contact Us</h1>
-		<p class="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-			Have questions or want to book our services? Fill out the form below and we'll get back to you shortly.
-		</p>
-		<ContactForm />
-	</div>
-</PageLayout>
+<BaseLayout title="Contact DenArt" description="Get in touch with DenArt body painting studio in Brooklyn">
+	<main class="max-w-4xl mx-auto section-loose px-6">
+		<SectionHeader
+			title="Get in"
+			titleAccent="Touch"
+			subtitle="Have questions or want to book our services? We'd love to hear from you."
+			centered={true}
+			class="mb-12"
+		/>
+
+		<div class="grid md:grid-cols-2 gap-12 mb-16">
+			<div>
+				<h3 class="font-display text-2xl text-sand mb-6">Visit Us</h3>
+				<address class="not-italic space-y-3 text-gray-300">
+					<p>CoCreate Space</p>
+					<p>99 Kingsland Ave #102</p>
+					<p>Brooklyn, NY 11222</p>
+				</address>
+
+				<h3 class="font-display text-2xl text-sand mt-10 mb-6">Contact</h3>
+				<div class="space-y-3 text-gray-300">
+					<p>
+						<a href="tel:646-926-1202" class="text-brand-red hover:text-white transition-colors">
+							646-926-1202
+						</a>
+					</p>
+					<p>
+						<a href="mailto:info@denartny.com" class="text-brand-red hover:text-white transition-colors">
+							info@denartny.com
+						</a>
+					</p>
+				</div>
+
+				<h3 class="font-display text-2xl text-sand mt-10 mb-6">Hours</h3>
+				<p class="text-gray-300">By appointment only</p>
+			</div>
+
+			<div>
+				<ContactForm />
+			</div>
+		</div>
+	</main>
+</BaseLayout>
