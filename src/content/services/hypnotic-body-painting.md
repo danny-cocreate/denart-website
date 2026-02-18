@@ -13,7 +13,8 @@ packages:
   - name: "3 Sessions"
     price: "$499"
     includes:
-      - "Save $97"
+      - "Future-self trance journey with guided visualization and creative symbol work"
+      - "One 2-hour professional UV body painting session bringing your vision to life"
       - "Explore different facets of your transformation"
       - "Check-in calls between sessions"
   - name: "Single Session Experience"
@@ -26,11 +27,13 @@ packages:
   - name: "5 Sessions"
     price: "$750"
     includes:
-      - "Save $245"
+      - "Future-self trance journey with guided visualization and creative symbol work"
+      - "One 2-hour professional UV body painting session bringing your vision to life"
       - "Deep manifestation journey"
       - "Full transformation support"
 testimonial: "Thank you so much for the wonderful and insightful experience!"
 testimonialAuthor: "O.R, New York, NY"
+galleryImages: []
 ---
 
 ## About The Experience
