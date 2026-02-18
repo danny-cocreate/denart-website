@@ -1,0 +1,41 @@
+---
+import { fetchPretixEvents } from '../utils/pretix';
+
+interface Props {
+  eventSlug?: string;
+}
+
+const { eventSlug = 'uc-class-couples-2' } = Astro.props;
+
+// Fetch at build time
+const events = await fetchPretixEvents();
+const upcomingEvents = events.slice(0, 6);
+---
+
+<div class="pretix-schedule" data-events={JSON.stringify(upcomingEvents)}>
+  {upcomingEvents.length > 0 ? (
+    <div class="flex flex-col gap-2">
+      {upcomingEvents.map((event) => (
+        <a 
+          href={event.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group"
+        >
+          <span class="font-medium text-white">{event.dateStr}</span>
+          <span class="text-gray-400 group-hover:text-brand-red">{event.timeStr}</span>
+        </a>
+      ))}
+      <a 
+        href="https://tickets.denartny.com/denart-studio/uc-class-couples-2/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-gray-500 text-xs py-1 hover:text-brand-red transition-colors"
+      >
+        + View all dates
+      </a>
+    </div>
+  ) : (
+    <p class="text-gray-400 text-sm">Check calendar for upcoming dates</p>
+  )}
+</div>

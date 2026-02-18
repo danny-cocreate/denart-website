@@ -6,6 +6,7 @@ import SectionHeader from '../../components/SectionHeader.astro';
 import Card from '../../components/Card.astro';
 import BookingModal from '../../components/BookingModal.astro';
 import FAQ from '../../components/FAQ.astro';
+import PretixSchedule from '../../components/PretixSchedule.astro';
 
 export async function getStaticPaths() {
 	const classes = await getCollection('classes');
@@ -126,51 +127,7 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 							</svg>
 						</div>
 						<p class="text-xs uppercase tracking-widest text-gray-500 mb-3">Schedule</p>
-						{classItem.data.schedule && classItem.data.schedule.length > 0 ? (
-							<div class="flex flex-col gap-2">
-								{classItem.data.schedule.slice(0, 3).map((date) => {
-									const parts = date.split('|');
-									const time1 = parts[1]?.trim() || '';
-									const time2 = parts[2]?.trim() || '';
-									const formatTime = (t: string) => {
-										// t is like "6p" or "8:30p" or "6p - 8p"
-										if (t.includes('-')) {
-											const [start, end] = t.split('-').map(s => s.trim());
-											const formatSingle = (time: string) => {
-												const clean = time.replace('p', '');
-												const hasColon = clean.includes(':');
-												if (hasColon) {
-													const [hrs, mins] = clean.split(':').map(Number);
-													return `${hrs}:${mins.toString().padStart(2, '0')}pm`;
-												}
-												return `${parseInt(clean)}:00pm`;
-											};
-											return `${formatSingle(start)} - ${formatSingle(end)}`;
-										}
-										const clean = t.replace('p', '');
-										const hasColon = clean.includes(':');
-										if (hasColon) {
-											const [hrs, mins] = clean.split(':').map(Number);
-											return `${hrs}:${mins.toString().padStart(2, '0')}pm`;
-										}
-										return `${parseInt(clean)}:00pm`;
-									};
-									return (
-										<div class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 transition-all">
-											<span class="font-medium text-white">{parts[0]?.trim()}</span>
-											<span class="text-gray-400">{time2 ? `${formatTime(time1)} - ${formatTime(time2)}` : formatTime(time1)}</span>
-										</div>
-									);
-								})}
-								{classItem.data.schedule.length > 3 && (
-									<span class="text-gray-500 text-xs py-1">
-										+{classItem.data.schedule.length - 3} more dates
-									</span>
-								)}
-							</div>
-						) : (
-							<p class="text-gray-400 text-sm">Check calendar for upcoming dates</p>
-						)}
+						<PretixSchedule />
 					</div>
 					
 					<!-- Price & Ticket -->
