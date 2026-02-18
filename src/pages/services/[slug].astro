@@ -134,15 +134,13 @@ const faqs = service.data.faqs || defaultFAQs;
               </svg>
             </div>
             <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Price</p>
-            <div class="space-y-2">
-              {service.data.packages.map((pkg) => (
-                <div class="py-2 px-4 rounded-lg bg-zinc-800/50 border border-zinc-700">
-                  <p class="text-2xl font-bold text-white">{pkg.price}</p>
-                  <p class="text-gray-400 text-xs">{pkg.name}</p>
-                </div>
-              ))}
-            </div>
-            <p class="text-gray-500 text-xs mt-3">Rates for personal projects</p>
+            {service.data.packages[0] && (
+              <div class="py-2 px-4 rounded-lg bg-zinc-800/50 border border-zinc-700">
+                <p class="text-2xl font-bold text-white">{service.data.packages[0].price}</p>
+                <p class="text-gray-400 text-xs">{service.data.packages[0].name}</p>
+              </div>
+            )}
+            <p class="text-gray-400 text-xs mt-3">Need something different? <a href="/contact" class="text-brand-red hover:underline">Contact us</a> for a custom quote.</p>
           </div>
           
           <!-- Where / Contact -->
