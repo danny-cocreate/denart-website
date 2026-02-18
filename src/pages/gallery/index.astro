@@ -1,8 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import SectionHeader from '../../components/SectionHeader.astro';
-import { getEntry } from 'astro:content';
 
 const galleryItems = await getCollection('gallery');
 const eventItems = await getCollection('events');

@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import SectionHeader from '../../../components/SectionHeader.astro';
 
 const events = await getCollection('events');
 
@@ -26,10 +25,9 @@ const eventData = sortedEvents.map(event => ({
 	<!-- Hero Header -->
 	<section class="relative bg-gray-900 py-16 px-6 overflow-hidden">
 		<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(107,33,168,0.3)_0%,_transparent_60%)]"></div>
+		<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(212,175,55,0.1)_0%,_transparent_50%)]"></div>
 		<div class="max-w-4xl mx-auto relative z-10 text-center">
 			<nav class="text-sm text-gray-400 mb-4">
-				<a href="/" class="hover:text-white transition-colors">Home</a>
-				<span class="mx-2">/</span>
 				<a href="/gallery" class="hover:text-white transition-colors">Gallery</a>
 				<span class="mx-2">/</span>
 				<span class="text-white">Events & Projects</span>
@@ -45,7 +43,12 @@ const eventData = sortedEvents.map(event => ({
 	</section>
 
 	<main class="max-w-6xl mx-auto py-16 px-6">
-		<div class="mb-8">
+		<div class="flex justify-between items-center mb-8">
+			<nav class="text-sm text-gray-400">
+				<a href="/gallery" class="hover:text-white transition-colors">Gallery</a>
+				<span class="mx-2">/</span>
+				<span class="text-white">Events & Projects</span>
+			</nav>
 			<span class="text-gray-400 text-sm">{eventData.length} events</span>
 		</div>
 		
