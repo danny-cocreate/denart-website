@@ -140,7 +140,6 @@ const faqs = service.data.faqs || defaultFAQs;
                 <p class="text-gray-400 text-xs">{service.data.packages[0].name}</p>
               </div>
             )}
-            <p class="text-gray-400 text-xs mt-3">Need something different? <a href="/contact" class="text-brand-red hover:underline">Contact us</a> for a custom quote.</p>
           </div>
           
           <!-- Where / Contact -->
@@ -165,10 +164,11 @@ const faqs = service.data.faqs || defaultFAQs;
           </div>
         </div>
         
-        <div class="mt-8 flex justify-center">
+        <div class="mt-8 flex flex-col items-center gap-4">
           <button onclick="openScheduleModal()" class="px-8 py-4 bg-brand-red text-white rounded-xl font-semibold text-lg hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30">
             Schedule Session
           </button>
+          <p class="text-gray-400 text-sm">Need something different? <a href="/contact" class="text-brand-red hover:underline">Contact us</a> for a custom quote.</p>
         </div>
       </div>
     </section>
@@ -265,10 +265,11 @@ const faqs = service.data.faqs || defaultFAQs;
           subtitle="Contact us to schedule your body painting session. We'll help bring your vision to life."
           size="md"
         />
-        <div class="mt-8 flex justify-center">
+        <div class="mt-8 flex flex-col items-center gap-4">
           <button onclick="openScheduleModal()" class="px-8 py-4 bg-brand-red text-white rounded-xl font-semibold text-lg hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30">
             Schedule Session
           </button>
+          <p class="text-gray-400 text-sm">Need something different? <a href="/contact" class="text-brand-red hover:underline">Contact us</a> for a custom quote.</p>
         </div>
       </div>
     </div>
