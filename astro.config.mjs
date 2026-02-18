@@ -14,4 +14,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [sitemap()],
+  redirects: {
+    '/testimonials': '/reviews',
+  },
 });
