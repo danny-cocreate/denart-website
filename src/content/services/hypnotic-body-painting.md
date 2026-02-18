@@ -14,7 +14,7 @@ packages:
       - "Optional photo documentation (+$400)"
       - "Optional video documentation (+$500)"
   - name: "3 Sessions"
-    price: "$500"
+    price: "$499"
     includes:
       - "Save $97"
       - "Explore different facets of your transformation"
