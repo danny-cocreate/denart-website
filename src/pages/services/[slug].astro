@@ -135,11 +135,18 @@ const faqs = service.data.faqs || defaultFAQs;
             </div>
             <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Price</p>
             {service.data.packages[0] && (
-              <div class="py-2 px-4 rounded-lg bg-zinc-800/50 border border-zinc-700">
-                <p class="text-2xl font-bold text-white">{service.data.packages[0].price}</p>
-                <p class="text-gray-400 text-xs">{service.data.packages[0].name}</p>
-              </div>
+              <p class="text-3xl font-bold text-white mb-3">{service.data.packages[0].price}</p>
             )}
+            <button 
+              onclick="openScheduleModal()"
+              class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-red text-white rounded-lg font-semibold text-sm hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30"
+            >
+              Book Now
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </button>
+            <p class="text-gray-400 text-sm mt-4">Need something different? <a href="/contact" class="text-brand-red hover:underline">Contact us</a> for a custom quote.</p>
           </div>
           
           <!-- Where / Contact -->
@@ -162,16 +169,6 @@ const faqs = service.data.faqs || defaultFAQs;
               Get directions
             </a>
           </div>
-        </div>
-        
-        <div class="mt-8 flex flex-col items-center gap-3">
-          <button onclick="openScheduleModal()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-red text-white rounded-lg font-semibold text-sm hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30">
-            Book Now
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </button>
-          <p class="text-gray-400 text-sm">Need something different? <a href="/contact" class="text-brand-red hover:underline">Contact us</a> for a custom quote.</p>
         </div>
       </div>
     </section>
