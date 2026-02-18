@@ -82,6 +82,3 @@ This is a creative experience using hypnotic visualization and body art, not psy
 
 As your future self evolves, so does your embodiment practice. Multiple sessions allow you to explore different facets of your transformation and deepen your manifestation journey. Book multiple sessions upfront and save.
 
-## Inspirations from Past Sessions
-
-<!-- Gallery placeholder - images would be added here -->
