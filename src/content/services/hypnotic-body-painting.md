@@ -3,8 +3,6 @@ title: "Hypnotic Body Painting"
 tagline: "Your Body as Your Vision Board"
 description: "Visualize who you're becoming. Paint that future identity onto your present body. Leave with photographic proof of your evolution."
 heroImage: "/images/services/hypnotic/hero.jpg"
-heroImages:
-  - "/images/services/hypnotic/hero.jpg"
 galleryImages:
   - "/images/services/hypnotic/gallery-1.jpg"
   - "/images/services/hypnotic/gallery-2.jpg"

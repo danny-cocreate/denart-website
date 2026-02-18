@@ -55,7 +55,7 @@ const faqs = service.data.faqs || defaultFAQs;
           <img 
             src={img} 
             alt={service.data.title}
-            class="w-full h-full object-cover object-[center_-100px]"
+            class="w-full h-full object-cover"
           />
         ))}
         <div class="absolute inset-0 bg-black/60"></div>
@@ -65,7 +65,7 @@ const faqs = service.data.faqs || defaultFAQs;
         <img 
           src={service.data.heroImage} 
           alt={service.data.title}
-          class="absolute inset-0 w-full h-full object-cover object-[center_-100px]"
+          class="absolute inset-0 w-full h-full object-cover"
         />
         <div class="absolute inset-0 bg-black/60"></div>
       </>
@@ -297,7 +297,7 @@ const faqs = service.data.faqs || defaultFAQs;
       id="lightbox-img" 
       src="" 
       alt="Gallery image" 
-      class="max-w-full max-h-[90vh] object-contain rounded-lg"
+      class="max-w-full max-h-[90vh] object-fill rounded-lg"
     />
     <button 
       id="lightbox-next"
