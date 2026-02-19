@@ -11,11 +11,19 @@ const sortedEvents = events.sort((a, b) => {
   return dateB.getTime() - dateA.getTime();
 });
 
+// Helper to find first existing image (try multiple extensions)
+function getThumbnailSrc(src) {
+  if (!src) return '';
+  const base = src.replace('.avif', '');
+  // Default to jpg (most common), will fallback in browser
+  return base + '.jpg';
+}
+
 const eventData = sortedEvents.map(event => ({
   slug: event.slug,
   title: event.data.title,
   date: event.data.date,
-  src: event.data.images?.[0]?.src?.replace('.avif', '.png') || '',
+  src: getThumbnailSrc(event.data.images?.[0]?.src),
   alt: event.data.images?.[0]?.alt || event.data.title,
   count: event.data.images?.length || 0
 }));
@@ -56,6 +64,7 @@ const eventData = sortedEvents.map(event => ({
 								src={event.src} 
 								alt={event.alt}
 								class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+								onerror="this.onerror=null; this.src=this.src.replace('.jpg','.png')"
 							/>
 						) : (
 							<div class="w-full h-full bg-gray-800 flex items-center justify-center">
