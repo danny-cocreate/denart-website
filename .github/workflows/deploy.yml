@@ -31,6 +31,6 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
           SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
           HOST: ${{ secrets.HOSTINGER_HOST }}
-          USERNAME: ${{ secrets.HOSTINGER_USER }}
+          remoteUser: ${{ secrets.HOSTINGER_USER }}
           REMOTE_HOST: ${{ secrets.HOSTINGER_REMOTE_PATH }}
           SOURCE: 'dist/'
