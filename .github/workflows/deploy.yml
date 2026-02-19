@@ -23,6 +23,8 @@ jobs:
         run: npm ci
 
       - name: Build Astro
+        env:
+          PRETIX_API_TOKEN: ${{ secrets.PRETIX_API_TOKEN }}
         run: npm run build
 
       - name: Deploy to Hostinger
