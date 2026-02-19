@@ -11,13 +11,12 @@ const sortedEvents = events.sort((a, b) => {
   return dateB.getTime() - dateA.getTime();
 });
 
-// Use WEBP as default (best compatibility), with jpg fallback in browser
-// Note: AVIF disabled due to CDN not configured for image/avif MIME type
+// Use JPG as default (best compatibility), no fallback needed
 const eventData = sortedEvents.map(event => ({
   slug: event.slug,
   title: event.data.title,
   date: event.data.date,
-  src: event.data.images?.[0]?.src?.replace('.avif', '.webp') || '',
+  src: event.data.images?.[0]?.src?.replace('.avif', '.jpg')?.replace('.webp', '.jpg') || '',
   alt: event.data.images?.[0]?.alt || event.data.title,
   count: event.data.images?.length || 0
 }));
@@ -58,7 +57,6 @@ const eventData = sortedEvents.map(event => ({
 								src={event.src} 
 								alt={event.alt}
 								class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-								onerror="this.onerror=null; this.src=this.src.replace('.webp','.jpg')"
 							/>
 						) : (
 							<div class="w-full h-full bg-gray-800 flex items-center justify-center">
