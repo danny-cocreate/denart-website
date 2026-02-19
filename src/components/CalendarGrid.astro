@@ -7,13 +7,13 @@ interface Props {
 
 const { events } = Astro.props;
 
-// Group events by date
+// Group events by date - use dateStr which already has correct ET formatting
 function groupEventsByDate(events: PretixEvent[]): Map<string, PretixEvent[]> {
   const groups = new Map<string, PretixEvent[]>();
   
   for (const event of events) {
-    const date = new Date(event.rawDate);
-    const dateKey = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    // dateStr is already formatted in ET (e.g., "Fri, Feb 27")
+    const dateKey = event.dateStr;
     
     if (!groups.has(dateKey)) {
       groups.set(dateKey, []);
