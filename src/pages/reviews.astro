@@ -48,6 +48,15 @@ const photoTestimonials = [
   { name: "Danny (Google)", quote: "Danny is excellent. I came with a friend today who wanted to get painted and try something new. He was very friendly, helpful and really comforting overall. My friend was a little nervous, but he was open, not creepy, and made the whole process so fun. I highly recommend this place." },
   { name: "Anonymous (Google)", quote: "What great fun this was! My gf and I had an hour session with Danny. I had butterfly wings painted on my back and flowers and dragon fly painted on my stomach- it turned out amazing. I loved the pictures taken as well! Highly recommended" },
 ];
+
+const classTestimonials = [
+  { name: "Chris T.", quote: "DenArt Body Painting Studio was one of the most amazing, romantic experiences my wife and I have done together. The setting is small, intimate, and genuinely comfortable. Painting was an absolute blast. Danny was incredible and made the night. Pro tip: bring wine. It helped with those initial nerves and honestly elevated the whole experience." },
+  { name: "Ronald B.", quote: "WHAT a fantastic date night - one of the best ever! The UV Paint in the Dark for couples class was fantastic. Danny was fantastic. The atmosphere is very low key and fun. We'd highly recommend to any couple to try this. It's fun, creative, totally non-judgmental, relaxed and romantic." },
+  { name: "Stephanie M.", quote: "Such a fun date night! We received this as a gift and really enjoyed the experience together." },
+  { name: "Yajaira R.", quote: "Amazing Experience with a very talented artist, he listens carefully to what type of art you want to expose through his work and he will leave you impress by it. I would definitely recommend that you get a body painting session with Danny." },
+  { name: "Jessie W.", quote: "This was a surprise date night and it was perfect. 3-5 couples is a great size, allowing you to chat, share ideas, and laugh about your attempts to paint in the dark. I recommend bringing a bottle of wine. In the end, I was quite pleased with our creations!" },
+  { name: "Michelle R.", quote: "Really great idea and a really fun, offbeat Friday night activity. Danny is super cool, and his painting was amazing. Definitely bring wine. I would recommend." },
+];
 ---
 
 <BaseLayout title="Customer Reviews" description="Read what our clients say about their body painting experiences at DenArt studio.">
@@ -122,6 +131,39 @@ const photoTestimonials = [
 										<span class="w-8 h-px bg-brand-purple"></span>
 										<span class="text-base font-medium text-brand-purple">{displayName}</span>
 										{source !== 'Anonymous' && <span class="text-sand-muted text-sm ml-2">({source})</span>}
+									</footer>
+								</blockquote>
+							</article>
+						);
+					})}
+				</div>
+			</section>
+
+			<!-- Classes Reviews Section -->
+			<section>
+				<div class="mb-8">
+					<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-3">What They Say</p>
+					<h2 class="font-display text-3xl md:text-4xl text-sand">Classes & Workshops</h2>
+					<div class="w-16 h-px bg-brand-red mt-4"></div>
+				</div>
+				
+				<div class="grid md:grid-cols-2 gap-6">
+					{classTestimonials.map((item) => {
+						const isLongQuote = item.quote.length > 200;
+						return (
+							<article class="bg-void-light/30 rounded-xl p-6 border border-zinc-800/30 hover:border-zinc-700 transition-all duration-300">
+								<blockquote>
+									<p class={`text-sand/80 leading-relaxed mb-4 ${isLongQuote ? 'quote-text' : ''}`} data-full={item.quote}>
+										"{isLongQuote ? item.quote.slice(0, 200) + '...' : item.quote}"
+										{isLongQuote && (
+											<button class="read-more-btn text-brand-red hover:text-white text-sm font-medium ml-2 transition-colors underline underline-offset-2" data-expanded="false">
+												Read more
+											</button>
+										)}
+									</p>
+									<footer class="flex items-center gap-2">
+										<span class="w-8 h-px bg-brand-red"></span>
+										<span class="text-base font-medium text-brand-red">{item.name}</span>
 									</footer>
 								</blockquote>
 							</article>
