@@ -1,0 +1,63 @@
+---
+import type { PretixEvent } from '../utils/pretix';
+
+interface Props {
+  event: PretixEvent;
+  variant?: 'default' | 'compact' | 'withTime';
+  showArrow?: boolean;
+}
+
+const { event, variant = 'default', showArrow = true } = Astro.props;
+
+const date = new Date(event.rawDate);
+const month = date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+const day = date.getDate();
+
+// Event info mapping - could be passed as prop instead
+const eventInfo: Record<string, { name: string; subtitle: string }> = {
+  'uc-class-couples-2': { name: 'Paint in the Dark', subtitle: 'UV Body Painting Class for Couples' },
+  'speed-friending': { name: 'Speed Friending', subtitle: 'Body Painting for Singles' },
+  'uv-body-painting-workshop': { name: 'UV Workshop', subtitle: 'Body Painting Workshop' },
+  'private-sessions': { name: 'Private Session', subtitle: 'One-on-One Body Painting' },
+  'couples-body-painting': { name: 'Couples Body Painting', subtitle: 'Body Painting for Two' },
+};
+
+const info = eventInfo[event.slug] || { name: event.slug.replace(/-/g, ' '), subtitle: '' };
+---
+
+{variant === 'compact' ? (
+  <a href={event.pageUrl} class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group">
+    <span class="font-medium text-white">{event.dateStr}</span>
+    <span class="text-gray-400 group-hover:text-brand-red">{event.timeStr}</span>
+  </a>
+) : (
+  <a href={event.pageUrl} class="group block">
+    <div class="flex gap-4 md:gap-6 p-5 md:p-6 bg-void-light border border-zinc-800 rounded-2xl transition-all duration-300 hover:border-brand-red">
+      <!-- Date Block -->
+      <div class="flex-shrink-0 w-16 md:w-18 text-center py-2 bg-zinc-900/60 rounded-lg">
+        <span class="block font-display text-2xl md:text-3xl text-sand leading-none">{day}</span>
+        <span class="block text-xs text-brand-red uppercase tracking-wider mt-1">{month}</span>
+      </div>
+      
+      <!-- Content -->
+      <div class="flex-grow flex flex-col justify-center py-1 min-w-0">
+        <h3 class="font-display text-xl md:text-2xl text-sand mb-0.5">{info.name}</h3>
+        <p class="text-brand-red text-sm font-medium">{info.subtitle}</p>
+        {variant === 'withTime' && (
+          <p class="text-sand-muted text-sm mt-1">{event.timeStr}</p>
+        )}
+      </div>
+      
+      <!-- Arrow -->
+      {showArrow && (
+        <div class="flex-shrink-0 flex items-center">
+          <div class="w-10 h-10 flex items-center justify-center rounded-full border border-zinc-700 group-hover:border-brand-red/50 group-hover:bg-brand-red/10 transition-all duration-300">
+            <svg class="w-5 h-5 text-sand-muted group-hover:text-brand-red transition-colors duration-300 transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      )}
+    </div>
+  </a>
+)}

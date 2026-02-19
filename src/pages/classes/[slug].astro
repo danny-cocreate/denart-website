@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CTAButton from '../../components/CTAButton.astro';
@@ -21,6 +23,13 @@ const { Content } = await classItem.render();
 const galleryImages = classItem.data.galleryImages || [];
 const galleryVideo = classItem.data.galleryVideo || null;
 const showPrivateNote = classItem.data.showPrivateNote || false;
+
+// Map class slug to Pretix event slug
+const CLASS_TO_PRETIX_SLUG: Record<string, string> = {
+  'speed-friending': 'speed-friending',
+  'uv-body-paint-couples': 'uc-class-couples-2',
+};
+const pretixEventSlug = CLASS_TO_PRETIX_SLUG[classItem.slug] || 'uc-class-couples-2';
 const privateNote = classItem.data.privateNote || "";
 
 // FAQs data
@@ -89,7 +98,7 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 				{classItem.data.category === 'singles' ? 'Event' : 'Class'}
 			</span>
 			<h1 class="text-4xl md:text-6xl font-bold text-white mb-4">{classItem.data.title}</h1>
-			<p class="text-xl md:text-2xl text-gray-200 mb-4">{classItem.data.tagline}</p>
+			<p class="text-xl md:text-2xl text-gray-200 mb-4">UV Body Painting Class for Couples</p>
 		</div>
 	</section>
 
@@ -127,7 +136,7 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 							</svg>
 						</div>
 						<p class="text-xs uppercase tracking-widest text-gray-500 mb-3">Schedule</p>
-						<PretixSchedule />
+						<PretixSchedule eventSlug={pretixEventSlug} />
 					</div>
 					
 					<!-- Price & Ticket -->
@@ -145,15 +154,9 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 						) : (
 							<p class="text-3xl font-bold text-white mb-3">{classItem.data.price}</p>
 						)}
-						<button 
-							onclick="openBookingModal()"
-							class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-red text-white rounded-lg font-semibold text-sm hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30"
-						>
+						<CTAButton onclick="openBookingModal()" variant="primary" size="sm">
 							Book Now
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-							</svg>
-						</button>
+						</CTAButton>
 						<div class="mt-4 text-sm text-gray-400">
 							🎁 &nbsp;Gift Certificate Available <a href={classItem.data.ticketLink} target="_blank" class="text-brand-red hover:underline ml-1">Buy Now</a>
 						</div>
@@ -305,15 +308,9 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 			<section class="bg-void-light border-y border-zinc-800 py-16 mt-20">
 				<div class="text-center">
 					<h2 class="text-3xl font-display text-white mb-8">Ready to join this {classItem.data.category === 'singles' ? 'event' : 'class'}?</h2>
-				<button 
-					onclick="openBookingModal()"
-					class="inline-flex items-center gap-2 px-8 py-4 bg-brand-red text-white rounded-xl font-semibold text-lg hover:bg-brand-red-hover transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-red/30"
-				>
+				<CTAButton onclick="openBookingModal()" variant="primary" size="lg">
 					Book Now
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-					</svg>
-				</button>
+				</CTAButton>
 				<div class="mt-4 text-sm text-gray-400">
 					🎁 &nbsp;Gift Certificate Available <a href={classItem.data.ticketLink} target="_blank" class="text-brand-red hover:underline ml-1">Buy Now</a>
 				</div>
@@ -330,6 +327,7 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 		earlyBird={classItem.data.earlyBird}
 		ticketLink={classItem.data.ticketLink}
 		schedule={classItem.data.schedule || []}
+		pretixSlug={pretixEventSlug}
 	/>
 
 	<!-- Video Lightbox Modal -->

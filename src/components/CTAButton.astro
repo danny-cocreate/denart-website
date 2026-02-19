@@ -1,23 +1,27 @@
 ---
 export interface Props {
-  href: string;
+  href?: string;
+  onclick?: string;
   variant?: 'primary' | 'secondary';
   size?: 'sm' | 'md' | 'lg';
   class?: string;
   showArrow?: boolean;
+  type?: 'button' | 'submit';
 }
 
 const {
   href,
+  onclick,
   variant = 'primary',
   size = 'md',
   class: className = '',
   showArrow = false,
+  type = 'button',
 } = Astro.props;
 
 // Size configurations
 const sizeClasses = {
-  sm: 'px-6 py-3 text-sm',
+  sm: 'px-5 py-2.5 text-sm',
   md: 'px-8 py-4 text-base',
   lg: 'px-8 py-4 text-base',
 };
@@ -29,13 +33,31 @@ const variantClasses = {
 };
 
 const classes = `${variantClasses[variant]} ${className}`;
+
+// Determine if this is a link or button
+const isButton = onclick || !href;
 ---
 
-<a href={href} class={classes}>
-  <span class={variant === 'primary' ? 'text-white' : ''} style={variant === 'primary' ? 'color: white;' : ''}><slot /></span>
-  {showArrow && variant === 'primary' && (
-    <svg class="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-    </svg>
-  )}
-</a>
+{isButton ? (
+  <button 
+    type={type}
+    onclick={onclick}
+    class={classes}
+  >
+    <span class={variant === 'primary' ? 'text-white' : ''}><slot /></span>
+    {showArrow && variant === 'primary' && (
+      <svg class="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+      </svg>
+    )}
+  </button>
+) : (
+  <a href={href} class={classes}>
+    <span class={variant === 'primary' ? 'text-white' : ''}><slot /></span>
+    {showArrow && variant === 'primary' && (
+      <svg class="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+      </svg>
+    )}
+  </a>
+)}

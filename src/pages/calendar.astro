@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CalendarGrid from '../components/CalendarGrid.astro';
+import CTAButton from '../components/CTAButton.astro';
+import { fetchAllPretixEvents } from '../utils/pretix';
+
+// Fetch events at build time
+let events = [];
+let error = false;
+
+try {
+  events = await fetchAllPretixEvents();
+} catch (e) {
+  console.error('Failed to fetch Pretix events:', e);
+  error = true;
+}
+
+if (error) {
+  events = [];
+}
+---
+
+<BaseLayout 
+  title="Calendar — DenArt Body Painting Studio" 
+  description="View upcoming body painting classes, workshops, and events in Brooklyn, NYC. UV painting, couples classes, and more."
+>
+  <main class="bg-void min-h-screen">
+    <!-- Compact Hero -->
+    <section class="relative py-12 md:py-16 px-6 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-b from-void via-void/95 to-void"></div>
+      <div class="max-w-4xl mx-auto relative z-10 text-center">
+        <span class="inline-block px-3 py-1.5 bg-brand-red/10 text-brand-red rounded-full text-xs font-medium mb-4 border border-brand-red/30 uppercase tracking-wider">
+          Schedule
+        </span>
+        <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-sand mb-4 leading-tight">
+          Event <span class="italic font-normal">Calendar</span>
+        </h1>
+        <p class="text-sand-muted text-lg md:text-xl max-w-2xl mx-auto">
+          View all upcoming classes, workshops, and events. Select a date to book your spot.
+        </p>
+      </div>
+    </section>
+
+    <div class="max-w-5xl mx-auto px-6 pb-20">
+      {error && (
+        <div class="mb-8 p-4 bg-brand-red/10 border border-brand-red/30 rounded-xl">
+          <p class="text-sand text-sm"><span class="text-brand-red font-semibold">Note:</span> Unable to load live event data.</p>
+        </div>
+      )}
+      
+      <CalendarGrid events={events} />
+      
+      <!-- Bottom CTA -->
+      <div class="mt-16 text-center">
+        <p class="text-sand-muted mb-6">Want a private experience?</p>
+        <CTAButton href="/services/fine-art-body-painting" variant="secondary">Book Private Session</CTAButton>
+      </div>
+
+      <!-- Questions Section -->
+      <div class="mt-20 bg-void-light border border-zinc-800 rounded-2xl p-8 md:p-12 text-center">
+        <h2 class="font-display text-2xl md:text-3xl text-sand mb-4">Questions about events?</h2>
+        <p class="text-sand-muted mb-6 max-w-lg mx-auto">Can't find what you're looking for? Reach out and we'll help you find the perfect experience.</p>
+        <CTAButton href="/contact" variant="primary">Contact Us</CTAButton>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

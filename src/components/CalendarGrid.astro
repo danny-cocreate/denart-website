@@ -1,0 +1,98 @@
+---
+import type { PretixEvent } from '../utils/pretix';
+
+interface Props {
+  events: PretixEvent[];
+}
+
+const { events } = Astro.props;
+
+// Group events by date
+function groupEventsByDate(events: PretixEvent[]): Map<string, PretixEvent[]> {
+  const groups = new Map<string, PretixEvent[]>();
+  
+  for (const event of events) {
+    const date = new Date(event.rawDate);
+    const dateKey = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    
+    if (!groups.has(dateKey)) {
+      groups.set(dateKey, []);
+    }
+    groups.get(dateKey)!.push(event);
+  }
+  
+  return groups;
+}
+
+const eventsByDate = groupEventsByDate(events);
+
+// Event info mapping
+const eventInfo: Record<string, { name: string; subtitle: string }> = {
+  'uc-class-couples-2': { name: 'Paint in the Dark', subtitle: 'UV Body Painting Class for Couples' },
+  'speed-friending': { name: 'Speed Friending', subtitle: 'Body Painting for Singles' },
+  'uv-body-painting-workshop': { name: 'UV Workshop', subtitle: 'Body Painting Workshop' },
+  'private-sessions': { name: 'Private Session', subtitle: 'One-on-One Body Painting' },
+  'couples-body-painting': { name: 'Couples Body Painting', subtitle: 'Body Painting for Two' },
+};
+
+function getEventInfo(slug: string) {
+  return eventInfo[slug] || { name: slug.replace(/-/g, ' ').replace(/^uc /i, ''), subtitle: '' };
+}
+---
+
+<div class="calendar-wrapper">
+  {events.length > 0 ? (
+    <div class="grid gap-4">
+      {Array.from(eventsByDate.entries()).map(([dateStr, dayEvents]) => {
+        const info = getEventInfo(dayEvents[0].slug);
+        
+        return (
+          <article class="group bg-void-light border border-zinc-800 rounded-2xl overflow-hidden hover:border-brand-red transition-all duration-300">
+            <!-- Header: Date + Event Info -->
+            <div class="p-5 md:p-6 border-b border-zinc-800/50 flex items-center gap-4 md:gap-6">
+              <!-- Date Block -->
+              <div class="flex-shrink-0 w-16 md:w-18 text-center py-2 bg-zinc-900/60 rounded-lg">
+                <span class="block font-display text-2xl md:text-3xl text-sand leading-none">{dateStr.split(',')[1]?.trim()}</span>
+                <span class="block text-xs text-brand-red uppercase tracking-wider mt-1">{dateStr.split(',')[0]}</span>
+              </div>
+              
+              <!-- Event Details - vertically centered -->
+              <div class="flex-1 min-w-0 py-1">
+                <h3 class="font-display text-xl md:text-2xl text-sand mb-0.5">{info.name}</h3>
+                <p class="text-brand-red text-sm font-medium">{info.subtitle}</p>
+              </div>
+            </div>
+            
+            <!-- Time Slots -->
+            <div class="p-4 md:p-5">
+              <div class={`flex flex-wrap gap-3 ${dayEvents.length === 1 ? 'max-w-[400px]' : ''}`}>
+                {dayEvents.map((event) => (
+                  <a 
+                    href={event.pageUrl}
+                    class="inline-flex items-center justify-between gap-4 px-4 py-3 bg-zinc-900/60 border border-zinc-800 rounded-lg text-decoration-none hover:bg-brand-red hover:border-brand-red hover:-translate-y-0.5 transition-all duration-300 min-w-[180px] flex-1"
+                  >
+                    <span class="text-sand text-sm font-medium">{event.timeStr}</span>
+                    <span class="text-brand-red text-xs uppercase tracking-wider group-hover:text-white transition-colors">Select</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  ) : (
+    <div class="bg-void-light border border-zinc-800 rounded-2xl p-12 text-center">
+      <p class="text-sand-muted text-lg mb-2">No upcoming events scheduled.</p>
+      <p class="text-sand-muted/70 text-sm">Check back soon or browse our <a href="/services" class="text-brand-red hover:text-brand-red/80 transition-colors">services</a>.</p>
+    </div>
+  )}
+</div>
+
+<style>
+  .calendar-wrapper {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+</style>
