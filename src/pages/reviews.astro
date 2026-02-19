@@ -59,7 +59,7 @@ const photoTestimonials = [
 			<div class="w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto mt-8"></div>
 		</div>
 
-		<div class="grid md:grid-cols-2 gap-8">
+		<div class="space-y-16">
 			<!-- Event Reviews Section -->
 			<section>
 				<div class="mb-8">
@@ -68,31 +68,31 @@ const photoTestimonials = [
 					<div class="w-16 h-px bg-brand-red mt-4"></div>
 				</div>
 				
-				<div class="grid gap-6">
-				{eventTestimonials.map((item) => {
-					const { displayName, source } = getSource(item.name);
-					const isLongQuote = item.quote.length > 200;
-					return (
-						<article class="bg-void-light/30 rounded-xl p-6 border border-zinc-800/30 hover:border-zinc-700 transition-all duration-300">
-							<blockquote>
-								<p class={`text-sand/80 leading-relaxed mb-4 ${isLongQuote ? 'quote-text' : ''}`} data-full={item.quote}>
-									"{isLongQuote ? item.quote.slice(0, 200) + '...' : item.quote}"
-									{isLongQuote && (
-										<button class="read-more-btn text-brand-red hover:text-white text-sm font-medium ml-2 transition-colors underline underline-offset-2" data-expanded="false">
-											Read more
-										</button>
-									)}
-								</p>
-								<footer class="flex items-center gap-2">
-									<span class="w-8 h-px bg-brand-red"></span>
-									<span class="text-base font-medium text-brand-red">{displayName}</span>
-									{source !== 'Anonymous' && <span class="text-sand-muted text-sm ml-2">({source})</span>}
-								</footer>
-							</blockquote>
-						</article>
-					);
-				})}
-			</div>
+				<div class="grid md:grid-cols-2 gap-6">
+					{eventTestimonials.map((item) => {
+						const { displayName, source } = getSource(item.name);
+						const isLongQuote = item.quote.length > 200;
+						return (
+							<article class="bg-void-light/30 rounded-xl p-6 border border-zinc-800/30 hover:border-zinc-700 transition-all duration-300">
+								<blockquote>
+									<p class={`text-sand/80 leading-relaxed mb-4 ${isLongQuote ? 'quote-text' : ''}`} data-full={item.quote}>
+										"{isLongQuote ? item.quote.slice(0, 200) + '...' : item.quote}"
+										{isLongQuote && (
+											<button class="read-more-btn text-brand-red hover:text-white text-sm font-medium ml-2 transition-colors underline underline-offset-2" data-expanded="false">
+												Read more
+											</button>
+										)}
+									</p>
+									<footer class="flex items-center gap-2">
+										<span class="w-8 h-px bg-brand-red"></span>
+										<span class="text-base font-medium text-brand-red">{displayName}</span>
+										{source !== 'Anonymous' && <span class="text-sand-muted text-sm ml-2">({source})</span>}
+									</footer>
+								</blockquote>
+							</article>
+						);
+					})}
+				</div>
 			</section>
 
 			<!-- Photo Shoot Reviews Section -->
@@ -103,7 +103,7 @@ const photoTestimonials = [
 					<div class="w-16 h-px bg-brand-purple mt-4"></div>
 				</div>
 				
-				<div class="grid gap-6">
+				<div class="grid md:grid-cols-2 gap-6">
 					{photoTestimonials.map((item) => {
 						const { displayName, source } = getSource(item.name);
 						const isLongQuote = item.quote.length > 200;
