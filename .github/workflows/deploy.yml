@@ -26,11 +26,15 @@ jobs:
         run: npm run build
 
       - name: Deploy to Hostinger
-        uses: easingthemes/ssh-deploy@v4
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.HOSTINGER_HOST }}
-          REMOTE_USER: ${{ secrets.HOSTINGER_USER }}
-          REMOTE_PORT: 65002
-          TARGET: ${{ secrets.HOSTINGER_REMOTE_PATH }}
-          SOURCE: 'dist/'
+        env:
+          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          USER: ${{ secrets.HOSTINGER_USER }}
+          PORT: ${{ secrets.HOSTINGER_PORT }}
+          REMOTE_PATH: ${{ secrets.HOSTINGER_REMOTE_PATH }}
+        run: |
+          echo "$SSH_KEY" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          rsync -avz -e "ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no" \
+            dist/ \
+            $USER@$HOST:$REMOTE_PATH/
