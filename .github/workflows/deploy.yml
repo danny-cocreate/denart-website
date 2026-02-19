@@ -29,8 +29,8 @@ jobs:
         uses: easingthemes/ssh-deploy@v4
         with:
           SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
-          SSH_PORT: ${{ secrets.HOSTINGER_PORT }}
-          HOST: ${{ secrets.HOSTINGER_HOST }}
-          remoteUser: ${{ secrets.HOSTINGER_USER }}
-          REMOTE_HOST: ${{ secrets.HOSTINGER_REMOTE_PATH }}
+          REMOTE_HOST: ${{ secrets.HOSTINGER_HOST }}
+          REMOTE_USER: ${{ secrets.HOSTINGER_USER }}
+          REMOTE_PORT: ${{ secrets.HOSTINGER_PORT }}
+          TARGET: ${{ secrets.HOSTINGER_REMOTE_PATH }}
           SOURCE: 'dist/'
