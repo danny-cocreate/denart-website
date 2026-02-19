@@ -3,7 +3,7 @@ title: "Liloveve Art Opening"
 date: "2014-01-04"
 description: "Live body painting at Liloveve gallery art opening in Brooklyn, NY"
 images:
-  - src: "/images/events/liloveve-art-openning/Screen-Shot-2014-01-03-at-3.15.55-PM.png"
+  - src: "/images/events/liloveve-art-opening/Screen-Shot-2014-01-03-at-3.15.55-PM.png"
     alt: "Liloveve Art Opening"
 ---
 
