@@ -28,9 +28,6 @@ const models = [
   { name: 'Cam Fan', location: 'New York, NY' },
 ];
 
-const nyModels = models.filter(m => m.location.includes('New York'));
-const laModels = models.filter(m => m.location.includes('Los Angeles'));
-const otherModels = models.filter(m => !m.location.includes('New York') && !m.location.includes('Los Angeles'));
 ---
 
 <BaseLayout title="Body Painting Models | DenArt Studio" description="Meet our preferred body painting models at DenArt Studio. Professional models for fine art body painting in NYC and beyond.">
@@ -65,15 +62,15 @@ const otherModels = models.filter(m => !m.location.includes('New York') && !m.lo
       </div>
     </div>
 
-    <!-- New York Models -->
-    <section class="mb-16">
+    <!-- All Models - Unified List -->
+    <section>
       <div class="flex items-center gap-4 mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold" style="color: var(--color-text-primary);">New York, NY</h2>
+        <h2 class="text-2xl md:text-3xl font-bold" style="color: var(--color-text-primary);">All Models</h2>
         <div class="flex-grow h-px" style="background: var(--color-border);"></div>
-        <span class="text-sm" style="color: var(--color-text-muted);">{nyModels.length} models</span>
+        <span class="text-sm" style="color: var(--color-text-muted);">{models.length} models</span>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {nyModels.map((model) => (
+        {models.map((model) => (
           <div class="group p-6 rounded-xl border text-center transition-all hover:scale-105" style="background: var(--color-bg-dark); border-color: var(--color-border);">
             {model.image ? (
               <div class="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-2" style="border-color: var(--color-brand-purple);">
@@ -89,46 +86,6 @@ const otherModels = models.filter(m => !m.location.includes('New York') && !m.lo
                 <span class="text-2xl" style="color: var(--color-brand-gold);">{model.name.charAt(0)}</span>
               </div>
             )}
-            <h3 class="font-bold text-lg" style="color: var(--color-text-primary);">{model.name}</h3>
-            <p class="text-sm mt-1" style="color: var(--color-text-muted);">{model.location}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Los Angeles Models -->
-    <section class="mb-16">
-      <div class="flex items-center gap-4 mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold" style="color: var(--color-text-primary);">Los Angeles, CA</h2>
-        <div class="flex-grow h-px" style="background: var(--color-border);"></div>
-        <span class="text-sm" style="color: var(--color-text-muted);">{laModels.length} models</span>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {laModels.map((model) => (
-          <div class="group p-6 rounded-xl border text-center transition-all hover:scale-105" style="background: var(--color-bg-dark); border-color: var(--color-border);">
-            <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center border-2" style="background: rgba(204, 49, 49, 0.15); border-color: var(--color-brand-purple);">
-              <span class="text-2xl" style="color: var(--color-brand-gold);">{model.name.charAt(0)}</span>
-            </div>
-            <h3 class="font-bold text-lg" style="color: var(--color-text-primary);">{model.name}</h3>
-            <p class="text-sm mt-1" style="color: var(--color-text-muted);">{model.location}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Other Locations -->
-    <section class="mb-16">
-      <div class="flex items-center gap-4 mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold" style="color: var(--color-text-primary);">Other Locations</h2>
-        <div class="flex-grow h-px" style="background: var(--color-border);"></div>
-        <span class="text-sm" style="color: var(--color-text-muted);">{otherModels.length} models</span>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {otherModels.map((model) => (
-          <div class="group p-6 rounded-xl border text-center transition-all hover:scale-105" style="background: var(--color-bg-dark); border-color: var(--color-border);">
-            <div class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center border-2" style="background: rgba(204, 49, 49, 0.15); border-color: var(--color-brand-purple);">
-              <span class="text-2xl" style="color: var(--color-brand-gold);">{model.name.charAt(0)}</span>
-            </div>
             <h3 class="font-bold text-lg" style="color: var(--color-text-primary);">{model.name}</h3>
             <p class="text-sm mt-1" style="color: var(--color-text-muted);">{model.location}</p>
           </div>

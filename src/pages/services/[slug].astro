@@ -7,7 +7,6 @@ import PageHero from '../../components/PageHero.astro';
 import CTAButton from '../../components/CTAButton.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import FAQ from '../../components/FAQ.astro';
-import ScheduleModal from '../../components/ScheduleModal.astro';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -141,7 +140,7 @@ const faqs = service.data.faqs || defaultFAQs;
             {service.data.packages[0] && (
               <p class="text-3xl font-bold text-white mb-3">{service.data.packages[0].price}</p>
             )}
-            <CTAButton onclick="openScheduleModal()" variant="primary" size="sm">
+            <CTAButton href="/get-a-quote" variant="primary" size="sm">
               Get a Quote
             </CTAButton>
             <p class="text-gray-400 text-sm mt-4">Need something different?<br/><a href="/contact" class="text-brand-red hover:underline">Contact us</a> for a custom quote.</p>
@@ -167,6 +166,25 @@ const faqs = service.data.faqs || defaultFAQs;
               Get directions
             </a>
           </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Past Clients Logos -->
+  {service.data.pastClients && service.data.pastClients.length > 0 && (
+    <section class="bg-void-light border-y border-zinc-800 py-12">
+      <div class="max-w-6xl mx-auto px-6">
+        <h3 class="text-center text-sm uppercase tracking-widest text-gray-500 mb-8">Trusted by</h3>
+        <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+          <img src="/images/logos/logo-nbc.png" alt="NBC" class="h-8 md:h-10 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+          <img src="/images/logos/logo-today.png" alt="Today Show" class="h-8 md:h-10 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+          <img src="/images/logos/logo-carson.png" alt="Carson Daly" class="h-8 md:h-10 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+          <img src="/images/logos/logo-1stlook.png" alt="1st Look" class="h-8 md:h-10 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+          <img src="/images/logos/logo-makeup.png" alt="Makeup Artist Magazine" class="h-8 md:h-10 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+          <img src="/images/logos/logo-taff.png" alt="TAFF" class="h-8 md:h-10 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+          <img src="/images/logos/logo-rcti.png" alt="RCTI" class="h-8 md:h-10 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+          <img src="/images/logos/logo-prosieben.png" alt="ProSieben" class="h-8 md:h-10 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
         </div>
       </div>
     </section>
@@ -260,7 +278,7 @@ const faqs = service.data.faqs || defaultFAQs;
           size="md"
         />
         <div class="mt-8 flex flex-col items-center gap-3">
-          <CTAButton onclick="openScheduleModal()" variant="primary" size="sm">
+          <CTAButton href="/get-a-quote" variant="primary" size="sm">
             Get a Quote
           </CTAButton>
           <p class="text-gray-400 text-sm">Need something different?<br/><a href="/contact" class="text-brand-red hover:underline">Contact us</a> for a custom quote.</p>
@@ -351,6 +369,4 @@ const faqs = service.data.faqs || defaultFAQs;
       }, 5000);
     }
   </script>
-  
-  <ScheduleModal serviceName={service.slug} serviceTitle={service.data.title} />
 </ServiceLayout>

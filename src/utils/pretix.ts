@@ -7,9 +7,6 @@ const PRETIX_API_BASE = 'https://tickets.denartny.com/api/v1/organizers/denart-s
 const DEFAULT_EVENT_SLUGS = [
   'uc-class-couples-2',
   'speed-friending',
-  'uv-body-painting-workshop',
-  'private-sessions',
-  'couples-body-painting',
 ];
 
 // Default event slugs can be overridden via env var (comma-separated)

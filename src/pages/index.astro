@@ -24,7 +24,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 <BaseLayout title="DenArt Body Painting Studio — NYC Body Art & Classes" description="Body painting for everyone — classes, private photo sessions, maternity, events and more in Brooklyn, NYC. 2000+ bodies painted since 2011.">
 	<main class="bg-void">
 		<!-- Hero Section - Dramatic Full-bleed -->
-		<section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
+		<section class="relative min-h-[70vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden">
 			<!-- Background Image with Gradient Overlay -->
 			<div class="absolute inset-0">
 				<img 
@@ -41,29 +41,29 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 			<div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
 				<!-- Semi-transparent background for legibility -->
 				<div class="absolute inset-0 -mx-6 -my-4 bg-black/80 backdrop-blur-sm rounded-2xl"></div>
-				<div class="relative py-12">
+				<div class="relative py-8 md:py-10">
 				<!-- Subtitle -->
-				<p class="text-brand-red text-xs uppercase tracking-[0.3em] mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 200ms; animation-fill-mode: forwards;">
+				<p class="text-brand-red text-xs uppercase tracking-[0.3em] mb-4 opacity-0 animate-fade-in-up" style="animation-delay: 200ms; animation-fill-mode: forwards;">
 					Brooklyn Body Art Studio • Est. 2011
 				</p>
 
 				<!-- Main Headline -->
-				<h1 class="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-semibold text-sand mb-8 leading-[0.95] opacity-0 animate-fade-in-up" style="animation-delay: 400ms; animation-fill-mode: forwards;">
+				<h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-sand mb-6 leading-[0.95] opacity-0 animate-fade-in-up" style="animation-delay: 400ms; animation-fill-mode: forwards;">
 					Body painting<br/>
 					<span class="italic font-normal">for everyone</span>
 				</h1>
 
 				<!-- Decorative Line -->
-				<div class="w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto mb-8 opacity-0 animate-fade-in-up" style="animation-delay: 600ms; animation-fill-mode: forwards;"></div>
+				<div class="w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 600ms; animation-fill-mode: forwards;"></div>
 
 				<!-- Subtitle -->
-				<p class="text-lg md:text-xl text-sand/80 max-w-2xl mx-auto mb-12 leading-relaxed opacity-0 animate-fade-in-up" style="animation-delay: 700ms; animation-fill-mode: forwards;">
+				<p class="text-base md:text-lg text-sand/80 max-w-2xl mx-auto mb-8 leading-relaxed opacity-0 animate-fade-in-up" style="animation-delay: 700ms; animation-fill-mode: forwards;">
 					Classes, private photo sessions, maternity art, events, and more. 
 					Over 2000 bodies transformed into living canvas.
 				</p>
 
 				<!-- CTAs -->
-				<div class="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0 animate-fade-in-up" style="animation-delay: 900ms; animation-fill-mode: forwards;">
+				<div class="flex flex-col sm:flex-row gap-3 justify-center items-center opacity-0 animate-fade-in-up" style="animation-delay: 900ms; animation-fill-mode: forwards;">
 					<CTAButton href="/services/fine-art-body-painting" variant="primary">
 						Book Private Session
 					</CTAButton>
@@ -86,30 +86,30 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 		</section>
 
 		<!-- As Seen On - Dark Theme -->
-		<section class="py-16 px-6 bg-void border-b border-zinc-800">
+		<section class="py-10 px-6 bg-void border-b border-zinc-800">
 			<div class="max-w-full mx-auto text-center px-4">
-				<p class="text-center text-xs uppercase tracking-[0.3em] text-sand-muted mb-8">As Seen On</p>
-				<div class="flex flex-nowrap justify-center items-center gap-x-16 opacity-90 overflow-hidden">
-					<img src="/images/logos/logo-today.png" alt="TODAY Show" class="h-20 w-auto" />
-					<img src="/images/logos/logo-1stlook.png" alt="1st Look" class="h-20 w-auto" />
-					<img src="/images/logos/logo-nbc.png" alt="NBC" class="h-20 w-auto" />
-					<img src="/images/logos/logo-prosieben.png" alt="ProSieben" class="h-20 w-auto" />
-					<img src="/images/logos/logo-taff.png" alt="TAFF" class="h-20 w-auto" />
-					<img src="/images/logos/logo-rcti.png" alt="RCTI" class="h-20 w-auto" />
-					<img src="/images/logos/logo-carson.png" alt="Carson Daly" class="h-20 w-auto" />
-					<img src="/images/logos/logo-makeup.png" alt="Make Up Artist" class="h-20 w-auto" />
+				<p class="text-center text-xs uppercase tracking-[0.3em] text-sand-muted mb-6">As Seen On</p>
+				<div class="flex flex-wrap justify-center items-center gap-x-6 gap-y-4 opacity-90">
+					<img src="/images/logos/logo-today.png" alt="TODAY Show" class="h-10 w-auto" />
+					<img src="/images/logos/logo-1stlook.png" alt="1st Look" class="h-10 w-auto" />
+					<img src="/images/logos/logo-nbc.png" alt="NBC" class="h-10 w-auto" />
+					<img src="/images/logos/logo-prosieben.png" alt="ProSieben" class="h-10 w-auto" />
+					<img src="/images/logos/logo-taff.png" alt="TAFF" class="h-10 w-auto" />
+					<img src="/images/logos/logo-rcti.png" alt="RCTI" class="h-10 w-auto" />
+					<img src="/images/logos/logo-carson.png" alt="Carson Daly" class="h-10 w-auto" />
+					<img src="/images/logos/logo-makeup.png" alt="Make Up Artist" class="h-10 w-auto" />
 				</div>
 			</div>
 		</section>
 
 		<!-- Upcoming Events Section - Dark Theme -->
-		<section class="py-24 md:py-32 px-6 bg-void border-b border-zinc-800">
+		<section class="py-16 md:py-24 px-6 bg-void border-b border-zinc-800">
 			<div class="max-w-7xl mx-auto">
 				<div class="grid lg:grid-cols-12 gap-12 lg:gap-16">
 					<!-- Main Content -->
 					<div class="lg:col-span-8">
 						<!-- Section Header -->
-						<div class="mb-12">
+						<div class="mb-12 text-center md:text-left">
 							<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-4">What's Coming</p>
 							<h2 class="font-display text-4xl md:text-5xl text-sand">
 								Upcoming Classes<br/>& Events
@@ -143,20 +143,22 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 					<!-- Sidebar -->
 					<div class="lg:col-span-4 space-y-6">
 						<!-- Gift Certificates Card -->
-						<div class="p-6 bg-void-light border border-zinc-800 rounded-2xl relative overflow-hidden">
+						<div class="p-6 bg-void-light border border-zinc-800 rounded-2xl relative overflow-hidden text-center md:text-left">
 							<div class="absolute top-0 right-0 w-32 h-32 bg-brand-red/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
 							<p class="text-brand-red text-xs uppercase tracking-[0.2em] mb-2">Gift Ideas</p>
 							<h3 class="font-display text-3xl text-sand mb-3">Gift Certificates</h3>
 							<p class="text-sand-muted text-sm mb-6 leading-relaxed">Give the gift of transformation. Perfect for birthdays, anniversaries, or any special occasion.</p>
-							<a 
-								href="/get-a-quote" 
-								class="inline-flex items-center gap-2 font-display font-medium text-brand-red hover:text-brand-red-light transition-colors group"
-							>
-								<span>Purchase</span>
-								<svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-								</svg>
-							</a>
+							<div class="flex justify-center md:justify-start">
+								<a 
+									href="/get-a-quote" 
+									class="inline-flex items-center gap-2 font-display font-medium text-brand-red hover:text-brand-red-light transition-colors group"
+								>
+									<span>Purchase</span>
+									<svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+									</svg>
+								</a>
+							</div>
 						</div>
 
 						<!-- Stats Card -->
@@ -176,8 +178,8 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 						</div>
 
 						<!-- Social Impact Card -->
-						<div class="p-6 bg-void-light/30 border border-zinc-800/50 rounded-2xl">
-							<div class="flex items-start gap-3 mb-3">
+						<div class="p-6 bg-void-light/30 border border-zinc-800/50 rounded-2xl text-center md:text-left">
+							<div class="flex items-start justify-center md:justify-start gap-3 mb-3">
 								<svg class="w-5 h-5 text-brand-red flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
 									<path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
 								</svg>
@@ -193,25 +195,25 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 		</section>
 
 		<!-- Media Feature Section - Dark Theme -->
-		<section class="py-24 md:py-32 px-6 bg-void-light border-y border-zinc-800/50">
+		<section class="py-16 md:py-24 px-6 bg-void-light border-y border-zinc-800/50">
 			<div class="max-w-6xl mx-auto">
-				<div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+				<div class="grid md:grid-cols-2 gap-10 md:gap-20 items-center">
 					<!-- Content -->
-					<div>
+					<div class="text-center md:text-left">
 						<!-- Media Logos -->
-						<div class="flex flex-wrap gap-6 mb-8 opacity-60">
-							<img src="/images/media/today-show.jpg" alt="TODAY Show" class="h-8 md:h-10 w-auto invert brightness-0 filter" />
-							<img src="/images/media/1st-look.jpg" alt="1st Look" class="h-8 md:h-10 w-auto invert brightness-0 filter" />
-							<img src="/images/media/carson-daly.jpg" alt="Carson Daly" class="h-8 md:h-10 w-auto invert brightness-0 filter" />
-							<img src="/images/media/cbs2.jpg" alt="CBS" class="h-8 md:h-10 w-auto invert brightness-0 filter" />
+						<div class="flex flex-wrap justify-center md:justify-start gap-4 md:gap-6 mb-6 opacity-60">
+							<img src="/images/media/today-show.jpg" alt="TODAY Show" class="h-6 md:h-8 w-auto invert brightness-0 filter" />
+							<img src="/images/media/1st-look.jpg" alt="1st Look" class="h-6 md:h-8 w-auto invert brightness-0 filter" />
+							<img src="/images/media/carson-daly.jpg" alt="Carson Daly" class="h-6 md:h-8 w-auto invert brightness-0 filter" />
+							<img src="/images/media/cbs2.jpg" alt="CBS" class="h-6 md:h-8 w-auto invert brightness-0 filter" />
 						</div>
-						<h2 class="font-display text-4xl md:text-5xl text-sand mb-6">
+						<h2 class="font-display text-3xl md:text-5xl text-sand mb-4 md:mb-6">
 							On National TV
 						</h2>
-						<p class="text-sand-muted text-lg leading-relaxed mb-8">
+						<p class="text-sand-muted text-base md:text-lg leading-relaxed mb-6 md:mb-8">
 							See DenArt featured on national television. Our work has been showcased on NBC's TODAY Show, demonstrating the transformative power of body painting to millions.
 						</p>
-						<div class="flex flex-wrap gap-4">
+						<div class="flex flex-wrap gap-4 justify-center md:justify-start">
 							<a href="/in_media/today-show" class="inline-flex items-center gap-2 font-display font-medium text-brand-red hover:text-brand-red-light transition-colors group">
 								<span>Watch the segment</span>
 								<svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,8 +224,8 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 					</div>
 
 					<!-- Video -->
-					<div>
-						<div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/50 border border-zinc-800 group">
+					<div class="text-center md:text-left">
+						<div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/50 border border-zinc-800 group max-w-lg mx-auto md:mx-0">
 							<div class="aspect-video bg-void-lighter">
 								<iframe class="w-full h-full" src="https://player.vimeo.com/video/50959638?title=0&byline=0&portrait=0" title="DenArt on TODAY show" allowfullscreen></iframe>
 							</div>
@@ -242,7 +244,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 		</section>
 
 		<!-- Testimonial Section - Dark Theme -->
-		<section class="py-24 md:py-32 px-6 bg-void">
+		<section class="py-16 md:py-24 px-6 bg-void">
 			<div class="max-w-4xl mx-auto text-center">
 				<!-- Quote Icon -->
 				<svg class="w-12 h-12 text-brand-red/30 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
