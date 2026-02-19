@@ -9,9 +9,10 @@ interface Props {
 
 const { event, variant = 'default', showArrow = true } = Astro.props;
 
-const date = new Date(event.rawDate);
-const month = date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
-const day = date.getDate();
+// Parse dateStr which already has correct ET timezone formatting (e.g., "Fri, Feb 27")
+const dateStrParts = event.dateStr.split(', ')[1]?.split(' ') || [];
+const month = dateStrParts[0]?.toUpperCase() || '';
+const day = parseInt(dateStrParts[1]) || 0;
 
 // Event info mapping - could be passed as prop instead
 const eventInfo: Record<string, { name: string; subtitle: string }> = {
