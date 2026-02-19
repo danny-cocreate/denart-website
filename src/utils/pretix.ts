@@ -56,15 +56,18 @@ export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]
         const date = new Date(event.date_from);
         const endDate = event.date_to ? new Date(event.date_to) : null;
         
+        const tz = 'America/New_York';
+        
         // Format: "Fri, Feb 13"
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-        const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        const fullDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: tz });
+        const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz });
+        const fullDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: tz });
         
         const startTime = date.toLocaleTimeString('en-US', { 
           hour: 'numeric', 
           minute: '2-digit',
-          hour12: true 
+          hour12: true,
+          timeZone: tz 
         }).toLowerCase();
         
         let timeStr = startTime;
@@ -72,7 +75,8 @@ export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]
           const endTime = endDate.toLocaleTimeString('en-US', { 
             hour: 'numeric', 
             minute: '2-digit',
-            hour12: true 
+            hour12: true,
+            timeZone: tz 
           }).toLowerCase();
           timeStr = `${startTime} - ${endTime}`;
         }
