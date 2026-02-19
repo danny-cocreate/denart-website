@@ -60,8 +60,8 @@ const photoTestimonials = [
 			class="mb-16"
 		/>
 
-		<!-- Rating Summary - Prominent -->
-		<div class="text-center py-10 mb-16 bg-gradient-to-b from-white/5 to-transparent rounded-2xl border border-white/10">
+		<!-- Rating Summary -->
+		<div class="text-center py-10 mb-16 bg-void-light/30 rounded-xl border border-zinc-800/30">
 			<div class="flex items-center justify-center gap-2 mb-3">
 				<span class="text-4xl text-yellow-400">★</span>
 				<span class="text-4xl text-yellow-400">★</span>
@@ -70,34 +70,29 @@ const photoTestimonials = [
 				<span class="text-4xl text-yellow-400">★</span>
 			</div>
 			<p class="text-2xl font-semibold text-sand mb-2">5.0 Average Rating</p>
-			<p class="text-sand/60">Based on 60+ reviews from across the web</p>
+			<p class="text-sand-muted">Based on 60+ reviews from across the web</p>
 			
 			<div class="flex items-center justify-center gap-8 mt-8">
 				<a href="https://www.yelp.com/biz/denart-body-painting-studio-brooklyn-3" class="flex items-center gap-3 text-sand hover:text-white transition-colors group" target="_blank" rel="noopener">
 					<span class="px-3 py-1 bg-yelp text-white text-xs font-bold rounded">YELP</span>
 					<span class="text-xl font-bold">4.8</span>
-					<span class="text-sand/60 text-sm group-hover:text-sand/80 transition-colors">(38 reviews)</span>
+					<span class="text-sand-muted text-sm group-hover:text-sand/80 transition-colors">(38 reviews)</span>
 				</a>
 				<span class="text-white/20">|</span>
 				<a href="https://www.google.com/maps/search/denart+body+painting+brooklyn" class="flex items-center gap-3 text-sand hover:text-white transition-colors group" target="_blank" rel="noopener">
 					<span class="px-3 py-1 bg-google text-white text-xs font-bold rounded">GOOGLE</span>
 					<span class="text-xl font-bold">5.0</span>
-					<span class="text-sand/60 text-sm group-hover:text-sand/80 transition-colors">(25 reviews)</span>
+					<span class="text-sand-muted text-sm group-hover:text-sand/80 transition-colors">(25 reviews)</span>
 				</a>
 			</div>
 		</div>
 
 		<!-- Event Reviews Section -->
 		<div class="mb-20">
-			<!-- Enhanced Section Header -->
-			<div class="flex items-center gap-4 mb-10">
-				<div class="flex-1 h-px bg-gradient-to-r from-transparent to-white/20"></div>
-				<div class="flex items-center gap-3">
-					<span class="text-2xl">✨</span>
-					<h2 class="text-2xl font-display text-sand tracking-widest uppercase">Event Clients</h2>
-					<span class="text-2xl">✨</span>
-				</div>
-				<div class="flex-1 h-px bg-gradient-to-l from-transparent to-white/20"></div>
+			<div class="text-center mb-10">
+				<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-4">Client Love</p>
+				<h2 class="font-display text-4xl md:text-5xl text-sand">Event Clients</h2>
+				<div class="w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto mt-8"></div>
 			</div>
 			
 			<div class="grid gap-6">
@@ -105,20 +100,8 @@ const photoTestimonials = [
 					const { displayName, source } = getSource(item.name);
 					const isLongQuote = item.quote.length > 200;
 					return (
-						<article class="review-card bg-white/5 rounded-xl p-6 border border-white/10 relative group">
-							<!-- Source Badge -->
-							<div class="absolute top-4 right-4">
-								<span class={`source-badge px-2 py-1 text-xs font-semibold rounded ${
-									source === 'Yelp' ? 'bg-yelp/20 text-yelp border border-yelp/30' :
-									source === 'Google' ? 'bg-google/20 text-google border border-google/30' :
-									source === 'Groupon' ? 'bg-brand-purple/20 text-brand-purple border border-brand-purple/30' :
-									'bg-white/10 text-sand/60 border border-white/10'
-								}`}>
-									{source}
-								</span>
-							</div>
-							
-							<blockquote class="pr-16">
+						<article class="bg-void-light/30 rounded-xl p-6 border border-zinc-800/30 hover:border-zinc-700 transition-all duration-300">
+							<blockquote>
 								<p class={`text-sand/80 leading-relaxed mb-4 ${isLongQuote ? 'quote-text' : ''}`} data-full={item.quote}>
 									"{isLongQuote ? item.quote.slice(0, 200) + '...' : item.quote}"
 									{isLongQuote && (
@@ -130,6 +113,7 @@ const photoTestimonials = [
 								<footer class="flex items-center gap-2">
 									<span class="w-8 h-px bg-brand-red"></span>
 									<span class="text-base font-medium text-brand-red">{displayName}</span>
+									{source !== 'Anonymous' && <span class="text-sand-muted text-sm ml-2">({source})</span>}
 								</footer>
 							</blockquote>
 						</article>
@@ -140,15 +124,10 @@ const photoTestimonials = [
 
 		<!-- Photo Shoot Reviews Section -->
 		<div class="mb-20">
-			<!-- Enhanced Section Header -->
-			<div class="flex items-center gap-4 mb-10">
-				<div class="flex-1 h-px bg-gradient-to-r from-transparent to-white/20"></div>
-				<div class="flex items-center gap-3">
-					<span class="text-2xl">📸</span>
-					<h2 class="text-2xl font-display text-sand tracking-widest uppercase">Photo Shoot Clients</h2>
-					<span class="text-2xl">📸</span>
-				</div>
-				<div class="flex-1 h-px bg-gradient-to-l from-transparent to-white/20"></div>
+			<div class="text-center mb-10">
+				<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-4">Client Love</p>
+				<h2 class="font-display text-4xl md:text-5xl text-sand">Photo Shoot Clients</h2>
+				<div class="w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto mt-8"></div>
 			</div>
 			
 			<div class="grid gap-6">
@@ -156,20 +135,8 @@ const photoTestimonials = [
 					const { displayName, source } = getSource(item.name);
 					const isLongQuote = item.quote.length > 200;
 					return (
-						<article class="review-card bg-white/5 rounded-xl p-6 border border-white/10 relative group">
-							<!-- Source Badge -->
-							<div class="absolute top-4 right-4">
-								<span class={`source-badge px-2 py-1 text-xs font-semibold rounded ${
-									source === 'Yelp' ? 'bg-yelp/20 text-yelp border border-yelp/30' :
-									source === 'Google' ? 'bg-google/20 text-google border border-google/30' :
-									source === 'Groupon' ? 'bg-brand-purple/20 text-brand-purple border border-brand-purple/30' :
-									'bg-white/10 text-sand/60 border border-white/10'
-								}`}>
-									{source}
-								</span>
-							</div>
-							
-							<blockquote class="pr-16">
+						<article class="bg-void-light/30 rounded-xl p-6 border border-zinc-800/30 hover:border-zinc-700 transition-all duration-300">
+							<blockquote>
 								<p class={`text-sand/80 leading-relaxed mb-4 ${isLongQuote ? 'quote-text' : ''}`} data-full={item.quote}>
 									"{isLongQuote ? item.quote.slice(0, 200) + '...' : item.quote}"
 									{isLongQuote && (
@@ -181,6 +148,7 @@ const photoTestimonials = [
 								<footer class="flex items-center gap-2">
 									<span class="w-8 h-px bg-brand-purple"></span>
 									<span class="text-base font-medium text-brand-purple">{displayName}</span>
+									{source !== 'Anonymous' && <span class="text-sand-muted text-sm ml-2">({source})</span>}
 								</footer>
 							</blockquote>
 						</article>
@@ -192,27 +160,6 @@ const photoTestimonials = [
 </BaseLayout>
 
 <style>
-	/* Card hover effects */
-	.review-card {
-		transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-	}
-	
-	.review-card:hover {
-		transform: translateY(-4px);
-		border-color: var(--hover-color, rgba(255, 255, 255, 0.2));
-		box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--hover-color, rgba(255, 255, 255, 0.1));
-	}
-	
-	/* Event cards - red glow on hover */
-	.review-card:nth-child(odd):hover {
-		--hover-color: rgba(220, 38, 38, 0.3);
-	}
-	
-	/* Photo shoot cards - purple glow on hover */
-	.review-card:nth-child(even):hover {
-		--hover-color: rgba(147, 51, 234, 0.3);
-	}
-	
 	/* Read more button */
 	.read-more-btn {
 		cursor: pointer;
@@ -225,27 +172,6 @@ const photoTestimonials = [
 	/* Link transitions */
 	a {
 		transition: color 0.2s ease;
-	}
-	
-	/* Source badge styling */
-	.source-badge {
-		transition: background-color 0.2s ease, color 0.2s ease;
-	}
-	
-	@media (max-width: 640px) {
-		.review-card blockquote {
-			padding-right: 0;
-		}
-		
-		.review-card .source-badge {
-			position: static;
-			display: inline-block;
-			margin-bottom: 0.5rem;
-		}
-		
-		.review-card blockquote {
-			padding-top: 1.5rem;
-		}
 	}
 </style>
 
