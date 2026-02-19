@@ -51,51 +51,24 @@ const photoTestimonials = [
 ---
 
 <BaseLayout title="Customer Reviews" description="Read what our clients say about their body painting experiences at DenArt studio.">
-	<main class="max-w-4xl mx-auto section-loose px-6">
-		<SectionHeader
-			title="Customer"
-			titleAccent="Reviews"
-			subtitle="Hear from our happy 'canvases' about their body painting experiences."
-			centered={true}
-			class="mb-16"
-		/>
-
-		<!-- Rating Summary -->
-		<div class="text-center py-10 mb-16 bg-void-light/30 rounded-xl border border-zinc-800/30">
-			<div class="flex items-center justify-center gap-2 mb-3">
-				<span class="text-4xl text-yellow-400">★</span>
-				<span class="text-4xl text-yellow-400">★</span>
-				<span class="text-4xl text-yellow-400">★</span>
-				<span class="text-4xl text-yellow-400">★</span>
-				<span class="text-4xl text-yellow-400">★</span>
-			</div>
-			<p class="text-2xl font-semibold text-sand mb-2">5.0 Average Rating</p>
-			<p class="text-sand-muted">Based on 60+ reviews from across the web</p>
-			
-			<div class="flex items-center justify-center gap-8 mt-8">
-				<a href="https://www.yelp.com/biz/denart-body-painting-studio-brooklyn-3" class="flex items-center gap-3 text-sand hover:text-white transition-colors group" target="_blank" rel="noopener">
-					<span class="px-3 py-1 bg-yelp text-white text-xs font-bold rounded">YELP</span>
-					<span class="text-xl font-bold">4.8</span>
-					<span class="text-sand-muted text-sm group-hover:text-sand/80 transition-colors">(38 reviews)</span>
-				</a>
-				<span class="text-white/20">|</span>
-				<a href="https://www.google.com/maps/search/denart+body+painting+brooklyn" class="flex items-center gap-3 text-sand hover:text-white transition-colors group" target="_blank" rel="noopener">
-					<span class="px-3 py-1 bg-google text-white text-xs font-bold rounded">GOOGLE</span>
-					<span class="text-xl font-bold">5.0</span>
-					<span class="text-sand-muted text-sm group-hover:text-sand/80 transition-colors">(25 reviews)</span>
-				</a>
-			</div>
+	<main class="max-w-6xl mx-auto section-loose px-6">
+		<div class="text-center mb-16">
+			<p class="text-brand-red text-xs uppercase tracking-[0.3em] mb-4">Testimonials</p>
+			<h1 class="font-display text-5xl md:text-6xl lg:text-7xl text-sand mb-6">Customer Reviews</h1>
+			<p class="text-sand-muted text-lg max-w-2xl mx-auto">Hear from our happy 'canvases' about their body painting experiences.</p>
+			<div class="w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto mt-8"></div>
 		</div>
 
-		<!-- Event Reviews Section -->
-		<div class="mb-20">
-			<div class="text-center mb-10">
-				<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-4">Client Love</p>
-				<h2 class="font-display text-4xl md:text-5xl text-sand">Event Clients</h2>
-				<div class="w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto mt-8"></div>
-			</div>
-			
-			<div class="grid gap-6">
+		<div class="grid md:grid-cols-2 gap-8">
+			<!-- Event Reviews Section -->
+			<section>
+				<div class="mb-8">
+					<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-3">What They Say</p>
+					<h2 class="font-display text-3xl md:text-4xl text-sand">Event Clients</h2>
+					<div class="w-16 h-px bg-brand-red mt-4"></div>
+				</div>
+				
+				<div class="grid gap-6">
 				{eventTestimonials.map((item) => {
 					const { displayName, source } = getSource(item.name);
 					const isLongQuote = item.quote.length > 200;
@@ -120,41 +93,42 @@ const photoTestimonials = [
 					);
 				})}
 			</div>
-		</div>
+			</section>
 
-		<!-- Photo Shoot Reviews Section -->
-		<div class="mb-20">
-			<div class="text-center mb-10">
-				<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-4">Client Love</p>
-				<h2 class="font-display text-4xl md:text-5xl text-sand">Photo Shoot Clients</h2>
-				<div class="w-24 h-px bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto mt-8"></div>
-			</div>
-			
-			<div class="grid gap-6">
-				{photoTestimonials.map((item) => {
-					const { displayName, source } = getSource(item.name);
-					const isLongQuote = item.quote.length > 200;
-					return (
-						<article class="bg-void-light/30 rounded-xl p-6 border border-zinc-800/30 hover:border-zinc-700 transition-all duration-300">
-							<blockquote>
-								<p class={`text-sand/80 leading-relaxed mb-4 ${isLongQuote ? 'quote-text' : ''}`} data-full={item.quote}>
-									"{isLongQuote ? item.quote.slice(0, 200) + '...' : item.quote}"
-									{isLongQuote && (
-										<button class="read-more-btn text-brand-red hover:text-white text-sm font-medium ml-2 transition-colors underline underline-offset-2" data-expanded="false">
-											Read more
-										</button>
-									)}
-								</p>
-								<footer class="flex items-center gap-2">
-									<span class="w-8 h-px bg-brand-purple"></span>
-									<span class="text-base font-medium text-brand-purple">{displayName}</span>
-									{source !== 'Anonymous' && <span class="text-sand-muted text-sm ml-2">({source})</span>}
-								</footer>
-							</blockquote>
-						</article>
-					);
-				})}
-			</div>
+			<!-- Photo Shoot Reviews Section -->
+			<section>
+				<div class="mb-8">
+					<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-3">What They Say</p>
+					<h2 class="font-display text-3xl md:text-4xl text-sand">Photo Shoot Clients</h2>
+					<div class="w-16 h-px bg-brand-purple mt-4"></div>
+				</div>
+				
+				<div class="grid gap-6">
+					{photoTestimonials.map((item) => {
+						const { displayName, source } = getSource(item.name);
+						const isLongQuote = item.quote.length > 200;
+						return (
+							<article class="bg-void-light/30 rounded-xl p-6 border border-zinc-800/30 hover:border-zinc-700 transition-all duration-300">
+								<blockquote>
+									<p class={`text-sand/80 leading-relaxed mb-4 ${isLongQuote ? 'quote-text' : ''}`} data-full={item.quote}>
+										"{isLongQuote ? item.quote.slice(0, 200) + '...' : item.quote}"
+										{isLongQuote && (
+											<button class="read-more-btn text-brand-red hover:text-white text-sm font-medium ml-2 transition-colors underline underline-offset-2" data-expanded="false">
+												Read more
+											</button>
+										)}
+									</p>
+									<footer class="flex items-center gap-2">
+										<span class="w-8 h-px bg-brand-purple"></span>
+										<span class="text-base font-medium text-brand-purple">{displayName}</span>
+										{source !== 'Anonymous' && <span class="text-sand-muted text-sm ml-2">({source})</span>}
+									</footer>
+								</blockquote>
+							</article>
+						);
+					})}
+				</div>
+			</section>
 		</div>
 	</main>
 </BaseLayout>
