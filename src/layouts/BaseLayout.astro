@@ -105,15 +105,14 @@ const navLinks = [
 						<li class={link.hasDropdown ? 'relative group' : ''}>
 							{link.hasDropdown ? (
 								<button 
-									class="flex items-center gap-1.5 font-display text-sand hover:!text-brand-red transition-colors duration-200 py-2 relative group cursor-pointer"
+									class="font-display text-sand hover:text-brand-red transition-colors duration-200 py-2 cursor-pointer"
 									onclick="const menu = this.nextElementSibling; const arrow = this.querySelector('svg'); menu.classList.toggle('hidden'); arrow.classList.toggle('rotate-180');"
 									aria-expanded="false"
 									aria-haspopup="true"
 								>
-									{link.label}
-									<span class="absolute bottom-0 left-0 w-0 h-px bg-brand-red transition-all duration-300 group-hover:w-full"></span>
+									<span class="relative">{link.label}</span>
 									<svg 
-										class="w-4 h-4 transition-transform duration-200" 
+										class="w-4 h-4 inline transition-transform duration-200 ml-1" 
 										fill="none" 
 										stroke="currentColor" 
 										viewBox="0 0 24 24"
@@ -136,12 +135,8 @@ const navLinks = [
 									))}
 								</ul>
 							) : (
-								<a 
-									href={link.href} 
-									class="font-display text-sand hover:text-brand-red transition-colors duration-200 py-2 relative group"
-								>
+								<a href={link.href} class="font-display text-sand hover:text-brand-red transition-colors duration-200 py-2">
 									{link.label}
-									<span class="absolute bottom-0 left-0 w-0 h-px bg-brand-red transition-all duration-300 group-hover:w-full"></span>
 								</a>
 							)}
 						</li>
