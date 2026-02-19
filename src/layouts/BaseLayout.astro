@@ -105,12 +105,13 @@ const navLinks = [
 						<li class={link.hasDropdown ? 'relative group' : ''}>
 							{link.hasDropdown ? (
 								<button 
-									class="font-display text-sand hover:text-brand-red transition-colors duration-200 py-2 cursor-pointer"
+									class="font-display hover:text-brand-red transition-colors duration-200 py-2 cursor-pointer"
+									style="color: #d4c4a8;"
 									onclick="const menu = this.nextElementSibling; const arrow = this.querySelector('svg'); menu.classList.toggle('hidden'); arrow.classList.toggle('rotate-180');"
 									aria-expanded="false"
 									aria-haspopup="true"
 								>
-									<span class="relative" style="color: inherit;">{link.label}</span>
+									<span class="relative">{link.label}</span>
 									<svg 
 										class="w-4 h-4 inline transition-transform duration-200 ml-1" 
 										fill="none" 
