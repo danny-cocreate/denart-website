@@ -30,11 +30,15 @@ jobs:
           SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
-          PORT: ${{ secrets.HOSTINGER_PORT }}
+          PORT: "65002"
           REMOTE_PATH: ${{ secrets.HOSTINGER_REMOTE_PATH }}
         run: |
+          echo "HOST=$HOST"
+          echo "USER=$USER"
+          echo "PORT=$PORT"
+          echo "REMOTE_PATH=$REMOTE_PATH"
           echo "$SSH_KEY" > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
-          rsync -avz -e "ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no" \
+          rsync -avz -e "ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no -v" \
             dist/ \
             $USER@$HOST:$REMOTE_PATH/
