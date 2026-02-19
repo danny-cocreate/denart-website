@@ -33,7 +33,7 @@ const images = event.data.images || [];
             <source srcset={img.src} type="image/avif" />
             <source srcset={img.src.replace('.avif', '.webp')} type="image/webp" />
             <img 
-              src={img.src.replace(".avif", ".png")')} 
+              src={img.src.replace(".avif", ".png")} 
               alt={img.alt || event.data.title} 
               class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 cursor-pointer"
               loading={index < 4 ? "eager" : "lazy"}
