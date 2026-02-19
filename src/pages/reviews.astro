@@ -2,7 +2,21 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 
-const eventTestimonials = [
+interface Testimonial {
+  name: string;
+  quote: string;
+}
+
+// Extract source from name field (e.g., "Name (Yelp)" -> "Yelp")
+function extractSource(name: string): { displayName: string; source: string } {
+  const match = name.match(/^(.+?)\s*\((.+?)\)$/);
+  if (match) {
+    return { displayName: match[1].trim(), source: match[2].trim() };
+  }
+  return { displayName: name, source: 'Google' };
+}
+
+const eventTestimonials: Testimonial[] = [
   { name: "Camoy Briscoe", quote: "Thanks again for doing the job last minute. The girls looked amazing!!" },
   { name: "Howard Haber", quote: "Spectacular! You and your models are both classy and amazing! So perfect! You definately made a few fans but I lead the pack. Just amazing. Thank you!" },
   { name: "Shallini M (Yelp)", quote: "Danny is a very talented painter who painted two models at my husband's 40th Birthday party. He put a great deal of thought and care into the details. Everyone at the party loved watching him paint. Danny accomodated a special request of ours to paint a famous piece of art that he had not done before which came out amazing." },
@@ -12,7 +26,7 @@ const eventTestimonials = [
   { name: "Samantha A, Kobo", quote: "Thanks so much for helping make our event special, you did a great job!" },
 ];
 
-const photoTestimonials = [
+const photoTestimonials: Testimonial[] = [
   { name: "Michelle, Google Places", quote: "You simply must experience this!!! Like the rater below… I saw this offer on Living Social… except that I didn't hesitate to grab it for even one second, and I am SO glad that I was able to experience this opportunity. I picked the Persistence of Memory piece to be painted on my front and Gulya truly transformed me into a work of art. She was personable, skilled and did an incredible job with the painting… she knew just how to customize the original painting to my brown skin tone and body type." },
   { name: "Nic, Google Places", quote: "AWESOME time for the ticklish… TOTALLY recommend this for anyone looking for something outrageous to do! Not something that I had ever thought about but when the offer came up on LivingSocial, I grabbed it! I am a plus size woman and the dragon came out fierce. Those that I showed couldn't tell if it was my front or my backside. Danny was a pleasure to work with, and kept me at ease the entire time." },
   { name: "Jennifer, Google Places", quote: "REALLY cool experience… I would recommend to anyone who is looking to just live and experience interesting things in life… you only live once so why not do interesting and fun things! I was very comfortable, nothing to be nervous or self conscious about… I am a photographer so I was able to contribute to the photo session as well, which was a lot of fun…" },
@@ -39,6 +53,19 @@ const photoTestimonials = [
   { name: "Danny (Google)", quote: "Danny is excellent. I came with a friend today who wanted to get painted and try something new. He was very friendly, helpful and really comforting overall. My friend was a little nervous, but he was open, not creepy, and made the whole process so fun. I highly recommend this place." },
   { name: "Anonymous (Google)", quote: "What great fun this was! My gf and I had an hour session with Danny. I had butterfly wings painted on my back and flowers and dragon fly painted on my stomach- it turned out amazing. I loved the pictures taken as well! Highly recommended" },
 ];
+
+// Process testimonials to add source badges
+const processedEventTestimonials = eventTestimonials.map(t => ({
+  ...t,
+  ...extractSource(t.name)
+}));
+
+const processedPhotoTestimonials = photoTestimonials.map(t => ({
+  ...t,
+  ...extractSource(t.name)
+}));
+
+const TRUNCATE_LENGTH = 200;
 ---
 
 <BaseLayout title="Customer Reviews" description="Read what our clients say about their body painting experiences at DenArt studio.">
@@ -51,22 +78,86 @@ const photoTestimonials = [
 			class="mb-16"
 		/>
 
+		<!-- Rating Summary - Prominent Placement -->
+		<div class="mb-20 bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/10">
+			<div class="text-center mb-8">
+				<h2 class="text-3xl md:text-4xl font-display text-sand mb-4">What Our Clients Say</h2>
+				<p class="text-sand/60">Reviews from across the web</p>
+			</div>
+			
+			<div class="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+				<a href="https://www.yelp.com/biz/denart-body-painting-studio-brooklyn-3" 
+				   class="flex flex-col items-center gap-2 group p-4 rounded-xl hover:bg-white/5 transition-all duration-300" 
+				   target="_blank" rel="noopener">
+					<div class="flex gap-0.5">
+						<span class="text-3xl text-yellow-400 drop-shadow-lg">★</span>
+						<span class="text-3xl text-yellow-400 drop-shadow-lg">★</span>
+						<span class="text-3xl text-yellow-400 drop-shadow-lg">★</span>
+						<span class="text-3xl text-yellow-400 drop-shadow-lg">★</span>
+						<span class="text-3xl text-yellow-400/70 drop-shadow-lg">★</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<span class="text-2xl font-bold text-sand group-hover:text-white transition-colors">4.8</span>
+						<span class="text-sand/60 text-sm">(38 Yelp reviews)</span>
+					</div>
+				</a>
+				
+				<div class="w-px h-16 bg-white/20 hidden md:block"></div>
+				
+				<a href="https://www.google.com/maps/search/denart+body+painting+brooklyn" 
+				   class="flex flex-col items-center gap-2 group p-4 rounded-xl hover:bg-white/5 transition-all duration-300" 
+				   target="_blank" rel="noopener">
+					<div class="flex gap-0.5">
+						<span class="text-3xl text-yellow-400 drop-shadow-lg">★</span>
+						<span class="text-3xl text-yellow-400 drop-shadow-lg">★</span>
+						<span class="text-3xl text-yellow-400 drop-shadow-lg">★</span>
+						<span class="text-3xl text-yellow-400 drop-shadow-lg">★</span>
+						<span class="text-3xl text-yellow-400 drop-shadow-lg">★</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<span class="text-2xl font-bold text-sand group-hover:text-white transition-colors">5.0</span>
+						<span class="text-sand/60 text-sm">(Google reviews)</span>
+					</div>
+				</a>
+			</div>
+		</div>
+
 		<!-- Event Reviews Section -->
 		<div class="mb-20">
-			<div class="flex items-center gap-4 mb-10">
-				<div class="flex-1 h-px bg-gradient-to-r from-transparent to-white/20"></div>
-				<h2 class="text-xl font-display text-sand tracking-widest uppercase">Event Clients</h2>
-				<div class="flex-1 h-px bg-gradient-to-l from-transparent to-white/20"></div>
+			<div class="text-center mb-10">
+				<div class="flex items-center justify-center gap-4 mb-6">
+					<div class="h-px w-16 bg-gradient-to-r from-transparent to-brand-red/50"></div>
+					<span class="text-brand-red text-xl">✦</span>
+					<div class="h-px w-16 bg-gradient-to-l from-transparent to-brand-red/50"></div>
+				</div>
+				<h2 class="text-3xl md:text-4xl font-display text-sand mb-3">Event Clients</h2>
+				<p class="text-sand/60">Corporate events, private parties & special occasions</p>
 			</div>
 			
 			<div class="grid gap-6">
-				{eventTestimonials.map((item) => (
-					<article class="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-brand-red/30 transition-colors">
+				{processedEventTestimonials.map((item) => (
+					<article class="review-card bg-white/5 rounded-xl p-6 border border-white/10 hover:border-brand-red/40 hover:bg-white/8 transition-all duration-300 group">
 						<blockquote>
-							<p class="text-sand/80 leading-relaxed mb-4">"{item.quote}"</p>
-							<footer class="flex items-center gap-2">
-								<span class="w-8 h-px bg-brand-red"></span>
-								<span class="text-sm font-medium text-brand-red">{item.name}</span>
+							<p class="quote text-base md:text-lg text-sand/80 leading-relaxed mb-4">
+								"{item.quote.length > TRUNCATE_LENGTH ? (
+									<>
+										<span class="quote-truncated">{item.quote.slice(0, TRUNCATE_LENGTH)}...</span>
+										<span class="quote-full hidden">{item.quote}</span>
+										<button class="read-more ml-2 text-brand-red hover:text-white text-sm font-medium underline underline-offset-4 transition-colors" type="button">Read more</button>
+									</>
+								) : (
+									item.quote
+								)}"
+							</p>
+							<footer class="flex items-center gap-3">
+								<span class="w-10 h-px bg-brand-red"></span>
+								<span class="text-sm font-medium text-sand">{item.displayName}</span>
+								<span class={`source-badge px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider ${
+									item.source === 'Yelp' ? 'bg-red-500/20 text-red-400' :
+									item.source === 'Google' ? 'bg-blue-500/20 text-blue-400' :
+									item.source === 'Groupon' ? 'bg-green-500/20 text-green-400' :
+									'bg-gray-500/20 text-gray-400'
+								}`}>{item.source}</span>
 							</footer>
 						</blockquote>
 					</article>
@@ -76,43 +167,72 @@ const photoTestimonials = [
 
 		<!-- Photo Shoot Reviews Section -->
 		<div class="mb-20">
-			<div class="flex items-center gap-4 mb-10">
-				<div class="flex-1 h-px bg-gradient-to-r from-transparent to-white/20"></div>
-				<h2 class="text-xl font-display text-sand tracking-widest uppercase">Photo Shoot Clients</h2>
-				<div class="flex-1 h-px bg-gradient-to-l from-transparent to-white/20"></div>
+			<div class="text-center mb-10">
+				<div class="flex items-center justify-center gap-4 mb-6">
+					<div class="h-px w-16 bg-gradient-to-r from-transparent to-brand-purple/50"></div>
+					<span class="text-brand-purple text-xl">✦</span>
+					<div class="h-px w-16 bg-gradient-to-l from-transparent to-brand-purple/50"></div>
+				</div>
+				<h2 class="text-3xl md:text-4xl font-display text-sand mb-3">Photo Shoot Clients</h2>
+				<p class="text-sand/60">Body painting sessions & creative photo experiences</p>
 			</div>
 			
 			<div class="grid gap-6">
-				{photoTestimonials.map((item) => (
-					<article class="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-brand-purple/30 transition-colors">
+				{processedPhotoTestimonials.map((item) => (
+					<article class="review-card bg-white/5 rounded-xl p-6 border border-white/10 hover:border-brand-purple/40 hover:bg-white/8 transition-all duration-300 group">
 						<blockquote>
-							<p class="text-sand/80 leading-relaxed mb-4">"{item.quote}"</p>
-							<footer class="flex items-center gap-2">
-								<span class="w-8 h-px bg-brand-purple"></span>
-								<span class="text-sm font-medium text-brand-purple">{item.name}</span>
+							<p class="quote text-base md:text-lg text-sand/80 leading-relaxed mb-4">
+								"{item.quote.length > TRUNCATE_LENGTH ? (
+									<>
+										<span class="quote-truncated">{item.quote.slice(0, TRUNCATE_LENGTH)}...</span>
+										<span class="quote-full hidden">{item.quote}</span>
+										<button class="read-more ml-2 text-brand-purple hover:text-white text-sm font-medium underline underline-offset-4 transition-colors" type="button">Read more</button>
+									</>
+								) : (
+									item.quote
+								)}"
+							</p>
+							<footer class="flex items-center gap-3">
+								<span class="w-10 h-px bg-brand-purple"></span>
+								<span class="text-sm font-medium text-sand">{item.displayName}</span>
+								<span class={`source-badge px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider ${
+									item.source === 'Yelp' ? 'bg-red-500/20 text-red-400' :
+									item.source === 'Google' ? 'bg-blue-500/20 text-blue-400' :
+									item.source === 'Groupon' ? 'bg-green-500/20 text-green-400' :
+									'bg-gray-500/20 text-gray-400'
+								}`}>{item.source}</span>
 							</footer>
 						</blockquote>
 					</article>
 				))}
 			</div>
 		</div>
-
-		<!-- Rating Summary -->
-		<div class="text-center py-12 border-t border-white/10">
-			<p class="text-sand/60 mb-4">Reviews from across the web</p>
-			<div class="flex items-center justify-center gap-6">
-				<a href="https://www.yelp.com/biz/denart-body-painting-studio-brooklyn-3" class="flex items-center gap-2 text-brand-red hover:text-white transition-colors" target="_blank" rel="noopener">
-					<span class="text-3xl">★</span>
-					<span class="font-semibold">4.8</span>
-					<span class="text-sand/60 text-sm">(38 Yelp)</span>
-				</a>
-				<span class="text-white/20">|</span>
-				<a href="https://www.google.com/maps/search/denart+body+painting+brooklyn" class="flex items-center gap-2 text-brand-red hover:text-white transition-colors" target="_blank" rel="noopener">
-					<span class="text-3xl">★</span>
-					<span class="font-semibold">5.0</span>
-					<span class="text-sand/60 text-sm">(Google)</span>
-				</a>
-			</div>
-		</div>
 	</main>
 </BaseLayout>
+
+<script>
+	// Read more / Read less functionality
+	document.querySelectorAll('.read-more').forEach(button => {
+		button.addEventListener('click', function() {
+			const card = this.closest('.quote');
+			if (!card) return;
+			
+			const truncated = card.querySelector('.quote-truncated');
+			const full = card.querySelector('.quote-full');
+			
+			if (truncated && full) {
+				if (truncated.classList.contains('hidden')) {
+					// Collapse
+					truncated.classList.remove('hidden');
+					full.classList.add('hidden');
+					this.textContent = 'Read more';
+				} else {
+					// Expand
+					truncated.classList.add('hidden');
+					full.classList.remove('hidden');
+					this.textContent = 'Show less';
+				}
+			}
+		});
+	});
+</script>
