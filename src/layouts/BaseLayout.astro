@@ -156,17 +156,26 @@ const navLinks = [
 					Get a Quote
 				</a>
 
-				<!-- Mobile Menu Button -->
-				<button 
-					id="mobile-menu-btn"
-					class="lg:hidden flex flex-col justify-center items-center w-12 h-12 rounded-lg border-2 border-sand/40 bg-black/50 backdrop-blur-sm space-y-1.5 group hover:border-sand hover:bg-black/70 transition-all duration-200"
-					aria-label="Toggle menu"
-					aria-expanded="false"
-				>
-					<span class="block w-7 h-0.5 bg-sand transition-all duration-300 origin-center group-[.active]:rotate-45 group-[.active]:translate-y-2"></span>
-					<span class="block w-7 h-0.5 bg-sand transition-all duration-300 group-[.active]:opacity-0"></span>
-					<span class="block w-7 h-0.5 bg-sand transition-all duration-300 origin-center group-[.active]:-rotate-45 group-[.active]:-translate-y-2"></span>
-				</button>
+				<!-- Mobile Menu CTA + Hamburger -->
+				<div class="flex items-center gap-3">
+					<a 
+						href="/get-a-quote"
+						class="lg:hidden inline-flex items-center font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg text-xs"
+						style="background-color: var(--color-brand-red); color: #fff;"
+					>
+						Get a Quote
+					</a>
+					<button 
+						id="mobile-menu-btn"
+						class="lg:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-transparent space-y-1.5 group"
+						aria-label="Toggle menu"
+						aria-expanded="false"
+					>
+						<span class="block w-6 h-0.5 bg-white transition-all duration-300 origin-center group-[.active]:rotate-45 group-[.active]:translate-y-2"></span>
+						<span class="block w-6 h-0.5 bg-white transition-all duration-300 group-[.active]:opacity-0"></span>
+						<span class="block w-6 h-0.5 bg-white transition-all duration-300 origin-center group-[.active]:-rotate-45 group-[.active]:-translate-y-2"></span>
+					</button>
+				</div>
 			</div>
 		</nav>
 
