@@ -13,7 +13,11 @@ export default {
           'gold-light': '#E8C547',
           orange: '#E67E22',
           blue: '#3498DB',
+          purple: '#8B5CF6',
         },
+        // Platform colors
+        yelp: '#D32323',
+        google: '#4285F4',
         // Dark theme surfaces - tinted neutrals
         void: '#0D0D0D',
         'void-light': '#1A1A1A',
