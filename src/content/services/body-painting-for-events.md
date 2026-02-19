@@ -1,10 +1,11 @@
 ---
-title: "Body Painting for Events"
-tagline: "Make your event more engaging and memorable"
+title: "For Events and Commercial Projects"
+tagline: "Make your event unforgettable with live body painting"
 description: "Add fine art body painting to your corporate event, party, or special occasion."
 heroImage: "/images/services/events/hero.jpg"
 category: "events"
 order: 4
+hideIntro: true
 pastClients:
   - "American Airlines"
   - "American Express"
@@ -18,13 +19,13 @@ pastClients:
   - "Gekkeikan Sake"
   - "Hooters"
   - "Kings of Leon"
-  - "Klipsch"
+  - "Klipsc"
   - "Mercer Hotel"
   - "More than Me foundation"
   - "National Geographics"
   - "NeueHouse"
   - "NY Tab"
-  - "Roberto Cavali Home"
+  - "Roberto Cavalli Home"
   - "Pubslush"
   - "Samsung"
   - "Stereo Exchange"
@@ -38,13 +39,35 @@ galleryImages:
   - "/images/events/casio-g-shock-event/instagram-digest-20130308-1.jpg"
   - "/images/events/amanda-palmer-at-ny-public-library/AFP-at-NYPL-01.jpg"
   - "/images/events/fushimi-williamsburg-092112/20120921-1T3A8307.jpg"
-  - "/images/events/neuehouse-061914/Bodypainting_at-_NeueHouse00.jpg"
-  - "/images/events/amanda-palmer-at-ny-public-library/AFP-at-NYPL-02.jpg"
+  - "/images/events/stoli-launch-party/stoli-1.jpg"
+  - "/images/events/roberto-cavalli-at-bdny/Roberto-Cavalli-BDNY-bodypainting-1.jpg"
+packages:
+  - name: "Live Painting Performance"
+    price: "Custom"
+    includes:
+      - "Professional body painter"
+      - "1-2 hours of live painting on model"
+      - "Custom design for your event"
+      - "All paints and supplies"
+  - name: "Roaming Entertainment"
+    price: "Custom"
+    includes:
+      - "2-4 hours of roaming entertainment"
+      - "Paint models or willing guests"
+      - "Interactive and engaging"
+      - "All supplies included"
+  - name: "Full Event Coverage"
+    price: "Custom"
+    includes:
+      - "Full-day event support"
+      - "Multiple painters available"
+      - "Custom designs"
+      - "Photography coordination"
 faqs:
   - question: "How far in advance should I book body painting for my event?"
     answer: "We recommend booking at least 2-4 weeks in advance to ensure availability. For larger events or custom designs, earlier is better. Last-minute bookings may be possible depending on our schedule."
   - question: "How long does body painting take at an event?"
-    answer: "It depends on the setup. For roaming entertainment where painters work on models throughout your event, we can paint multiple guests over several hours. For a featured performance or demonstration, plan for 15-30 minutes per painted model."
+    answer: "It depends on the setup. For roaming entertainment where painters work on models throughout your event, we can paint multiple guests over several hours. For a featured performance or demonstration, plan for 1-2 hours per model."
   - question: "Do you provide the models?"
     answer: "Yes! We can provide professional models experienced in body painting. We also offer a workshop where guests can paint each other as a fun interactive activity."
   - question: "What types of events do you work with?"
@@ -53,7 +76,7 @@ faqs:
     answer: "We need a well-lit area with access to power for our lighting setup. We provide our own equipment, tables, and lighting. Just let us know the space available and we'll handle the rest."
 ---
 
-## Make your event more engaging and memorable
+## Make your event unforgettable
 
 Adding fine art body painting will add sexiness and sophistication to your event. Not only it will impress your guests, it will also make your guests want to talk about your event because it presents an opportunity for them to brag about their art history knowledge (i.e. "Last night at Ms. A's party I saw a Van Gogh piece painted on a live model!").
 
@@ -81,7 +104,7 @@ In addition to body painters, we can also provide [models](/body-painting-models
 - National Geographics
 - NeueHouse
 - NY Tab
-- Roberto Cavali Home
+- Roberto Cavalli Home
 - Pubslush
 - Samsung
 - Stereo Exchange

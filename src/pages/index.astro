@@ -1,17 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CTAButton from '../components/CTAButton.astro';
+import EventCard from '../components/EventCard.astro';
 import { getCollection } from 'astro:content';
+import { fetchAllPretixEvents } from '../utils/pretix';
 
 const services = await getCollection('services');
 const classes = await getCollection('classes');
 const testimonials = await getCollection('testimonials');
 
-const upcomingClasses = classes.flatMap((classItem) => 
-	classItem.data.schedule ? classItem.data.schedule.map((date) => ({ classItem, date })) : []
-).slice(0, 4);
+// Fetch events from Pretix
+let pretixEvents = [];
+try {
+  pretixEvents = await fetchAllPretixEvents();
+} catch (e) {
+  console.error('Failed to fetch Pretix events:', e);
+}
 
-const featuredTestimonial = testimonials[0];
+// Take first 4 events for homepage
+const upcomingEvents = pretixEvents.slice(0, 4);
 ---
 
 <BaseLayout title="DenArt Body Painting Studio — NYC Body Art & Classes" description="Body painting for everyone — classes, private photo sessions, maternity, events and more in Brooklyn, NYC. 2000+ bodies painted since 2011.">
@@ -111,55 +118,11 @@ const featuredTestimonial = testimonials[0];
 
 						<!-- Events Grid -->
 						<div class="space-y-4">
-							{upcomingClasses.map(({ classItem, date }, index) => {
-								// Parse date from format like "Fri, Feb 6 | 6p | 8:30p" or "Fri, 16 Jan 2026 | 6-8pm"
-								const shortDateMatch = date.match(/(\w+),?\s+(\w+)\s+(\d+)(?:\s+\||\s*$)/);
-								const fullDateMatch = date.match(/(\w+),?\s+(\d+)\s+(\w+)\s+(\d+)/);
-								
-								let dateObj;
-								let month = '???';
-								let day = '??';
-								
-								if (shortDateMatch) {
-									month = shortDateMatch[2].substring(0, 3).toUpperCase();
-									day = shortDateMatch[3];
-								} else if (fullDateMatch) {
-									month = fullDateMatch[3].substring(0, 3).toUpperCase();
-									day = fullDateMatch[2];
-								} else {
-									// Try to extract any numbers
-									const nums = date.match(/\d+/);
-									day = nums ? nums[0] : '??';
-								}
-								
-								return (
-									<a href={`/classes/${classItem.slug}`} class="group block">
-										<div class="flex gap-6 p-5 bg-void-light border border-zinc-800 rounded-xl transition-all duration-300 hover:bg-void-lighter hover:border-brand-red/30 hover:shadow-lg hover:-translate-y-1">
-											<!-- Date Block -->
-											<div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-16 bg-brand-red text-white rounded-lg">
-												<span class="text-[10px] uppercase tracking-wider font-medium opacity-90">{month}</span>
-												<span class="font-display text-2xl font-semibold leading-none">{day}</span>
-											</div>
-											<!-- Content -->
-											<div class="flex-grow flex flex-col justify-center">
-												<p class="text-sand-muted text-sm mb-1">{date}</p>
-												<h3 class="font-display text-xl text-sand group-hover:text-brand-red transition-colors duration-200 mb-2">{classItem.data.title}</h3>
-												<p class="text-sand-muted text-sm line-clamp-2">{classItem.data.description}</p>
-											</div>
-											<!-- Arrow -->
-											<div class="flex-shrink-0 flex items-center">
-												<div class="w-10 h-10 flex items-center justify-center rounded-full border border-zinc-700 group-hover:border-brand-red/50 group-hover:bg-brand-red/10 transition-all duration-300">
-													<svg class="w-5 h-5 text-sand-muted group-hover:text-brand-red transition-colors duration-300 transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-													</svg>
-												</div>
-											</div>
-										</div>
-									</a>
-								);
-							})}
+							{upcomingEvents.slice(0, 4).map((event) => (
+								<EventCard event={event} />
+							))}
 
-							{upcomingClasses.length === 0 && (
+							{upcomingEvents.length === 0 && (
 								<div class="text-center py-16 bg-void-light/30 rounded-xl border border-zinc-800/30">
 									<p class="text-sand-muted">No upcoming events scheduled. Check back soon!</p>
 								</div>
@@ -168,7 +131,7 @@ const featuredTestimonial = testimonials[0];
 
 						<!-- View All Link -->
 						<div class="mt-10">
-							<a href="/classes" class="inline-flex items-center gap-2 font-display text-brand-red hover:text-brand-red-light transition-colors group">
+							<a href="/calendar" class="inline-flex items-center gap-2 font-display text-brand-red hover:text-brand-red-light transition-colors group">
 								<span>View all classes</span>
 								<svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>

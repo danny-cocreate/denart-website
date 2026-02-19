@@ -1,7 +1,7 @@
 ---
 ---
 
-<form class="space-y-6" method="POST" action="/api/contact">
+<form class="space-y-6" id="contact-form">
 	<div>
 		<label for="name" class="block text-sm font-medium text-sand mb-2">Name</label>
 		<input 
@@ -34,8 +34,55 @@
 	</div>
 	<button 
 		type="submit" 
-		class="w-full py-3 px-6 bg-brand-red text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
+		id="submit-btn"
+		class="w-full py-3 px-6 bg-brand-red text-white font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
 	>
 		Send Message
 	</button>
 </form>
+
+<!-- Status Messages -->
+<div id="form-status" class="hidden mt-4 p-4 rounded-lg"></div>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const statusDiv = document.getElementById('form-status') as HTMLDivElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    statusDiv.classList.add('hidden');
+    statusDiv.className = 'hidden mt-4 p-4 rounded-lg';
+    
+    try {
+      const formData = new FormData(form);
+      
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        statusDiv.textContent = result.message || 'Message sent successfully!';
+        statusDiv.className = 'mt-4 p-4 rounded-lg bg-green-900/50 border border-green-700 text-green-300';
+        form.reset();
+      } else {
+        statusDiv.textContent = result.error || 'Failed to send message. Please try again.';
+        statusDiv.className = 'mt-4 p-4 rounded-lg bg-red-900/50 border border-red-700 text-red-300';
+      }
+    } catch (error) {
+      statusDiv.textContent = 'An error occurred. Please try again.';
+      statusDiv.className = 'mt-4 p-4 rounded-lg bg-red-900/50 border border-red-700 text-red-300';
+    }
+    
+    statusDiv.classList.remove('hidden');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send Message';
+  });
+</script>

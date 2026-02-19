@@ -6,7 +6,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import CTAButton from '../../components/CTAButton.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import Card from '../../components/Card.astro';
-import BookingModal from '../../components/BookingModal.astro';
+import CheckoutWidgetModal from '../../components/CheckoutWidgetModal.astro';
 import FAQ from '../../components/FAQ.astro';
 import PretixSchedule from '../../components/PretixSchedule.astro';
 
@@ -30,6 +30,13 @@ const CLASS_TO_PRETIX_SLUG: Record<string, string> = {
   'uv-body-paint-couples': 'uc-class-couples-2',
 };
 const pretixEventSlug = CLASS_TO_PRETIX_SLUG[classItem.slug] || 'uc-class-couples-2';
+
+// Map class slug to checkout widget event key
+const CLASS_TO_CHECKOUT_EVENT: Record<string, string> = {
+  'speed-friending': 'speed-friending',
+  'uv-body-paint-couples': 'paint-in-the-dark',
+};
+const checkoutEventKey = CLASS_TO_CHECKOUT_EVENT[classItem.slug] || 'paint-in-the-dark';
 const privateNote = classItem.data.privateNote || "";
 
 // FAQs data
@@ -154,7 +161,7 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 						) : (
 							<p class="text-3xl font-bold text-white mb-3">{classItem.data.price}</p>
 						)}
-						<CTAButton onclick="openBookingModal()" variant="primary" size="sm">
+						<CTAButton onclick="openCheckoutWidgetModal()" variant="primary" size="sm">
 							Book Now
 						</CTAButton>
 						<div class="mt-4 text-sm text-gray-400">
@@ -308,7 +315,7 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 			<section class="bg-void-light border-y border-zinc-800 py-16 mt-20">
 				<div class="text-center">
 					<h2 class="text-3xl font-display text-white mb-8">Ready to join this {classItem.data.category === 'singles' ? 'event' : 'class'}?</h2>
-				<CTAButton onclick="openBookingModal()" variant="primary" size="lg">
+				<CTAButton onclick="openCheckoutWidgetModal()" variant="primary" size="lg">
 					Book Now
 				</CTAButton>
 				<div class="mt-4 text-sm text-gray-400">
@@ -319,16 +326,8 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 		</div>
 	</article>
 
-	<!-- Booking Modal -->
-	<BookingModal 
-		classSlug={classItem.slug}
-		classTitle={classItem.data.title}
-		price={classItem.data.price}
-		earlyBird={classItem.data.earlyBird}
-		ticketLink={classItem.data.ticketLink}
-		schedule={classItem.data.schedule || []}
-		pretixSlug={pretixEventSlug}
-	/>
+	<!-- Checkout Widget Modal -->
+	<CheckoutWidgetModal eventKey={checkoutEventKey} />
 
 	<!-- Video Lightbox Modal -->
 	<div id="video-lightbox" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center p-4" onclick="closeVideoLightbox(event)">

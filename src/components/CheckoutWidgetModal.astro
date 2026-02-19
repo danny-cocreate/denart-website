@@ -1,0 +1,99 @@
+---
+// Checkout Widget Modal Component
+// Opens an iframe modal with the checkout.denartny.com widget
+// Handles close messages from the widget
+
+interface Props {
+  eventKey: string; // e.g., 'paint-in-the-dark', 'speed-friending'
+}
+
+const { eventKey } = Astro.props;
+const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`;
+---
+
+<!-- Checkout Widget Modal -->
+<div id="checkout-widget-modal" class="fixed inset-0 z-[999999] hidden" aria-labelledby="checkout-modal-title" role="dialog" aria-modal="true">
+  <!-- Backdrop -->
+  <div id="checkout-modal-backdrop" class="absolute inset-0 bg-black/90 backdrop-blur-sm transition-opacity"></div>
+  
+  <!-- Modal Panel -->
+  <div class="relative min-h-screen md:min-h-0 md:flex md:items-center md:justify-center p-4">
+    <div class="relative w-full max-w-[500px] h-[90vh] max-h-[800px] bg-[#000] rounded-[30px] overflow-hidden border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
+      <!-- Close Button -->
+      <button 
+        id="checkout-modal-close"
+        class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 border border-white/10 text-white/60 hover:text-white hover:bg-white/20 transition-all"
+        aria-label="Close checkout"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      
+      <!-- Iframe -->
+      <iframe 
+        id="checkout-widget-iframe"
+        src={checkoutUrl}
+        class="w-full h-full border-none"
+        allow="clipboard-write"
+      ></iframe>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ checkoutUrl }}>
+  // Make functions globally available
+  window.openCheckoutWidgetModal = function() {
+    const modal = document.getElementById('checkout-widget-modal');
+    const iframe = document.getElementById('checkout-widget-iframe');
+    
+    if (modal) {
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      
+      // Reset iframe src to ensure it reloads each time (clears previous state)
+      if (iframe) {
+        iframe.src = checkoutUrl;
+      }
+    }
+  };
+  
+  window.closeCheckoutWidgetModal = function() {
+    const modal = document.getElementById('checkout-widget-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  };
+  
+  // Listen for messages from the iframe
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'denart-checkout-close') {
+      closeCheckoutWidgetModal();
+    }
+  });
+  
+  // Close button handler
+  document.addEventListener('DOMContentLoaded', function() {
+    const closeBtn = document.getElementById('checkout-modal-close');
+    const backdrop = document.getElementById('checkout-modal-backdrop');
+    
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeCheckoutWidgetModal);
+    }
+    
+    if (backdrop) {
+      backdrop.addEventListener('click', closeCheckoutWidgetModal);
+    }
+  });
+  
+  // Close on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('checkout-widget-modal');
+      if (modal && !modal.classList.contains('hidden')) {
+        closeCheckoutWidgetModal();
+      }
+    }
+  });
+</script>

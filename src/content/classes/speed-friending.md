@@ -4,8 +4,8 @@ tagline: "Body Painting Experience to Connect with Other Singles"
 description: "A non-nude body painting social event for singles. Meet new people through interactive body painting activities."
 heroImage: "/images/classes/speed-friending/avif/hero.avif"
 category: "singles"
-price: "$39"
-earlyBird: "$29"
+price: "$69"
+earlyBird: "$39"
 duration: "2 hours"
 order: 2
 showPrivateNote: false

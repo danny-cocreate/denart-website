@@ -3,6 +3,8 @@
 // Opens when clicking "Book Now" buttons on class pages
 // Shows time selection + checkout flow
 
+import { fetchSubeventsForSlug } from '../utils/pretix';
+
 interface TimeSlot {
   date: string;
   time: string;
@@ -15,24 +17,35 @@ interface Props {
   price: string;
   earlyBird?: string;
   ticketLink: string;
-  schedule: string[];
+  schedule?: string[];
+  pretixSlug?: string;
 }
 
-const { classSlug, classTitle, price, earlyBird, ticketLink, schedule } = Astro.props;
+const { classSlug, classTitle, price, earlyBird, ticketLink, schedule = [], pretixSlug } = Astro.props;
 
-// Parse schedule into time slots
-const timeSlots: TimeSlot[] = schedule.map(dateStr => {
-  // Parse format like "Fri, Feb 6 | 6p | 8:30p" or "Fri, 16 Jan 2026 | 6-8pm"
-  const parts = dateStr.split('|').map(p => p.trim());
-  const datePart = parts[0] || dateStr;
-  const timePart = parts[1] || '6:00 PM';
-  
-  return {
-    date: datePart,
-    time: timePart,
+// Get events from Pretix if pretixSlug is provided
+let timeSlots: TimeSlot[] = [];
+
+if (pretixSlug) {
+  const events = await fetchSubeventsForSlug(pretixSlug);
+  timeSlots = events.map(event => ({
+    date: event.dateStr,
+    time: event.timeStr,
     available: true
-  };
-});
+  }));
+} else {
+  // Fallback to static schedule
+  timeSlots = schedule.map(dateStr => {
+    const parts = dateStr.split('|').map(p => p.trim());
+    const datePart = parts[0] || dateStr;
+    const timePart = parts[1] || '6:00 PM';
+    return {
+      date: datePart,
+      time: timePart,
+      available: true
+    };
+  });
+}
 ---
 
 <!-- Booking Modal -->
