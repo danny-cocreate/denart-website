@@ -35,7 +35,7 @@ const categoryData = categories.map(cat => {
 	
 	if (featuredItem) {
 		if (cat.collection === 'gallery') {
-			src = featuredItem.data.images?.[0]?.src?.replace('.avif', '.jpg') || '';
+			src = featuredItem.data.images?.[0]?.src?.replace('.avif', '.png') || '';
 		} else if (cat.collection === 'events' && featuredItem.data.images?.[0]?.src) {
 			src = featuredItem.data.images[0].src;
 		}
