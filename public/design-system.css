@@ -1,0 +1,99 @@
+/* ==========================================================================
+   DenArt Design System - Core Tokens
+   ========================================================================== */
+
+/* 
+   This file contains CSS custom properties (variables) for the DenArt brand.
+   Import this in any project to use DenArt's design tokens.
+   
+   Usage:
+   <link rel="stylesheet" href="https://danny-cocreate.github.io/denart-design-system/tokens.css">
+   
+   Or in CSS:
+   @import url('https://danny-cocreate.github.io/denart-design-system/tokens.css');
+*/
+
+:root {
+  /* Typography Scale - Fluid */
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem);
+  --text-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 3.5rem);
+  --text-5xl: clamp(3rem, 2rem + 5vw, 5rem);
+  --text-6xl: clamp(3.5rem, 2.5rem + 6vw, 6rem);
+  
+  /* Spacing Scale */
+  --space-tight: clamp(0.5rem, 0.25rem + 1vw, 1rem);
+  --space-base: clamp(1rem, 0.5rem + 2vw, 2rem);
+  --space-loose: clamp(2rem, 1rem + 4vw, 4rem);
+  --space-generous: clamp(4rem, 2rem + 6vw, 8rem);
+  --space-dramatic: clamp(6rem, 3rem + 8vw, 12rem);
+  
+  /* Brand Colors - Gold */
+  --color-gold: #D4AF37;
+  --color-gold-light: #E8C547;
+  --color-gold-dark: #B8960C;
+  --color-gold-muted: #8B7355;
+  
+  /* Brand Colors - Void (Dark Background) */
+  --color-void: #0a0a0e;
+  --color-void-light: #121218;
+  --color-void-lighter: #1a1a22;
+  
+  /* Brand Colors - Sand (Light Text) */
+  --color-sand: #e8e6e1;
+  --color-sand-muted: #9a9893;
+  --color-sand-dim: #6b6965;
+  
+  /* Brand Colors - Accent (Red) */
+  --color-accent: #C41E3A;
+  --color-accent-light: #E62E4A;
+  
+  /* Brand Colors - Red-based (DenArt signature) */
+  --color-brand-red: #C41E3A;
+  --color-brand-red-light: #E62E4A;
+  --color-brand-red-dark: #A01830;
+  --color-brand-red-muted: #991111;
+  
+  /* Tertiary/Accent Colors */
+  --color-brand-gold: #D4AF37;
+  --color-brand-gold-hover: #B8960C;
+  --color-brand-orange: #E67E22;
+  --color-brand-blue: #3498DB;
+  
+  /* Background colors */
+  --color-bg-deepest: var(--color-void);
+  --color-bg-dark: var(--color-void-light);
+  --color-bg-surface: var(--color-void-lighter);
+  --color-bg-elevated: #22222c;
+  
+  /* Text colors */
+  --color-text-primary: var(--color-sand);
+  --color-text-secondary: var(--color-sand-muted);
+  --color-text-muted: var(--color-sand-dim);
+  
+  /* Borders */
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(212, 175, 55, 0.3);
+  
+  /* Transitions */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-dramatic: 800ms;
+}
+
+/* Typography */
+.font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-body {
+  font-family: 'Karla', system-ui, sans-serif;
+}
