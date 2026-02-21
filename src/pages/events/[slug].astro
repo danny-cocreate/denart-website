@@ -14,7 +14,28 @@ export async function getStaticPaths() {
 const { event } = Astro.props;
 const { Content } = await event.render();
 const images = event.data.images || [];
+
+// Build Event schema
+const siteUrl = 'https://denartny.com';
+const eventUrl = `${siteUrl}/events/${event.slug}`;
+const eventImage = images.length > 0 ? images[0].src : null;
+
+// Extract description from event body (first 150 chars)
+const eventBody = event.body || '';
+const eventDescription = eventBody.replace(/[#*\n]/g, ' ').slice(0, 150).trim() + '...';
+
+const eventSchema = {
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": event.data.title,
+  "description": eventDescription,
+  "url": eventUrl,
+  ...(event.data.date && { "startDate": event.data.date }),
+  ...(eventImage && { "image": eventImage }),
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(eventSchema)} />
 
 <PageLayout title={event.data.title}>
   <PageHero
