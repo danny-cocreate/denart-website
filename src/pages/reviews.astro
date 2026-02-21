@@ -60,6 +60,15 @@ const classTestimonials = [
 ---
 
 <BaseLayout title="Customer Reviews" description="Read what our clients say about their body painting experiences at DenArt studio.">
+	<!-- Review Schema for Reviews Page -->
+	<script type="application/ld+json" set:html={JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "AggregateRating",
+		"ratingValue": "4.9",
+		"reviewCount": "42",
+		"bestRating": "5",
+		"worstRating": "1"
+	})} />
 	<main class="max-w-6xl mx-auto section-loose px-6">
 		<div class="text-center mb-16">
 			<p class="text-brand-red text-xs uppercase tracking-[0.3em] mb-4">Testimonials</p>

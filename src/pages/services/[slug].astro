@@ -47,7 +47,14 @@ const defaultFAQs = [
 const faqs = service.data.faqs || defaultFAQs;
 ---
 
-<ServiceLayout title={service.data.title} description={service.data.description}>
+<ServiceLayout 
+  title={service.data.title} 
+  description={service.data.description}
+  serviceSchema={{
+    price: service.data.packages?.[0]?.price?.replace(/[^0-9]/g, '') || '150',
+    priceCurrency: 'USD'
+  }}
+>
   <!-- Hero Section - Side-by-side images like class pages -->
   <section class="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
     {service.data.heroImages && service.data.heroImages.length > 0 ? (

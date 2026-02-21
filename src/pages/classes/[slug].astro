@@ -90,6 +90,42 @@ const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
 ---
 
 <BaseLayout title={classItem.data.title} description={classItem.data.description}>
+	<!-- Event Schema for Classes -->
+	<script type="application/ld+json" set:html={JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "Event",
+		"name": classItem.data.title,
+		"description": classItem.data.description,
+		"image": classItem.data.heroImage,
+		"startDate": new Date().toISOString().split('T')[0] + 'T19:00:00',
+		"endDate": new Date().toISOString().split('T')[0] + 'T22:00:00',
+		"eventStatus": "https://schema.org/EventScheduled",
+		"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+		"location": {
+			"@type": "Place",
+			"name": "DenArt Body Painting Studio",
+			"address": {
+				"@type": "PostalAddress",
+				"streetAddress": "99 Kingsland Ave #102",
+				"addressLocality": "Brooklyn",
+				"addressRegion": "NY",
+				"postalCode": "11222",
+				"addressCountry": "US"
+			}
+		},
+		"offers": {
+			"@type": "Offer",
+			"price": classItem.data.price?.replace(/[^0-9]/g, '') || "95",
+			"priceCurrency": "USD",
+			"availability": "https://schema.org/InStock",
+			"url": classItem.data.ticketLink || "https://denartny.com/calendar/"
+		},
+		"organizer": {
+			"@type": "Organization",
+			"name": "DenArt Body Painting Studio",
+			"url": "https://denartny.com"
+		}
+	})} />
 	<!-- Hero with Background Image -->
 	<section class="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
 		{classItem.data.heroImage && (

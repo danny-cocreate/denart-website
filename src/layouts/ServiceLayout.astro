@@ -4,12 +4,52 @@ import BaseLayout from './BaseLayout.astro';
 interface Props {
 	title: string;
 	description?: string;
+	serviceSchema?: {
+		price?: string;
+		priceCurrency?: string;
+	};
 }
 
-const { title, description } = Astro.props;
+const { title, description, serviceSchema } = Astro.props;
+
+// Build Service schema
+const serviceSchemaJson = serviceSchema ? JSON.stringify({
+	"@context": "https://schema.org",
+	"@type": "Service",
+	"name": title,
+	"description": description,
+	"provider": {
+		"@type": "LocalBusiness",
+		"name": "DenArt Body Painting Studio",
+		"image": "https://denartny.com/images/logo.png",
+		"url": "https://denartny.com",
+		"telephone": "+1-347-937-9973",
+		"address": {
+			"@type": "PostalAddress",
+			"streetAddress": "99 Kingsland Ave #102",
+			"addressLocality": "Brooklyn",
+			"addressRegion": "NY",
+			"postalCode": "11222",
+			"addressCountry": "US"
+		},
+		"priceRange": "$$"
+	},
+	"areaServed": {
+		"@type": "Place",
+		"name": "New York City"
+	},
+	"offers": {
+		"@type": "Offer",
+		"price": serviceSchema.price || "150",
+		"priceCurrency": serviceSchema.priceCurrency || "USD"
+	}
+}) : null;
 ---
 
 <BaseLayout title={title} description={description}>
+	{serviceSchemaJson && (
+		<script type="application/ld+json" set:html={serviceSchemaJson} />
+	)}
 	<slot />
 </BaseLayout>
 
