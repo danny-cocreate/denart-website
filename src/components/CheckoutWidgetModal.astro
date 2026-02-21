@@ -51,6 +51,14 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
       
+      // Track begin_checkout in GA4
+      if (typeof window.trackEvent === 'function') {
+        window.trackEvent('begin_checkout', {
+          event_category: 'ecommerce',
+          event_key: checkoutUrl.includes('speed-friending') ? 'speed-friending' : 'paint-in-the-dark'
+        });
+      }
+      
       // Reset iframe src to ensure it reloads each time (clears previous state)
       if (iframe) {
         iframe.src = checkoutUrl;

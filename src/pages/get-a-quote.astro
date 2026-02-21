@@ -224,9 +224,14 @@ import CTAButton from '../components/CTAButton.astro';
         // Track form submission in GA4
         if (typeof window.trackEvent === 'function') {
           const service = (document.getElementById('service') as HTMLSelectElement)?.value || 'unknown';
+          // Custom event
           window.trackEvent('quote_form_submit', {
             service_type: service,
             timestamp: new Date().toISOString()
+          });
+          // Standard GA4 lead event
+          window.trackEvent('generate_lead', {
+            method: 'quote_form'
           });
         }
         
