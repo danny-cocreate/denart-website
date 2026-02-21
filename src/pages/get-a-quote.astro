@@ -221,15 +221,25 @@ import CTAButton from '../components/CTAButton.astro';
       const result = await response.json();
       
       if (result.success) {
-        // Track form submission in GA4
-        if (typeof window.trackEvent === 'function') {
-          const service = (document.getElementById('service') as HTMLSelectElement)?.value || 'unknown';
-          // Custom event
-          window.trackEvent('quote_form_submit', {
+        // Track form submission in GA4 - use direct gtag calls for reliability
+        const service = (document.getElementById('service') as HTMLSelectElement)?.value || 'unknown';
+        
+        // Custom event - quote form submit
+        if (typeof gtag === 'function') {
+          gtag('event', 'quote_form_submit', {
             service_type: service,
             timestamp: new Date().toISOString()
           });
           // Standard GA4 lead event
+          gtag('event', 'generate_lead', {
+            method: 'quote_form'
+          });
+          console.log('[GA4] Form conversion tracked!');
+        } else if (typeof window.trackEvent === 'function') {
+          window.trackEvent('quote_form_submit', {
+            service_type: service,
+            timestamp: new Date().toISOString()
+          });
           window.trackEvent('generate_lead', {
             method: 'quote_form'
           });

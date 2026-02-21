@@ -68,8 +68,14 @@ const navLinks = [
 		
 		// Global function to track custom events
 		window.trackEvent = function(eventName, params) {
-			gtag('event', eventName, params);
-			console.log('[GA4] Event tracked:', eventName, params);
+			if (typeof gtag === 'function') {
+				gtag('event', eventName, params);
+				console.log('[GA4] Event tracked:', eventName, params);
+			} else {
+				console.log('[GA4] gtag not ready, queuing:', eventName, params);
+				window.dataLayer = window.dataLayer || [];
+				window.dataLayer.push({event: eventName, ...params});
+			}
 		};
 	</script>
 	
