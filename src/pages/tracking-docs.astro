@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Tracking Documentation | DenArt">
+  <div class="max-w-4xl mx-auto px-6 py-16">
+    <h1 class="text-4xl font-bold mb-8">Tracking Documentation</h1>
+    
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Analytics Platforms</h2>
+      
+      <div class="space-y-6">
+        <div class="bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-xl font-semibold mb-2">Google Analytics 4</h3>
+          <p><strong>Property ID:</strong> G-E4945R08JE</p>
+          <p><strong>Dashboard:</strong> <a href="https://analytics.google.com" class="text-blue-600 underline">analytics.google.com</a></p>
+        </div>
+        
+        <div class="bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-xl font-semibold mb-2">Microsoft Clarity</h3>
+          <p><strong>Project ID:</strong> vkmvjggvrb</p>
+          <p><strong>Dashboard:</strong> <a href="https://clarity.microsoft.com/projects" class="text-blue-600 underline">clarity.microsoft.com/projects</a></p>
+          <p><strong>Account:</strong> danny@denartny.com (Google login)</p>
+        </div>
+      </div>
+    </section>
+    
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Tracked Events</h2>
+      
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="border-b-2 border-gray-300">
+            <th class="text-left py-3">Event</th>
+            <th class="text-left py-3">Platform</th>
+            <th class="text-left py-3">Trigger</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>page_view</code></td>
+            <td>GA4, Clarity</td>
+            <td>Every page load</td>
+          </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>begin_checkout</code></td>
+            <td>GA4</td>
+            <td>User proceeds to payment in checkout</td>
+          </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>purchase</code></td>
+            <td>GA4</td>
+            <td>Successful payment</td>
+          </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>generate_lead</code></td>
+            <td>GA4</td>
+            <td>Quote form submission</td>
+          </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>quote_form_submit</code></td>
+            <td>GA4</td>
+            <td>Quote form submission (custom)</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">Tracked Pages</h2>
+      
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="border-b-2 border-gray-300">
+            <th class="text-left py-3">URL</th>
+            <th class="text-left py-3">Tracking</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-gray-200">
+            <td class="py-3">denartny.com/*</td>
+            <td>GA4 + Clarity</td>
+          </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3">checkout.denartny.com/*</td>
+            <td>GA4 + Clarity</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-4">UTM Parameters</h2>
+      <p class="mb-4">Use these standard parameters for all marketing campaigns:</p>
+      
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="border-b-2 border-gray-300">
+            <th class="text-left py-3">Parameter</th>
+            <th class="text-left py-3">Example</th>
+            <th class="text-left py-3">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>utm_source</code></td>
+            <td><code>instagram</code>, <code>facebook</code>, <code>google</code>, <code>newsletter</code></td>
+            <td>Traffic source</td>
+          </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>utm_medium</code></td>
+            <td><code>cpc</code>, <code>social</code>, <code>email</code>, <code>referral</code></td>
+            <td>Marketing medium</td>
+          </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>utm_campaign</code></td>
+            <td><code>spring-2026</code>, <code>uv-class-promo</code></td>
+            <td>Campaign name</td>
+          </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>utm_content</code></td>
+            <td><code>video-ad-1</code>, <code>carousel-2</code></td>
+            <td>Ad variation</td>
+          </tr>
+          <tr class="border-b border-gray-200">
+            <td class="py-3"><code>utm_term</code></td>
+            <td><code>body+painting+nyc</code></td>
+            <td>Search keywords</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p class="mt-4 text-gray-600">Example: <code class="bg-gray-100 px-2 py-1">denartny.com/?utm_source=instagram&utm_medium=social&utm_campaign=spring-2026</code></p>
+    </section>
+    
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Integration Notes</h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>Ticketing backend: <strong>Pretix</strong> (tickets.denartny.com)</li>
+        <li>Checkout widget: <strong>Custom React app</strong> (checkout.denartny.com)</li>
+        <li>WordPress site: denartny.com (Astro-built)</li>
+        <li>Clarity provides session recordings and heatmaps</li>
+        <li>GA4 provides conversion funnel and attribution</li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
