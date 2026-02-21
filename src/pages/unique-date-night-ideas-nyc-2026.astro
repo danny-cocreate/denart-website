@@ -1,12 +1,80 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CTAButton from '../components/CTAButton.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "15 Unique Date Night Ideas in NYC for 2026",
+  "description": "Looking for unforgettable date ideas in NYC? From UV body painting to rock climbing, discover 15 creative experiences for couples in New York.",
+  "image": "https://denartny.com/images/hero-mosaic.jpg",
+  "author": {
+    "@type": "Organization",
+    "name": "DenArt Studio"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "DenArt Studio",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://denartny.com/favicon.svg"
+    }
+  },
+  "datePublished": "2026-02-21",
+  "dateModified": "2026-02-21",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://denartny.com/unique-date-night-ideas-nyc-2026/"
+  }
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the best unique date night idea in NYC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Paint in the Dark at DenArt Studio is one of the most unique date experiences in NYC—UV body painting where you and your partner become living art under blacklight."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does Paint in the Dark date experience cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Paint in the Dark at DenArt Studio is a premium experience. Visit https://denartny.com/classes/uv-body-paint-couples/ for current pricing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the best couples activities in Brooklyn?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Brooklyn offers amazing couples activities including UV body painting at DenArt, rock climbing at Brooklyn Boulders, axe throwing, pottery classes, and more."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are there budget-friendly date ideas in NYC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Many date ideas on this list are budget-friendly: ice skating ($10-20), brewery tours ($10-25), dance classes ($15-30), and exploring Queens Night Market."
+      }
+    }
+  ]
+};
 ---
 
 <BaseLayout 
   title="15 Unique Date Night Ideas in NYC for 2026 | DenArt Studio"
   description="Looking for unforgettable date ideas in NYC? From UV body painting to rock climbing, discover 15 creative experiences for couples in New York."
 >
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
   <main class="bg-void">
     <!-- Hero -->
     <section class="py-20 px-6">
@@ -14,9 +82,40 @@ import CTAButton from '../components/CTAButton.astro';
         <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-sand mb-6 leading-tight">
           15 Unique Date Night Ideas in NYC for 2026
         </h1>
-        <p class="text-xl text-sand-muted mb-8">
+        <p class="text-xl text-sand-muted mb-4">
           Looking for unforgettable date ideas in NYC? From UV body painting to rock climbing, discover 15 creative experiences for couples in New York.
         </p>
+        <div class="flex items-center gap-4 text-sm text-sand-muted">
+          <time datetime="2026-02-21">Last updated: February 21, 2026</time>
+          <span>•</span>
+          <span>15 min read</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Table of Contents -->
+    <section class="px-6 pb-8">
+      <div class="max-w-4xl mx-auto">
+        <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+          <h2 class="text-lg font-semibold text-sand mb-4">Quick Links</h2>
+          <ul class="grid md:grid-cols-2 gap-2 text-sand-muted">
+            <li><a href="#paint-in-the-dark" class="hover:text-brand-red transition-colors">1. Paint in the Dark (DenArt)</a></li>
+            <li><a href="#acro-yoga" class="hover:text-brand-red transition-colors">2. Acro Yoga</a></li>
+            <li><a href="#rock-climbing" class="hover:text-brand-red transition-colors">3. Rock Climbing</a></li>
+            <li><a href="#pottery" class="hover:text-brand-red transition-colors">4. Pottery Class</a></li>
+            <li><a href="#axe-throwing" class="hover:text-brand-red transition-colors">5. Axe Throwing</a></li>
+            <li><a href="#escape-room" class="hover:text-brand-red transition-colors">6. Escape Room</a></li>
+            <li><a href="#vr-experience" class="hover:text-brand-red transition-colors">7. VR Experience</a></li>
+            <li><a href="#dance-class" class="hover:text-brand-red transition-colors">8. Dance Class</a></li>
+            <li><a href="#cooking-class" class="hover:text-brand-red transition-colors">9. Cooking Class</a></li>
+            <li><a href="#brewery-tour" class="hover:text-brand-red transition-colors">10. Brewery Tour</a></li>
+            <li><a href="#night-market" class="hover:text-brand-red transition-colors">11. Night Market</a></li>
+            <li><a href="#ice-skating" class="hover:text-brand-red transition-colors">12. Ice Skating</a></li>
+            <li><a href="#city-climb" class="hover:text-brand-red transition-colors">13. City Climb</a></li>
+            <li><a href="#mixology" class="hover:text-brand-red transition-colors">14. Mixology Class</a></li>
+            <li><a href="#pottery-painting" class="hover:text-brand-red transition-colors">15. Pottery Painting</a></li>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -36,7 +135,7 @@ import CTAButton from '../components/CTAButton.astro';
         </p>
 
         <!-- 1. Paint in the Dark -->
-        <div class="mb-12 p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+        <div id="paint-in-the-dark" class="mb-12 p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">1. Paint in the Dark at DenArt Studio — UV Body Painting</h2>
           <p class="text-sand-muted mb-4">
             Let's get the obvious one out of the way first. <a href="https://denartny.com/classes/uv-body-paint-couples/" class="text-brand-red hover:text-brand-gold">DenArt Studio</a> in Brooklyn offers a Paint in the Dark experience where professional artists transform you and your partner into living, glowing art—using UV-reactive body paints that only reveal their full magic under blacklight.
@@ -53,7 +152,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 2. Acro Yoga -->
-        <div class="mb-12">
+        <div id="acro-yoga" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">2. Acro Yoga — Partner Yoga Practice</h2>
           <p class="text-sand-muted mb-4">
             If you want to build trust with your partner (literally), acro yoga is the move. This partner practice combines yoga, acrobatics, and Thai massage into flows that require communication, balance, and a lot of laughter.
@@ -70,7 +169,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 3. Rock Climbing -->
-        <div class="mb-12">
+        <div id="rock-climbing" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">3. Rock Climbing — The Cliffs or Brooklyn Boulders</h2>
           <p class="text-sand-muted mb-4">
             Nothing says "we can handle anything together" like scaling a wall. Indoor climbing is one of the best date activities for couples because it's equal parts physical, mental, and collaborative.
@@ -87,7 +186,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 4. Pottery -->
-        <div class="mb-12">
+        <div id="pottery" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">4. Pottery Class — Make Something Together</h2>
           <p class="text-sand-muted mb-4">
             Getting your hands dirty together is surprisingly romantic. Pottery classes let you escape screens and noise while creating something tangible—however wonky it turns out.
@@ -101,7 +200,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 5. Axe Throwing -->
-        <div class="mb-12">
+        <div id="axe-throwing" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">5. Axe Throwing — Competitive Fun</h2>
           <p class="text-sand-muted mb-4">
             If you want date night with an adrenaline spike, axe throwing delivers. It's exactly what it sounds like: you throw axes at targets in a supervised, safe environment.
@@ -115,7 +214,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 6. Escape Room -->
-        <div class="mb-12">
+        <div id="escape-room" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">6. Escape Room — Test Your Problem-Solving</h2>
           <p class="text-sand-muted mb-4">
             Nothing reveals how you handle pressure like an escape room. You're locked in a themed room with 60 minutes to solve puzzles and find your way out.
@@ -129,7 +228,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 7. VR -->
-        <div class="mb-12">
+        <div id="vr-experience" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">7. VR Experience — Immersive Gaming</h2>
           <p class="text-sand-muted mb-4">
             Step into another world—together. VR arcades like <strong>VR World</strong> in NYC offer multiplayer experiences where you can battle zombies, explore space, or paint in 3D.
@@ -143,7 +242,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 8. Dance Class -->
-        <div class="mb-12">
+        <div id="dance-class" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">8. Dance Class — Salsa, Bachata, or Swing</h2>
           <p class="text-sand-muted mb-4">
             Nothing beats learning to move together. Dance classes are a classic date activity for a reason—they force you to communicate, synchronize, and get physical in a structured, fun way.
@@ -157,7 +256,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 9. Cooking Class -->
-        <div class="mb-12">
+        <div id="cooking-class" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">9. Cooking Class — Foodie Date</h2>
           <p class="text-sand-muted mb-4">
             If you eat well together, this is the next level. Cooking classes let you work as a team to create a meal—then eat it.
@@ -171,7 +270,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 10. Brewery Tour -->
-        <div class="mb-12">
+        <div id="brewery-tour" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">10. Brewery or Distillery Tour — Craft Drinks</h2>
           <p class="text-sand-muted mb-4">
             NYC's craft beer and spirits scene is thriving. Brewery and distillery tours let you sample local creations while learning how they're made.
@@ -185,7 +284,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 11. Night Market -->
-        <div class="mb-12">
+        <div id="night-market" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">11. Night Market — Queens Night Market</h2>
           <p class="text-sand-muted mb-4">
             For the adventurers. <strong>Queens Night Market</strong> (spring-summer) brings together 100+ vendors selling international street food, crafts, and vibes from around the world.
@@ -199,7 +298,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 12. Ice Skating -->
-        <div class="mb-12">
+        <div id="ice-skating" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">12. Ice Skating — Classic Romance</h2>
           <p class="text-sand-muted mb-4">
             Sometimes the classics are classics for a reason. Ice skating is a quintessential NYC winter date—and for good reason.
@@ -213,7 +312,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 13. City Climb -->
-        <div class="mb-12">
+        <div id="city-climb" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">13. City Climb or Edge — Thrills with Views</h2>
           <p class="text-sand-muted mb-4">
             For couples who want to take things to new heights—literally. <strong>City Climb</strong> at Hudson Yards lets you climb to the top of the Edge building (1,200+ feet) for 360-degree views.
@@ -227,7 +326,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 14. Mixology -->
-        <div class="mb-12">
+        <div id="mixology" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">14. Mixology Class — Cocktail Making</h2>
           <p class="text-sand-muted mb-4">
             Learn to make craft cocktails together—then drink them. Mixology classes teach you the science and art of cocktail making.
@@ -241,7 +340,7 @@ import CTAButton from '../components/CTAButton.astro';
         </div>
 
         <!-- 15. Pottery Painting -->
-        <div class="mb-12">
+        <div id="pottery-painting" class="mb-12 scroll-mt-8">
           <h2 class="text-2xl font-display text-sand mb-4">15. Pottery Painting — Paint Your Own Ceramics</h2>
           <p class="text-sand-muted mb-4">
             Similar to pottery (above), but focused on painting pre-made ceramics. Pick a mug, plate, or figurine, paint it, and have it glazed and fired.
