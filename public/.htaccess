@@ -1,0 +1,79 @@
+# DenArt - SEO Redirects from WordPress Migration
+# Created: 2026-02-20
+
+# Force HTTPS
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# www to non-www (preferred)
+RewriteCond %{HTTP_HOST} ^www\.denartny\.com [NC]
+RewriteRule ^(.*)$ https://denartny.com/$1 [L,R=301]
+
+# === WordPress Migration Redirects ===
+
+# Blog section - redirect to home (blog content removed)
+RewriteRule ^blog/?$ / [L,R=301]
+RewriteRule ^blog/.*$ / [L,R=301]
+
+# Category archives - redirect to services
+RewriteRule ^category/.*$ /services/ [L,R=301]
+
+# Tag archives - redirect to services  
+RewriteRule ^tag/.*$ /services/ [L,R=301]
+
+# Author archives - redirect to about
+RewriteRule ^author/.*$ /about/ [L,R=301]
+
+# Date archives - redirect to home
+RewriteRule ^[0-9]{4}/?$ / [L,R=301]
+RewriteRule ^[0-9]{4}/[0-9]{2}/?$ / [L,R=301]
+RewriteRule ^[0-9]{4}/[0-9]{2}/[0-9]{2}/?$ / [L,R=301]
+
+# WordPress feed URLs
+RewriteRule ^feed/?$ / [L,R=301]
+RewriteRule ^rss/?$ / [L,R=301]
+RewriteRule ^rss2/?$ / [L,R=301]
+RewriteRule ^atom/?$ / [L,R=301]
+
+# WordPress admin URLs
+RewriteRule ^wp-admin/?$ / [L,R=301]
+RewriteRule ^wp-login\.php$ / [L,R=301]
+RewriteRule ^wp-content/.*$ / [L,R=301]
+RewriteRule ^wp-includes/.*$ / [L,R=301]
+
+# Common WP query strings - redirect to home
+RewriteCond %{QUERY_STRING} ^p= [OR]
+RewriteCond %{QUERY_STRING} ^page_id= [OR]
+RewriteCond %{QUERY_STRING} ^cat= [OR]
+RewriteCond %{QUERY_STRING} ^tag= [OR]
+RewriteCond %{QUERY_STRING} ^author= [OR]
+RewriteCond %{QUERY_STRING} ^m= [OR]
+RewriteCond %{QUERY_STRING} ^s=
+RewriteRule ^(.*)$ /? [L,R=301]
+
+# XMLRPC - security
+RewriteRule ^xmlrpc\.php$ / [L,R=301]
+
+# === Static Files Caching ===
+
+# Cache static assets
+<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|webp|avif|woff|woff2|ttf|eot)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+
+# HTML - shorter cache for dynamic content
+<FilesMatch "\.(html)$">
+    Header set Cache-Control "public, max-age=3600"
+</FilesMatch>
+
+# Gzip compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
