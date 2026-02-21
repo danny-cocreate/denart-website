@@ -1,9 +1,35 @@
 # Brief: Add Event Schema Markup to denartny.com Event Pages
 
 ## Status
-- **Status:** in-progress
+- **Status:** done
 - **Assigned Agent:** coder
 - **Created:** 2026-02-21
+
+## Results
+
+### What was done:
+1. **Added JSON-LD Event schema** to `/src/pages/events/[slug].astro`
+   - Schema includes: `@context`, `@type`, `name`, `description`, `url`, `startDate`, `image`
+   - Injected via `<script type="application/ld+json">` in page `<head>`
+
+2. **Rebuilt the site** - `npm run build` completed successfully
+   - 217 pages built, including all 40 event pages
+   - Verified schema is correctly embedded in generated HTML
+
+3. **Sitemap verified** - All 40 event pages are included in `sitemap-0.xml` at `/events/*` URLs
+
+4. **Fixed robots.txt** - Updated sitemap references from `sitemap.xml` to `sitemap-index.xml`
+
+5. **Committed & pushed** - Changes pushed to GitHub (CI will deploy to Hostinger)
+
+### Note on Google Search Console:
+- Sitemap ping is **deprecated** by Google
+- Google will automatically discover the sitemap from `robots.txt`
+- Manual submission requires browser access to Search Console
+
+### Files modified:
+- `src/pages/events/[slug].astro` - Added Event schema
+- `public/robots.txt` - Fixed sitemap URLs
 
 ## Objective
 Add JSON-LD Event schema markup to all event pages on denartny.com and submit the sitemap to Google Search Console.
