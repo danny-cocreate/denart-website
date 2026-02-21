@@ -221,6 +221,15 @@ import CTAButton from '../components/CTAButton.astro';
       const result = await response.json();
       
       if (result.success) {
+        // Track form submission in GA4
+        if (typeof window.trackEvent === 'function') {
+          const service = (document.getElementById('service') as HTMLSelectElement)?.value || 'unknown';
+          window.trackEvent('quote_form_submit', {
+            service_type: service,
+            timestamp: new Date().toISOString()
+          });
+        }
+        
         statusDiv.textContent = result.message || 'Quote request sent successfully! We\'ll be in touch soon.';
         statusDiv.className = 'mt-4 p-4 rounded-lg bg-emerald-900/20 border border-emerald-800/30 text-emerald-400 text-sm';
         form.reset();
