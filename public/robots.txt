@@ -26,5 +26,6 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
-# Sitemap
-Sitemap: https://denartny.com/sitemap.xml
+# Sitemaps
+Sitemap: https://denartny.com/sitemap-index.xml
+Sitemap: https://denartny.com/sitemap-0.xml
