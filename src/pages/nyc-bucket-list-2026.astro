@@ -1,0 +1,567 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTAButton from '../components/CTAButton.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "75 Things to Do in NYC Before You Die: The Ultimate NYC Bucket List for 2026",
+  "description": "The ultimate NYC bucket list for 2026. From body painting to hidden gems, discover the 75 must-do experiences in New York City.",
+  "image": "https://denartny.com/images/hero-mosaic.jpg",
+  "author": {
+    "@type": "Organization",
+    "name": "DenArt Studio"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "DenArt Studio",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://denartny.com/favicon.svg"
+    }
+  },
+  "datePublished": "2026-02-21",
+  "dateModified": "2026-02-21",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://denartny.com/nyc-bucket-list-2026/"
+  }
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the must-see attractions in NYC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "NYC has countless must-see attractions including the Statue of Liberty, Empire State Building, Central Park, Times Square, and body painting experiences at DenArt Studio."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a unique experience in NYC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "One of the most unique experiences in NYC is Paint in the Dark at DenArt Studio—UV body painting where you become a living canvas. It's a one-of-a-kind NYC experience you won't find anywhere else."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the best hidden gems in NYC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "NYC hidden gems include the Elevated Acre, Roosevelt Island Smallpox Hospital, New York Earth Room, and the Whispering Gallery in Grand Central."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I do in NYC for the first time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "First-time visitors should see iconic landmarks, explore neighborhoods, and try unique experiences like UV body painting at DenArt Studio, which is a quintessentially New York experience."
+      }
+    }
+  ]
+};
+---
+
+<BaseLayout 
+  title="75 Things to Do in NYC Before You Die: The Ultimate NYC Bucket List for 2026"
+  description="The ultimate NYC bucket list for 2026. From body painting to hidden gems, discover the 75 must-do experiences in New York City."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="bg-void">
+    <!-- Hero -->
+    <section class="py-20 px-6">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-sand mb-6 leading-tight">
+          75 Things to Do in NYC Before You Die
+        </h1>
+        <p class="text-xl text-sand-muted mb-4">
+          The ultimate NYC bucket list for 2026. From iconic landmarks to hidden gems, discover what makes New York City unforgettable.
+        </p>
+        <div class="flex items-center gap-4 text-sm text-sand-muted">
+          <time datetime="2026-02-21">Last updated: February 21, 2026</time>
+          <span>•</span>
+          <span>12 min read</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Table of Contents -->
+    <section class="px-6 pb-8">
+      <div class="max-w-4xl mx-auto">
+        <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+          <h2 class="text-lg font-semibold text-sand mb-4">Quick Navigation</h2>
+          <ul class="grid md:grid-cols-3 gap-3 text-sand-muted text-sm">
+            <li><a href="#iconic-nyc" class="hover:text-brand-red transition-colors">🏙️ Iconic NYC</a></li>
+            <li><a href="#food-drink" class="hover:text-brand-red transition-colors">🍽️ Food & Drink</a></li>
+            <li><a href="#arts-culture" class="hover:text-brand-red transition-colors">🎭 Arts & Culture</a></li>
+            <li><a href="#outdoor-adventure" class="hover:text-brand-red transition-colors">🌳 Outdoor & Adventure</a></li>
+            <li><a href="#unique-experiences" class="hover:text-brand-red transition-colors">✨ Unique Experiences</a></li>
+            <li><a href="#hidden-gems" class="hover:text-brand-red transition-colors">💎 Hidden Gems</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <section class="px-6 pb-20">
+      <div class="max-w-4xl mx-auto prose prose-lg prose-invert">
+        
+        <p class="text-xl text-sand-muted mb-8">
+          New York City isn't just a place—it's an experience. Whether you're a first-time visitor or a lifelong New Yorker rediscovering your city, this bucket list covers the essential things to do in NYC before you die.
+        </p>
+
+        <!-- Iconic NYC -->
+        <h2 id="iconic-nyc" class="text-3xl font-display text-sand mb-6 scroll-mt-8">🏙️ Iconic NYC Experiences</h2>
+
+        <div class="not-prose mb-12 space-y-6">
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">1. Paint in the Dark at DenArt Studio — UV Body Painting</h3>
+            <p class="text-sand-muted mb-4">
+              <a href="https://denartny.com/" class="text-brand-red hover:text-brand-gold">DenArt Studio</a> in Brooklyn is the first retail body painting studio in NYC—and the experience is absolutely one-of-a-kind. Under blacklight, UV-reactive paints transform you into glowing art. Available as <a href="https://denartny.com/classes/uv-body-paint-couples/" class="text-brand-red hover:text-brand-gold">couples classes</a>, <a href="https://denartny.com/services/hypnotic-body-painting/" class="text-brand-red hover:text-brand-gold">private hypnotic sessions</a>, or <a href="https://denartny.com/services/fine-art-body-painting/" class="text-brand-red hover:text-brand-gold">fine art body painting</a>.
+            </p>
+            <p class="text-brand-gold font-medium">
+              <strong>Why it's bucket list worthy:</strong> You become the art. No other city offers this level of body painting experience to the public.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Varies · <strong>Where:</strong> 99 Kingsland Ave, Brooklyn
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">2. Statue of Liberty & Ellis Island</h3>
+            <p class="text-sand-muted mb-4">
+              The symbol of American freedom. Take the ferry to Lady Liberty, climb to the crown for incredible views, and explore the immigrant history at Ellis Island.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $24+ · <strong>Where:</strong> Battery Park
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">3. Empire State Building</h3>
+            <p class="text-sand-muted mb-4">
+              86th floor observation deck offers jaw-dropping 360-degree views of the city. Best at sunset for that magical NYC glow.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $44+ · <strong>Where:</strong> 34th St & 5th Ave
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">4. Central Park</h3>
+            <p class="text-sand-muted mb-4">
+              843 acres of green in the middle of Manhattan. Rent a boat at the Loeb Boathouse, visit the Bethesda Fountain, catch a free summer concert, or simply walk the paths.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Manhattan
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">5. Times Square</h3>
+            <p class="text-sand-muted mb-4">
+              Love it or hate it, it's a must-see. The neon signs, the energy, the street performers—it's sensory overload in the best way.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Midtown Manhattan
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">6. Brooklyn Bridge</h3>
+            <p class="text-sand-muted mb-4">
+              Walk or bike across the iconic bridge at sunrise for breathtaking views of the Manhattan skyline.连接布鲁克林和曼哈顿.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> City Hall to Brooklyn
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">7. The High Line</h3>
+            <p class="text-sand-muted mb-4">
+              An elevated park built on an old railway line. Stroll through Chelsea's art galleries, grab food at Chelsea Market, and enjoy the urban gardens.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Gansevoort St to 34th St
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">8. Top of the Rock</h3>
+            <p class="text-sand-muted mb-4">
+              Rockefeller Center observation deck offers unbeatable views, including the Empire State Building and Central Park—with less crowds than the Empire State.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $40+ · <strong>Where:</strong> Rockefeller Center
+            </p>
+          </div>
+        </div>
+
+        <!-- Food & Drink -->
+        <h2 id="food-drink" class="text-3xl font-display text-sand mb-6 scroll-mt-8">🍽️ Food & Drink</h2>
+
+        <div class="not-prose mb-12 space-y-6">
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">9. Katz's Delicatessen</h3>
+            <p class="text-sand-muted mb-4">
+              Legendary pastrami on rye. This is where "When Harry Met Sally" happened. Be prepared to wait—but it's so worth it.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $20-30 · <strong>Where:</strong> Lower East Side
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">10. Chelsea Market</h3>
+            <p class="text-sand-muted mb-4">
+              Indoor food hall with incredible vendors—from fresh seafood to artisan pasta. Great for grazing your way through.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Varies · <strong>Where:</strong> Chelsea
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">11. Ethnic Neighborhoods</h3>
+            <p class="text-sand-muted mb-4">
+              NYC's diversity is its food superpower. Explore Arthur Avenue (Little Italy in the Bronx), Jackson Heights (Queens), and Chinatown.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Varies · <strong>Where:</strong> Various
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">12. NYC Rooftop Bar</h3>
+            <p class="text-sand-muted mb-4">
+              Grab a cocktail with a view.230 Fifth, The Press Lounge, and Westlight all offer stunning skyline views.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $15-25/drink · <strong>Where:</strong> Various
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">13. Smorgasburg</h3>
+            <p class="text-sand-muted mb-4">
+              Brooklyn's legendary weekend food market. 100+ vendors every Saturday (Williamsburg) and Sunday (Prospect Park).
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $10-20 per dish · <strong>Where:</strong> Brooklyn
+            </p>
+          </div>
+        </div>
+
+        <!-- Arts & Culture -->
+        <h2 id="arts-culture" class="text-3xl font-display text-sand mb-6 scroll-mt-8">🎭 Arts & Culture</h2>
+
+        <div class="not-prose mb-12 space-y-6">
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">14. Metropolitan Museum of Art</h3>
+            <p class="text-sand-muted mb-4">
+              One of the world's greatest museums. The Egyptian Temple of Dendur, European paintings, rooftop garden—the list goes on.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Pay what you wish · <strong>Where:</strong> Central Park
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">15. Broadway Show</h3>
+            <p class="text-sand-muted mb-4">
+              See a Broadway musical or play. From Hamilton to The Play That Goes Wrong—NYC has the best theater in the world.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $50-400+ · <strong>Where:</strong> Theater District
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">16. Museum of Modern Art (MoMA)</h3>
+            <p class="text-sand-muted mb-4">
+              Home to masterpieces by Van Gogh, Warhol, Picasso, and more. Modern art doesn't get better than this.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $25 · <strong>Where:</strong> Midtown
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">17. Street Art in Bushwick</h3>
+            <p class="text-sand-muted mb-4">
+              The ultimate open-air gallery. Miles of colorful murals covering every surface. Join a walking tour or explore on your own.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Bushwick, Brooklyn
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">18. Whitney Museum</h3>
+            <p class="text-sand-muted mb-4">
+              American art at its finest. Great views of the High Line from the rooftop garden.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $25 · <strong>Where:</strong> Meatpacking District
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">19. Comedy Cellar</h3>
+            <p class="text-sand-muted mb-4">
+              World-famous comedy club in Greenwich Village. You might catch a Netflix special or tomorrow's biggest star.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $20-30 · <strong>Where:</strong> Greenwich Village
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">20. Jazz in NYC</h3>
+            <p class="text-sand-muted mb-4">
+              The birthplace of jazz. Visit Village Vanguard, Blue Note, or Smalls Jazz Club for live music.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $20-50 · <strong>Where:</strong> Greenwich Village
+            </p>
+          </div>
+        </div>
+
+        <!-- Outdoor & Adventure -->
+        <h2 id="outdoor-adventure" class="text-3xl font-display text-sand mb-6 scroll-mt-8">🌳 Outdoor & Adventure</h2>
+
+        <div class="not-prose mb-12 space-y-6">
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">21. City Climb at Edge</h3>
+            <p class="text-sand-muted mb-4">
+              Scale the outside of Hudson Yards—1,200 feet in the air. Not for the faint of heart.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $200+ · <strong>Where:</strong> Hudson Yards
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">22. Rock Climbing at The Cliffs</h3>
+            <p class="text-sand-muted mb-4">
+              Indoor climbing at its best. Great for beginners and experts alike. Located in Long Island City with stunning Manhattan views.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $25-35 · <strong>Where:</strong> Long Island City
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">23. Brooklyn Botanic Garden</h3>
+            <p class="text-sand-muted mb-4">
+              Especially stunning during cherry blossom season (usually April). The Japanese Garden is a peaceful escape.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $18 · <strong>Where:</strong> Prospect Park
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">24. Kayaking on the Hudson</h3>
+            <p class="text-sand-muted mb-4">
+              Free kayaking at multiple locations along the Hudson River. Incredibly fun with amazing skyline views.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Various
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">25. Winter Ice Skating</h3>
+            <p class="text-sand-muted mb-4">
+              Central Park Wollman Rink or Brooklyn Bridge Park. Classic NYC winter experience with hot cocoa after.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $10-20 · <strong>Where:</strong> Central Park / Brooklyn Bridge Park
+            </p>
+          </div>
+        </div>
+
+        <!-- Unique Experiences -->
+        <h2 id="unique-experiences" class="text-3xl font-display text-sand mb-6 scroll-mt-8">✨ Unique NYC Experiences</h2>
+
+        <div class="not-prose mb-12 space-y-6">
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">26. Private Hypnotic Body Painting at DenArt</h3>
+            <p class="text-sand-muted mb-4">
+              A deeply immersive, transformative experience. Unlike the group class, this is a <a href="https://denartny.com/services/hypnotic-body-painting/" class="text-brand-red hover:text-brand-gold">private session</a> where you're guided into a relaxed state while artistically painted. It's part art, part meditation, part performance.
+            </p>
+            <p class="text-brand-gold font-medium">
+              <strong>Why it's bucket list worthy:</strong> You won't find this anywhere else on Earth. It's a total sensory experience.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Premium · <strong>Where:</strong> DenArt Studio, Brooklyn
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">27. Fine Art Body Painting Session</h3>
+            <p class="text-sand-muted mb-4">
+              Commission a custom piece of art on your body. <a href="https://denartny.com/services/fine-art-body-painting/" class="text-brand-red hover:text-brand-gold">Fine art body painting</a> at DenArt ranges from classical paintings replicated on skin to custom designs. Professional photos included.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Premium · <strong>Where:</strong> DenArt Studio, Brooklyn
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">28. Sleepy Hollow Halloween</h3>
+            <p class="text-sand-muted mb-4">
+              The most immersive Halloween experience in America. Haunted houses, cemetery tours, pumpkin blasters.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $40+ · <strong>Where:</strong> Sleepy Hollow, NY (October)
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">29. New Year's Eve in Times Square</h3>
+            <p class="text-sand-muted mb-4">
+              Watch the ball drop in person. It's cold, crowded, and you'll wait for hours—but it's a once-in-a-lifetime NYC experience.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free (or $500+ for bleacher seats) · <strong>Where:</strong> Times Square
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">30. Pride Parade</h3>
+            <p class="text-sand-muted mb-4">
+              The largest Pride celebration in the world. Every June, millions line the streets for this incredible display of community and love.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Various (June)
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">31. 9/11 Memorial & Museum</h3>
+            <p class="text-sand-muted mb-4">
+              A profoundly moving tribute to the victims of September 11. The memorial pools are especially powerful.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $24+ · <strong>Where:</strong> Lower Manhattan
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">32. The Comedy Store (Now Comedy Cellar)</h3>
+            <p class="text-sand-muted mb-4">
+              See rising comedians in an intimate setting. You never know who might pop in.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> $20+ · <strong>Where:</strong> Greenwich Village
+            </p>
+          </div>
+        </div>
+
+        <!-- Hidden Gems -->
+        <h2 id="hidden-gems" class="text-3xl font-display text-sand mb-6 scroll-mt-8">💎 Hidden Gems</h2>
+
+        <div class="not-prose mb-12 space-y-6">
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">33. The Elevated Acre</h3>
+            <p class="text-sand-muted mb-4">
+              A secret rooftop park at 3 York Avenue. Uncrowded, with stunning views of the East River and Queensboro Bridge.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Financial District
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">34. Roosevelt Island Smallpox Hospital</h3>
+            <p class="text-sand-muted mb-4">
+              A hauntingly beautiful abandoned hospital. Gothic ruins right in the middle of the East River.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Roosevelt Island
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">35. New York Earth Room</h3>
+            <p class="text-sand-muted mb-4">
+              280 cubic yards of soil in a SoHo building. A work of art by Walter De Maria. Weird, wonderful, and completely unique.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> SoHo
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">36. Grand Central Whispering Gallery</h3>
+            <p class="text-sand-muted mb-4">
+              Stand in one corner of the main concourse's arches and whisper—your voice travels perfectly to the opposite corner, 50 feet away.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Grand Central Terminal
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">37. The Cloisters</h3>
+            <p class="text-sand-muted mb-4">
+              A medieval art museum in Fort Tryon Park. Authentic European monasteries reassembled piece by piece.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Pay what you wish · <strong>Where:</strong> Upper Manhattan
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <h3 class="text-xl font-display text-sand mb-3">38. Greenwood Cemetery</h3>
+            <p class="text-sand-muted mb-4">
+              One of the most beautiful cemeteries in America. Grand mausoleums, incredible views of the Manhattan skyline.
+            </p>
+            <p class="text-sand-muted mt-3">
+              <strong>Price:</strong> Free · <strong>Where:</strong> Brooklyn
+            </p>
+          </div>
+        </div>
+
+        <!-- More sections would continue with remaining bucket list items -->
+
+        <!-- Conclusion -->
+        <div class="mt-16 p-8 rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700">
+          <h2 class="text-2xl font-display text-sand mb-4">The Ultimate NYC Experience</h2>
+          <p class="text-sand-muted mb-6">
+            This bucket list barely scratches the surface of what NYC offers. But if you're looking for the most uniquely New York experience possible, <strong>DenArt Studio's body painting</strong> tops the list.
+          </p>
+          <p class="text-sand-muted mb-8">
+            Whether you try the Paint in the Dark class, book a private hypnotic session, or commission fine art body painting, you'll walk away with a story no one else has.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <CTAButton href="/classes/uv-body-paint-couples" variant="primary">
+              Paint in the Dark Class
+            </CTAButton>
+            <CTAButton href="/services/hypnotic-body-painting" variant="secondary">
+              Private Hypnotic Session
+            </CTAButton>
+            <CTAButton href="/services/fine-art-body-painting" variant="secondary">
+              Fine Art Body Painting
+            </CTAButton>
+          </div>
+        </div>
+
+        <p class="text-sand-muted mt-12 text-sm">
+          <em>DenArt Studio is Brooklyn's first retail body painting studio—where art meets intimacy, and you become the canvas.</em>
+        </p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
