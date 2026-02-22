@@ -5,7 +5,7 @@ import CTAButton from '../components/CTAButton.astro';
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "75 Things to Do in NYC Before You Die: The Ultimate NYC Bucket List for 2026",
+  "headline": "37 Things to Do in NYC Before You Die: The Ultimate NYC Bucket List for 2026",
   "description": "The ultimate NYC bucket list for 2026. From body painting to hidden gems, discover the 75 must-do experiences in New York City.",
   "image": "https://denartny.com/images/hero-mosaic.jpg",
   "author": {
@@ -69,7 +69,7 @@ const faqSchema = {
 ---
 
 <BaseLayout
-  title="75 Things to Do in NYC Before You Die: The Ultimate NYC Bucket List for 2026"
+  title="37 Things to Do in NYC Before You Die: The Ultimate NYC Bucket List for 2026"
   description="The ultimate NYC bucket list for 2026. From body painting to hidden gems, discover the 75 must-do experiences in New York City."
 >
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
@@ -80,7 +80,7 @@ const faqSchema = {
     <section class="py-20 px-6">
       <div class="max-w-4xl mx-auto">
         <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-sand mb-6 leading-tight">
-          75 Things to Do in NYC Before You Die
+          37 Things to Do in NYC Before You Die
         </h1>
         <p class="text-xl text-sand-muted mb-4">
           The ultimate NYC bucket list for 2026. From iconic landmarks to hidden gems, discover what makes New York City unforgettable.
@@ -88,7 +88,7 @@ const faqSchema = {
         <div class="flex items-center gap-4 text-sm text-sand-muted">
           <time datetime="2026-02-21">Last updated: February 21, 2026</time>
           <span>•</span>
-          <span>12 min read</span>
+          <span>6 min read</span>
         </div>
       </div>
     </section>
@@ -125,12 +125,9 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/classes/uv-couples/paint-dark-hero.jpg" alt="Paint in the Dark UV Body Painting at DenArt Studio" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-            <h3 class="text-xl font-display text-sand mb-3">1. Paint in the Dark at DenArt Studio - UV Body Painting</h3>
+            <h3 class="text-xl font-display text-sand mb-3">1. <a href="https://denartny.com/" class="text-brand-red hover:text-brand-gold">DenArt Studio</a> - Body Painting Experience</h3>
             <p class="text-sand-muted mb-4">
-              <a href="https://denartny.com/" class="text-brand-red hover:text-brand-gold">DenArt Studio</a> in Brooklyn is the first retail body painting studio in NYC-and the experience is absolutely one-of-a-kind. Under blacklight, UV-reactive paints transform you into glowing art. Available as <a href="https://denartny.com/classes/uv-body-paint-couples/" class="text-brand-red hover:text-brand-gold">couples classes</a>, <a href="https://denartny.com/services/hypnotic-body-painting/" class="text-brand-red hover:text-brand-gold">private hypnotic sessions</a>, or <a href="https://denartny.com/services/fine-art-body-painting/" class="text-brand-red hover:text-brand-gold">fine art body painting</a>.
-            </p>
-            <p class="text-brand-gold font-medium">
-              <strong>Why it's bucket list worthy:</strong> You become the art. No other city offers this level of body painting experience to the public.
+              NYC's first retail body painting studio. Under blacklight, UV-reactive paints transform you into glowing art. Available as <a href="https://denartny.com/classes/uv-body-paint-couples/" class="text-brand-red hover:text-brand-gold">couples classes</a>, <a href="https://denartny.com/services/hypnotic-body-painting/" class="text-brand-red hover:text-brand-gold">private hypnotic sessions</a>, or <a href="https://denartny.com/services/fine-art-body-painting/" class="text-brand-red hover:text-brand-gold">fine art body painting</a>. See full details in <a href="#arts-culture" class="text-brand-red">Arts & Culture</a> below.
             </p>
             <p class="text-sand-muted mt-3">
               <strong>Price:</strong> Varies · <strong>Where:</strong> 99 Kingsland Ave, Brooklyn
@@ -141,12 +138,12 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/statue_liberty.jpg" alt="Statue of Liberty" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">2. <a href="https://www.nps.gov/stli/index.htm" target="_blank" rel="noopener">Statue of Liberty <h3 class="text-xl font-display text-sand mb-3">2. <a href="https://www.statuecruises.com/" target="_blank" rel="noopener">Statue of Liberty & Ellis Island</a></h3> Ellis Island</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">2. <a href="https://www.nps.gov/stli/index.htm" target="_blank" rel="noopener">Statue of Liberty</a> >2. <a href="https://www.statuecruises.com/" target="_blank" rel="noopener">Statue of Liberty & Ellis Island</a></h3> <a href="https://www.statueoflibertytickets.com/" target="_blank" rel="noopener">Ellis Island</a></h3>
               <p class="text-sand-muted mb-4">
                 The symbol of American freedom. Take the ferry to Lady Liberty, climb to the crown for incredible views, and explore the immigrant history at Ellis Island.
               </p>
               <p class="text-sand-muted mt-3">
-                <strong>Price:</strong> $24+ · <strong>Where:</strong> Battery Park · <a href="https://www.nps.gov/stli/index.htm" target="_blank" rel="noopener" class="text-brand-red text-sm">[NPS]</a> · <a href="https://www.statueoflibertytickets.com/" target="_blank" rel="noopener" class="text-brand-red text-sm">[Buy Tickets]</a>
+                <strong>Price:</strong> $24+ · <strong>Where:</strong> Battery Park · <a href="https://www.statuecruises.com/" target="_blank" rel="noopener" class="text-brand-red text-sm">[Buy Tickets]</a>
               </p>
             </div>
           </div>
@@ -154,7 +151,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/empire_state.jpg" alt="Empire State Building" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">3. <a href="https://www.esbnyc.com/" target="_blank" rel="noopener">Empire State Building</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">3. <a href="https://www.esbnyc.com/" target="_blank" rel="noopener">Empire State Building</a> · <a href="https://www.esbnyc.com/buy-tickets" target="_blank" rel="noopener" class="text-brand-red text-sm">[Buy Tickets]</a></h3>
               <p class="text-sand-muted mb-4">
                 86th floor observation deck offers jaw-dropping 360-degree views of the city. Best at sunset for that magical NYC glow.
               </p>
@@ -167,7 +164,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/central_park.jpg" alt="Central Park" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">4. <a href="https://www.centralparknyc.org/" target="_blank" rel="noopener">Central Park</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">4. <a href="https://www.centralparknyc.org/" target="_blank" rel="noopener">Central Park</a></h3>
               <p class="text-sand-muted mb-4">
                 843 acres of green in the middle of Manhattan. Rent a boat at the Loeb Boathouse, visit the Bethesda Fountain, catch a free summer concert, or simply walk the paths.
               </p>
@@ -180,7 +177,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/5-bucketlist.jpg" alt="Times Square" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">5. <a href="https://www.timessquarenyc.org/" target="_blank" rel="noopener">Times Square</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">5. <a href="https://www.timessquarenyc.org/" target="_blank" rel="noopener">Times Square</a></h3>
               <p class="text-sand-muted mb-4">
                 Love it or hate it, it's a must-see. The neon signs, the energy, the street performers-it's sensory overload in the best way.
               </p>
@@ -193,7 +190,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/6-bucketlist.jpg" alt="Brooklyn Bridge" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">6. <a href="https://www.nycgovparks.org/highlights/brooklyn-bridge" target="_blank" rel="noopener">Brooklyn Bridge</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">6. <a href="https://www.nycgovparks.org/highlights/brooklyn-bridge" target="_blank" rel="noopener">Brooklyn Bridge</a></h3>
               <p class="text-sand-muted mb-4">
                 Walk or bike across the iconic bridge at sunrise for breathtaking views of the Manhattan skyline.连接布鲁克林和曼哈顿.
               </p>
@@ -206,7 +203,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/7-bucketlist.jpg" alt="The High Line" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">7. <a href="https://www.thehighline.org/" target="_blank" rel="noopener">The High Line</a> · <a href="https://www.chelseamarket.com/" target="_blank" rel="noopener" class="text-brand-red text-sm">[Chelsea Market]</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">7. <a href="https://www.thehighline.org/" target="_blank" rel="noopener">The High Line</a> · <a href="https://www.chelseamarket.com/" target="_blank" rel="noopener" class="text-brand-red text-sm">[Chelsea Market]</a></h3>
               <p class="text-sand-muted mb-4">
                 An elevated park built on an old railway line. Stroll through Chelsea's art galleries, grab food at Chelsea Market, and enjoy the urban gardens.
               </p>
@@ -219,7 +216,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/8-bucketlist.jpg" alt="Top of the Rock" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">8. <a href="https://www.rockefellercenter.com/attractions/top-of-the-rock/" target="_blank" rel="noopener">Top of the Rock</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">8. <a href="https://www.rockefellercenter.com/attractions/top-of-the-rock-observation-deck/" target="_blank" rel="noopener">Top of the Rock</a></h3>
               <p class="text-sand-muted mb-4">
                 Rockefeller Center observation deck offers unbeatable views, including the Empire State Building and Central Park-with less crowds than the Empire State.
               </p>
@@ -237,7 +234,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/9-bucketlist.jpg" alt="Katz's Delicatessen" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">9. <a href="https://www.katzsdelicatessen.com/" target="_blank" rel="noopener">Katz's Delicatessen</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">9. <a href="https://www.katzsdelicatessen.com/" target="_blank" rel="noopener">Katz's Delicatessen</a></h3>
               <p class="text-sand-muted mb-4">
                 Legendary pastrami on rye. This is where "When Harry Met Sally" happened. Be prepared to wait-but it's so worth it.
               </p>
@@ -250,7 +247,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/10-bucketlist.jpg" alt="Chelsea Market" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">10. <a href="https://www.chelseamarket.com/" target="_blank" rel="noopener">Chelsea Market</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">10. <a href="https://www.chelseamarket.com/" target="_blank" rel="noopener">Chelsea Market</a></h3>
               <p class="text-sand-muted mb-4">
                 Indoor food hall with incredible vendors-from fresh seafood to artisan pasta. Great for grazing your way through.
               </p>
@@ -263,7 +260,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/11-bucketlist.jpg" alt="Ethnic Neighborhoods" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">11. Ethnic Neighborhoods: <a href="https://www.arthuravenuebronx.com/" target="_blank" rel="noopener">Arthur Avenue</a>, <a href="https://www.jacksontours.org/" target="_blank" rel="noopener">Jackson Heights</a>, <a href="https://www.explorechinatown.com/" target="_blank" rel="noopener">Chinatown</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">11. Ethnic Neighborhoods: <a href="https://www.arthuravenuebronx.com/" target="_blank" rel="noopener">Arthur Avenue</a>, <a href="https://www.jacksontours.org/" target="_blank" rel="noopener">Jackson Heights</a>, <a href="https://www.explorechinatown.com/" target="_blank" rel="noopener">Chinatown</a></h3>
               <p class="text-sand-muted mb-4">
                 NYC's diversity is its food superpower. Explore Arthur Avenue (Little Italy in the Bronx), Jackson Heights (Queens), and Chinatown.
               </p>
@@ -276,7 +273,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/12-bucketlist.jpg" alt="NYC Rooftop Bar" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">12. <a href="https://www.230fifth.com/" target="_blank" rel="noopener">NYC Rooftop Bars</a>: 230 Fifth, <a href="https://www.presslounge.com/" target="_blank" rel="noopener">The Press Lounge</a>, <a href="https://www.westlightbar.com/" target="_blank" rel="noopener">Westlight</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">12. <a href="https://www.230fifth.com/" target="_blank" rel="noopener">NYC Rooftop Bars</a>: 230 Fifth, <a href="https://www.presslounge.com/" target="_blank" rel="noopener">The Press Lounge</a>, <a href="https://www.westlightbar.com/" target="_blank" rel="noopener">Westlight</a></h3>
               <p class="text-sand-muted mb-4">
                 Grab a cocktail with a view. 230 Fifth, The Press Lounge, and Westlight all offer stunning skyline views.
               </p>
@@ -289,7 +286,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/13-bucketlist.jpg" alt="Smorgasburg" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">13. <a href="https://www.smorgasburg.com/" target="_blank" rel="noopener">Smorgasburg</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">13. <a href="https://www.smorgasburg.com/" target="_blank" rel="noopener">Smorgasburg</a></h3>
               <p class="text-sand-muted mb-4">
                 Brooklyn's legendary weekend food market. 100+ vendors every Saturday (Williamsburg) and Sunday (Prospect Park).
               </p>
@@ -305,9 +302,25 @@ const faqSchema = {
 
         <div class="not-prose mb-12 space-y-6">
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
+            <img src="/images/classes/uv-couples/paint-dark-hero.jpg" alt="Body Painting at DenArt Studio" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
+            <div class="flex-1">
+              <h3 class="text-xl font-display text-sand mb-3">14. <a href="https://denartny.com/" target="_blank" rel="noopener">Body Painting at DenArt Studio</a></h3>
+              <p class="text-sand-muted mb-4">
+                NYC's only retail body painting studio offers three unique experiences: <strong>Paint in the Dark</strong> (UV body painting couples class), <strong>Hypnotic Body Painting</strong> (private immersive session), and <strong>Fine Art Body Painting</strong> (custom commissioned artwork). Professional photos included.
+              </p>
+              <p class="text-brand-gold font-medium">
+                <strong>Why it's bucket list worthy:</strong> You become the art. No other city offers this level of body painting experience to the public.
+              </p>
+              <p class="text-sand-muted mt-3">
+                <strong>Price:</strong> $95+ · <strong>Where:</strong> 99 Kingsland Ave, Brooklyn · <a href="https://denartny.com/classes/uv-body-paint-couples/" target="_blank" rel="noopener" class="text-brand-red text-sm">[Classes]</a> · <a href="https://denartny.com/services/hypnotic-body-painting/" target="_blank" rel="noopener" class="text-brand-red text-sm">[Private]</a> · <a href="https://denartny.com/services/fine-art-body-painting/" target="_blank" rel="noopener" class="text-brand-red text-sm">[Fine Art]</a>
+              </p>
+            </div>
+          </div>
+
+          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/14-bucketlist.jpg" alt="Metropolitan Museum of Art" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">14. <a href="https://www.metmuseum.org/" target="_blank" rel="noopener">Metropolitan Museum of Art</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">15. <a href="https://www.metmuseum.org/" target="_blank" rel="noopener">Metropolitan Museum of Art</a></h3>
               <p class="text-sand-muted mb-4">
                 One of the world's greatest museums. The Egyptian Temple of Dendur, European paintings, rooftop garden-the list goes on.
               </p>
@@ -320,7 +333,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/15-bucketlist.jpg" alt="Broadway Show" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">15. Broadway Show: <a href="https://www.broadway.com/" target="_blank" rel="noopener">Broadway.com</a>, <a href="https://www.tdf.org/tkts" target="_blank" rel="noopener" class="text-brand-red text-sm">[TKTS Discount]</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">16. Broadway Show: <a href="https://www.broadway.com/" target="_blank" rel="noopener">Broadway.com</a>, <a href="https://www.tdf.org/tkts" target="_blank" rel="noopener" class="text-brand-red text-sm">[TKTS Discount]</a></h3>
               <p class="text-sand-muted mb-4">
                 See a Broadway musical or play. From Hamilton to The Play That Goes Wrong—NYC has the best theater in the world.
               </p>
@@ -333,7 +346,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/16-bucketlist.jpg" alt="Museum of Modern Art (MoMA)" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">16. <a href="https://www.moma.org/" target="_blank" rel="noopener">Museum of Modern Art (MoMA)</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">17. <a href="https://www.moma.org/" target="_blank" rel="noopener">Museum of Modern Art (MoMA)</a></h3>
               <p class="text-sand-muted mb-4">
                 Home to masterpieces by Van Gogh, Warhol, Picasso, and more. Modern art doesn't get better than this.
               </p>
@@ -346,7 +359,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/17-bucketlist.jpg" alt="Street Art in Bushwick" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">17. <a href="https://www.thebushwickcollective.com/" target="_blank" rel="noopener">Street Art in Bushwick</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">18. <a href="https://www.thebushwickcollective.com/" target="_blank" rel="noopener">Street Art in Bushwick</a></h3>
               <p class="text-sand-muted mb-4">
                 The ultimate open-air gallery. Miles of colorful murals covering every surface. Join a walking tour or explore on your own.
               </p>
@@ -359,7 +372,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/whitney_museum.jpg" alt="Whitney Museum" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">18. <a href="https://whitney.org/" target="_blank" rel="noopener">Whitney Museum</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">19. <a href="https://whitney.org/" target="_blank" rel="noopener">Whitney Museum</a></h3>
               <p class="text-sand-muted mb-4">
                 American art at its finest. Great views of the High Line from the rooftop garden.
               </p>
@@ -370,22 +383,22 @@ const faqSchema = {
           </div>
 
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
-            <img src="/images/pages/19-bucketlist.jpg" alt="Cafe Wha?" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
+            <img src="/images/pages/19-bucketlist.jpg" alt="Comedy Cellar" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">19. <a href="https://www.cafewha.com/" target="_blank" rel="noopener">Cafe Wha?</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">20. <a href="https://www.comedycellar.com/" target="_blank" rel="noopener">Comedy Cellar</a></h3>
               <p class="text-sand-muted mb-4">
-                A legendary Greenwich Village music club since 1959. See live bands almost every night - from indie rock to funk, blues to jazz. The Cafe Wha? House Band puts on an amazing show.
+                World-famous comedy club in Greenwich Village. You might catch a Netflix special or tomorrow's biggest star.
               </p>
               <p class="text-sand-muted mt-3">
-                <strong>Price:</strong> $10-25 · <strong>Where:</strong> Greenwich Village · <a href="https://www.cafewha.com/calendar" target="_blank" rel="noopener">[See Schedule]</a>
+                <strong>Price:</strong> $20-30 · <strong>Where:</strong> Greenwich Village
               </p>
             </div>
           </div>
 
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
-            <img src="/images/pages/20-bucketlist.jpg" alt="Jazz in NYC" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
+            <img src="/images/pages/19-bucketlist.jpg" alt="Jazz in NYC" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">20. Jazz in NYC: <a href="https://www.villagevanguard.com/" target="_blank" rel="noopener">Village Vanguard</a>, <a href="https://www.bluenotejazz.com/" target="_blank" rel="noopener">Blue Note</a>, <a href="https://www.smallslive.com/" target="_blank" rel="noopener">Smalls</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">21. Jazz in NYC: <a href="https://www.villagevanguard.com/" target="_blank" rel="noopener">Village Vanguard</a>, <a href="https://www.bluenotejazz.com/" target="_blank" rel="noopener">Blue Note</a>, <a href="https://www.smallslive.com/" target="_blank" rel="noopener">Smalls</a></h3>
               <p class="text-sand-muted mb-4">
                 The birthplace of jazz. Visit Village Vanguard, Blue Note, or Smalls Jazz Club for live music.
               </p>
@@ -401,14 +414,14 @@ const faqSchema = {
 
         <div class="not-prose mb-12 space-y-6">
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
-            <img src="/images/pages/21-bucketlist.jpg" alt="City Climb at Edge" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
+            <img src="/images/pages/20-bucketlist.jpg" alt="City Climb at Edge" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">21. <a href="https://www.edgenyc.com/city-climb/" target="_blank" rel="noopener">City Climb at Edge</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">22. <a href="https://www.edgenyc.com/en/city-climb" target="_blank" rel="noopener">City Climb at Edge</a></h3>
               <p class="text-sand-muted mb-4">
                 Scale the outside of Hudson Yards-1,200 feet in the air. Not for the faint of heart.
               </p>
               <p class="text-sand-muted mt-3">
-                <strong>Price:</strong> $200+ · <strong>Where:</strong> Hudson Yards · <a href="https://www.edgenyc.com/city-climb/" target="_blank" rel="noopener">[Buy Tickets]</a>
+                <strong>Price:</strong> $200+ · <strong>Where:</strong> Hudson Yards
               </p>
             </div>
           </div>
@@ -416,7 +429,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/rock_climbing.jpg" alt="Rock Climbing at The Cliffs" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">22. Rock Climbing at <a href="https://thecliffsnylc.com/" target="_blank" rel="noopener">The Cliffs</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">23. Rock Climbing at <a href="https://thecliffsnylc.com/" target="_blank" rel="noopener">The Cliffs</a></h3>
               <p class="text-sand-muted mb-4">
                 Indoor climbing at its best. Great for beginners and experts alike. Located in Long Island City with stunning Manhattan views.
               </p>
@@ -429,7 +442,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/23-bucketlist.jpg" alt="Brooklyn Botanic Garden" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">23. <a href="https://www.bbg.org/" target="_blank" rel="noopener">Brooklyn Botanic Garden</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">24. <a href="https://www.bbg.org/" target="_blank" rel="noopener">Brooklyn Botanic Garden</a></h3>
               <p class="text-sand-muted mb-4">
                 Especially stunning during cherry blossom season (usually April). The Japanese Garden is a peaceful escape.
               </p>
@@ -442,7 +455,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/24-bucketlist.jpg" alt="Kayaking on the Hudson" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">24. Kayaking on the Hudson: <a href="https://hudsonriverpark.org/" target="_blank" rel="noopener">Hudson River Park</a>, <a href="https://downtownboathouse.org/" target="_blank" rel="noopener">Downtown Boathouse (free)</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">25. Kayaking on the Hudson: <a href="https://hudsonriverpark.org/" target="_blank" rel="noopener">Hudson River Park</a>, <a href="https://downtownboathouse.org/" target="_blank" rel="noopener">Downtown Boathouse (free)</a></h3>
               <p class="text-sand-muted mb-4">
                 Free kayaking at multiple locations along the Hudson River. Incredibly fun with amazing skyline views.
               </p>
@@ -455,7 +468,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/ice_skating.jpg" alt="Winter Ice Skating" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">25. Winter Ice Skating: <a href="https://wollmanrinknyc.com/" target="_blank" rel="noopener">Wollman Rink</a>, <a href="https://www.brooklynbridgepark.org/activities/ice-skating/" target="_blank" rel="noopener">Brooklyn Bridge Park</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">26. Winter Ice Skating: <a href="https://wollmanrinknyc.com/" target="_blank" rel="noopener">Wollman Rink</a>, <a href="https://www.brooklynbridgepark.org/activities/ice-skating/" target="_blank" rel="noopener">Brooklyn Bridge Park</a></h3>
               <p class="text-sand-muted mb-4">
                 Central Park Wollman Rink or Brooklyn Bridge Park. Classic NYC winter experience with hot cocoa after.
               </p>
@@ -471,38 +484,9 @@ const faqSchema = {
 
         <div class="not-prose mb-12 space-y-6">
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
-            <img src="/images/services/hypnotic/gallery-1.jpg" alt="Private Hypnotic Body Painting at DenArt Studio" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
-            <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">26. Private Hypnotic Body Painting at DenArt</h3>
-              <p class="text-sand-muted mb-4">
-                A deeply immersive, transformative experience. Unlike the group class, this is a <a href="https://denartny.com/services/hypnotic-body-painting/" class="text-brand-red hover:text-brand-gold">private session</a> where you're guided into a relaxed state while artistically painted. It's part art, part meditation, part performance.
-              </p>
-              <p class="text-brand-gold font-medium">
-                <strong>Why it's bucket list worthy:</strong> You won't find this anywhere else on Earth. It's a total sensory experience.
-              </p>
-              <p class="text-sand-muted mt-3">
-                <strong>Price:</strong> Premium · <strong>Where:</strong> DenArt Studio, Brooklyn
-              </p>
-            </div>
-          </div>
-
-          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
-            <img src="/images/services/fine-art/hero.jpg" alt="Fine Art Body Painting at DenArt Studio" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
-            <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">27. Fine Art Body Painting Session</h3>
-              <p class="text-sand-muted mb-4">
-                Commission a custom piece of art on your body. <a href="https://denartny.com/services/fine-art-body-painting/" class="text-brand-red hover:text-brand-gold">Fine art body painting</a> at DenArt ranges from classical paintings replicated on skin to custom designs. Professional photos included.
-              </p>
-              <p class="text-sand-muted mt-3">
-                <strong>Price:</strong> Premium · <strong>Where:</strong> DenArt Studio, Brooklyn
-              </p>
-            </div>
-          </div>
-
-          <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/28-bucketlist.jpg" alt="Sleepy Hollow Halloween" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">28. <a href="https://www.visitsleepyhollow.com/" target="_blank" rel="noopener">Sleepy Hollow Halloween</a>: <a href="https://www.sleepyhollowcemetery.org/" target="_blank" rel="noopener">Cemetery Tours</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">27. <a href="https://www.visitsleepyhollow.com/" target="_blank" rel="noopener">Sleepy Hollow Halloween</a>: <a href="https://www.sleepyhollowcemetery.org/" target="_blank" rel="noopener">Cemetery Tours</a></h3>
               <p class="text-sand-muted mb-4">
                 The most immersive Halloween experience in America. Haunted houses, cemetery tours, pumpkin blasters.
               </p>
@@ -515,7 +499,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/new_years_eve.jpg" alt="New Year's Eve in Times Square" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">29. <a href="https://www.timessquarenyc.org/nye" target="_blank" rel="noopener">New Year's Eve in Times Square</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">28. <a href="https://www.timessquarenyc.org/nye" target="_blank" rel="noopener">New Year's Eve in Times Square</a></h3>
               <p class="text-sand-muted mb-4">
                 Watch the ball drop in person. It's cold, crowded, and you'll wait for hours-but it's a once-in-a-lifetime NYC experience.
               </p>
@@ -528,7 +512,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/30-bucketlist.jpg" alt="Pride Parade" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">30. <a href="https://www.nycpride.org/" target="_blank" rel="noopener">Pride Parade</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">29. <a href="https://www.nycpride.org/" target="_blank" rel="noopener">Pride Parade</a></h3>
               <p class="text-sand-muted mb-4">
                 The largest Pride celebration in the world. Every June, millions line the streets for this incredible display of community and love.
               </p>
@@ -541,7 +525,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/911_memorial.jpg" alt="9/11 Memorial & Museum" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">31. <a href="https://www.911memorial.org/" target="_blank" rel="noopener">9/11 Memorial <h3 class="text-xl font-display text-sand mb-3">31. 9/11 Memorial & Museum</h3> Museum</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">30. <a href="https://www.911memorial.org/" target="_blank" rel="noopener">9/11 Memorial >30. 9/11 Memorial & Museum</h3> Museum</a></h3>
               <p class="text-sand-muted mb-4">
                 A profoundly moving tribute to the victims of September 11. The memorial pools are especially powerful.
               </p>
@@ -552,9 +536,9 @@ const faqSchema = {
           </div>
 
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
-            <img src="/images/pages/32-bucketlist.jpg" alt="The Comedy Store" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
+            <img src="/images/pages/19-bucketlist.jpg" alt="The Comedy Store" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">32. <a href="https://www.comedycellar.com/" target="_blank" rel="noopener">Comedy Cellar</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">31. <a href="https://www.comedycellar.com/" target="_blank" rel="noopener">Comedy Cellar</a></h3>
               <p class="text-sand-muted mb-4">
                 See rising comedians in an intimate setting. You never know who might pop in.
               </p>
@@ -572,7 +556,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/33-bucketlist.jpg" alt="The Elevated Acre" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">33. <a href="https://www.nycgovparks.org/parks/elevated-acre" target="_blank" rel="noopener">The Elevated Acre</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">32. <a href="https://www.nycgovparks.org/parks/elevated-acre" target="_blank" rel="noopener">The Elevated Acre</a></h3>
               <p class="text-sand-muted mb-4">
                 A secret rooftop park at 3 York Avenue. Uncrowded, with stunning views of the East River and Queensboro Bridge.
               </p>
@@ -585,7 +569,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/roosevelt_island.jpg" alt="Roosevelt Island Smallpox Hospital" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">34. <a href="https://www.rooseveltisland.us/" target="_blank" rel="noopener">Roosevelt Island Smallpox Hospital</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">33. <a href="https://www.rooseveltisland.us/" target="_blank" rel="noopener">Roosevelt Island Smallpox Hospital</a></h3>
               <p class="text-sand-muted mb-4">
                 A hauntingly beautiful abandoned hospital. Gothic ruins right in the middle of the East River.
               </p>
@@ -598,7 +582,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/35-bucketlist.jpg" alt="New York Earth Room" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">35. <a href="https://diaart.org/visit/visit-our-locations-sites/new-york-earth-room" target="_blank" rel="noopener">New York Earth Room</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">34. <a href="https://diaart.org/visit/visit-our-locations-sites/new-york-earth-room" target="_blank" rel="noopener">New York Earth Room</a></h3>
               <p class="text-sand-muted mb-4">
                 280 cubic yards of soil in a SoHo building. A work of art by Walter De Maria. Weird, wonderful, and completely unique.
               </p>
@@ -611,7 +595,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/36-bucketlist.jpg" alt="Grand Central Whispering Gallery" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">36. <a href="https://www.grandcentralterminal.com/" target="_blank" rel="noopener">Grand Central Whispering Gallery</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">35. <a href="https://www.grandcentralterminal.com/" target="_blank" rel="noopener">Grand Central Whispering Gallery</a></h3>
               <p class="text-sand-muted mb-4">
                 Stand in one corner of the main concourse's arches and whisper-your voice travels perfectly to the opposite corner, 50 feet away.
               </p>
@@ -624,7 +608,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/the_cloisters.jpg" alt="The Cloisters" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">37. <a href="https://www.metmuseum.org/plan-your-visit/met-cloisters" target="_blank" rel="noopener">The Cloisters</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">36. <a href="https://www.metmuseum.org/plan-your-visit/met-cloisters" target="_blank" rel="noopener">The Cloisters</a></h3>
               <p class="text-sand-muted mb-4">
                 A medieval art museum in Fort Tryon Park. Authentic European monasteries reassembled piece by piece.
               </p>
@@ -637,7 +621,7 @@ const faqSchema = {
           <div class="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 flex flex-col md:flex-row gap-4">
             <img src="/images/pages/38-bucketlist.jpg" alt="Greenwood Cemetery" class="w-full md:w-1/3 h-48 object-cover rounded-lg" />
             <div class="flex-1">
-              <h3 class="text-xl font-display text-sand mb-3">38. <a href="https://www.greenwoodcemetery.org/" target="_blank" rel="noopener">Green-Wood Cemetery</a></h3>
+              <h3 class="text-xl font-display text-sand mb-3"<h3 class="text-xl font-display text-sand mb-3">37. <a href="https://www.greenwoodcemetery.org/" target="_blank" rel="noopener">Green-Wood Cemetery</a></h3>
               <p class="text-sand-muted mb-4">
                 One of the most beautiful cemeteries in America. Grand mausoleums, incredible views of the Manhattan skyline.
               </p>
