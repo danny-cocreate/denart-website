@@ -400,29 +400,42 @@ const navLinks = [
 		</div>
 	</footer>
 	<script>
-		import { defineTool } from 'webmcp-kit';
+		import '@mcp-b/global';
 		import { z } from 'zod';
 
 		console.log('[WebMCP] Script loaded');
 
-		const getUpcomingClasses = defineTool({
+		// Register the tool with navigator.modelContext (from @mcp-b/global)
+		navigator.modelContext.registerTool({
 			name: 'getUpcomingClasses',
 			description: 'Get upcoming class schedule for DenArt body painting sessions',
-			inputSchema: z.object({
-				limit: z.number().optional().default(5),
-			}),
-			execute: async ({ limit }) => {
+			inputSchema: {
+				type: 'object',
+				properties: {
+					limit: { 
+						type: 'number', 
+						description: 'Number of classes to return (default: 5)' 
+					}
+				},
+				required: []
+			},
+			execute: async (args) => {
+				const limit = args.limit || 5;
 				const classes = [
 					{ date: '2026-03-13', time: '6:00 PM', spots: 3, type: 'Paint in the Dark' },
 					{ date: '2026-03-13', time: '8:30 PM', spots: 7, type: 'Paint in the Dark' },
 					{ date: '2026-03-27', time: '6:00 PM', spots: 5, type: 'Paint in the Dark' },
 				];
-				return JSON.stringify(classes.slice(0, limit));
-			},
+				
+				const result = classes.slice(0, limit);
+				
+				return {
+					content: [{ type: 'text', text: JSON.stringify(result) }]
+				};
+			}
 		});
 
-		getUpcomingClasses.register();
-		console.log('[WebMCP] Tool registered:', getUpcomingClasses.name);
+		console.log('[WebMCP] Tool registered: getUpcomingClasses');
 	</script>
 </body>
 </html>
