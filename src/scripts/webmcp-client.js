@@ -23,6 +23,18 @@ const getUpcomingClasses = defineTool({
 getUpcomingClasses.register();
 console.log('[WebMCP] Tool registered:', getUpcomingClasses.name);
 
+// MCP-B polyfill: expose tools globally for discovery
+if (typeof window !== 'undefined') {
+  window.__MCP_TOOLS__ = window.__MCP_TOOLS__ || {};
+  window.__MCP_TOOLS__['getUpcomingClasses'] = getUpcomingClasses;
+  console.log('[WebMCP] Exposed to window.__MCP_TOOLS__');
+  
+  // Also try window.webmcp for broader compatibility
+  window.webmcp = window.webmcp || {};
+  window.webmcp.getUpcomingClasses = getUpcomingClasses;
+  console.log('[WebMCP] Exposed to window.webmcp');
+}
+
 if (typeof navigator !== 'undefined' && navigator.modelContext) {
   console.log('[WebMCP] navigator.modelContext available!');
   document.getElementById('webmcp-status').textContent = 'WebMCP Ready - Tools Registered';
