@@ -436,6 +436,102 @@ const navLinks = [
 		});
 
 		console.log('[WebMCP] Tool registered: getUpcomingClasses');
+
+		// Tool 2: getServices
+		const servicesData = [
+			{ name: 'Body Painting for 2', category: 'Private', tagline: 'Share the Experience', description: 'A romantic body painting experience for couples, friends, or family members.', price: 'From $899' },
+			{ name: 'Fine Art Body Painting', category: 'Private', tagline: 'Masterpiece on Your Body', description: 'Detailed, intricate body painting inspired by classical art.', price: 'From $699' },
+			{ name: 'Hypnotic Body Painting', category: 'Private', tagline: 'Visual Illusions', description: 'Optical illusions and mind-bending designs painted on your body.', price: 'From $799' },
+			{ name: 'Maternity Belly Painting', category: 'Private', tagline: 'Celebrate New Life', description: 'Beautiful designs celebrating pregnancy on your belly.', price: 'From $499' },
+			{ name: 'Non-Nude Session', category: 'Private', tagline: 'Comfortable Experience', description: 'Body painting with clothing-optional approach for maximum comfort.', price: 'From $399' },
+			{ name: 'Private Party at Studio', category: 'Events', tagline: 'Exclusive Studio Rental', description: 'Host your own body painting party with friends at the studio.', price: 'From $1,499' },
+			{ name: 'Body Painting for Events', category: 'Events', tagline: 'We Come to You', description: 'Professional body painters for your event, party, or corporate function.', price: 'From $500/hour' },
+			{ name: 'Ultimate Package', category: 'Private', tagline: 'The Full Experience', description: 'Complete body painting experience with extended session and extra prints.', price: '$2,499' },
+		];
+
+		navigator.modelContext.registerTool({
+			name: 'getServices',
+			description: 'Get all available body painting services offered by DenArt',
+			inputSchema: {
+				type: 'object',
+				properties: {
+					category: { type: 'string', description: 'Filter by category: Private or Events (optional)' }
+				},
+				required: []
+			},
+			execute: async (args) => {
+				let result = servicesData;
+				if (args.category) {
+					result = servicesData.filter(s => s.category.toLowerCase() === args.category.toLowerCase());
+				}
+				return { content: [{ type: 'text', text: JSON.stringify(result) }] };
+			}
+		});
+		console.log('[WebMCP] Tool registered: getServices');
+
+		// Tool 3: getReviews
+		const reviewsData = [
+			{ name: 'Shallini M (Yelp)', quote: 'Danny is a very talented painter who painted two models at my husband\'s 40th Birthday party. He put a great deal of thought and care into the details.' },
+			{ name: 'Nic (Google)', quote: 'AWESOME time... I am a plus size woman and the dragon came out fierce. Danny was a pleasure to work with, and kept me at ease the entire time.' },
+			{ name: 'Jessica (Google)', quote: 'It truly was an amazing experience. I would recommend to anyone who is looking to just live and experience interesting things in life.' },
+			{ name: 'Nance (Google)', quote: 'Would recommend to anyone!! I knew I wanted to do a body painting session as soon as I saw it... I had such a great time with the artists at DEN ART!' },
+			{ name: 'Spencer (Google)', quote: 'This was FANTASTIC! I bought this as a gift for my wife and we absolutely loved the experience. The pictures look fantastic.' },
+			{ name: 'Kindra M (Yelp)', quote: 'Danny is one of the most talented and professional artists and photographers i have ever worked with. He put me right at ease.' },
+			{ name: 'Cristina L (Yelp)', quote: 'Such a pleasure to work with. Danny is an extremely gifted painter. I had Van Gogh\'s Starry Night painted on my body and it turned out beautifully.' },
+			{ name: 'Francesca (Google)', quote: 'I had an amazing experience at Den Art... everyone made me feel so comfortable and was so professional that I immediately felt at ease.' },
+			{ name: 'Meg M (Yelp)', quote: 'I bought the body painting session for my husband and I to do together and it was amazing. They are incredibly talented and caring artists.' },
+			{ name: 'Alexandria H (Google)', quote: 'GO DO THIS!!!!!!! Danny and his staff are very professional and kind and made this a relaxing fun experience.' },
+		];
+
+		navigator.modelContext.registerTool({
+			name: 'getReviews',
+			description: 'Get customer reviews and testimonials for DenArt body painting',
+			inputSchema: {
+				type: 'object',
+				properties: {
+					limit: { type: 'number', description: 'Number of reviews to return (default: 5)' }
+				},
+				required: []
+			},
+			execute: async (args) => {
+				const limit = args.limit || 5;
+				const result = reviewsData.slice(0, limit);
+				return { content: [{ type: 'text', text: JSON.stringify(result) }] };
+			}
+		});
+		console.log('[WebMCP] Tool registered: getReviews');
+
+		// Tool 4: getPortfolio
+		const portfolioData = [
+			{ title: 'Starry Night', category: 'Fine Art', description: 'Van Gogh\'s masterpiece on body' },
+			{ title: 'Dragon Design', category: 'Asian Inspired', description: 'Intricate dragon with flowing details' },
+			{ title: 'Tree of Life', category: 'Nature', description: 'Organic tree design embracing the body' },
+			{ title: 'Butterterfly Wings', category: 'Nature', description: 'Delicate wings extending from back' },
+			{ title: 'Couple\'s Design', category: 'For 2', description: 'Coordinated designs for two people' },
+			{ title: 'Maternity Art', category: 'Pregnancy', description: 'Celebrating motherhood with beautiful belly art' },
+			{ title: 'Optical Illusion', category: 'Hypnotic', description: 'Mind-bending visual effects' },
+			{ title: 'Spanish Dancer', category: 'Fine Art', description: 'Flamenco-inspired dynamic pose' },
+		];
+
+		navigator.modelContext.registerTool({
+			name: 'getPortfolio',
+			description: 'Get featured body painting artwork and portfolio pieces from DenArt',
+			inputSchema: {
+				type: 'object',
+				properties: {
+					category: { type: 'string', description: 'Filter by category: Fine Art, Nature, For 2, Pregnancy, etc. (optional)' }
+				},
+				required: []
+			},
+			execute: async (args) => {
+				let result = portfolioData;
+				if (args.category) {
+					result = portfolioData.filter(p => p.category.toLowerCase().includes(args.category.toLowerCase()));
+				}
+				return { content: [{ type: 'text', text: JSON.stringify(result) }] };
+			}
+		});
+		console.log('[WebMCP] Tool registered: getPortfolio');
 	</script>
 </body>
 </html>
