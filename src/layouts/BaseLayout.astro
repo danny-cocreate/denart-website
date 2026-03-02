@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { fetchAllPretixEvents, type PretixEvent } from '../utils/pretix';
 
 interface Props {
 	title: string;
@@ -7,6 +8,14 @@ interface Props {
 }
 
 const { title, description = 'DenArt Body Painting Studio - NYC Body Art, Classes & Events' } = Astro.props;
+
+// Fetch pretix events for WebMCP tools (server-side)
+let pretixEvents: PretixEvent[] = [];
+try {
+  pretixEvents = await fetchAllPretixEvents();
+} catch (e) {
+  console.error('Failed to fetch pretix events:', e);
+}
 
 const navLinks = [
 	{ 
@@ -399,6 +408,10 @@ const navLinks = [
 			</div>
 		</div>
 	</footer>
+	<!-- Global data for WebMCP tools (server-rendered) -->
+	<script define:vars={{ pretixEvents }}>
+		window.__DENART_EVENTS__ = pretixEvents;
+	</script>
 	<script>
 		import '@mcp-b/global';
 		import { z } from 'zod';
@@ -408,7 +421,7 @@ const navLinks = [
 		// Register the tool with navigator.modelContext (from @mcp-b/global)
 		navigator.modelContext.registerTool({
 			name: 'getUpcomingClasses',
-			description: 'Get upcoming class schedule for DenArt body painting sessions',
+			description: 'Get upcoming class schedule for DenArt body painting sessions (from Pretix)',
 			inputSchema: {
 				type: 'object',
 				properties: {
@@ -421,13 +434,15 @@ const navLinks = [
 			},
 			execute: async (args) => {
 				const limit = args.limit || 5;
-				const classes = [
-					{ date: '2026-03-13', time: '6:00 PM', spots: 3, type: 'Paint in the Dark' },
-					{ date: '2026-03-13', time: '8:30 PM', spots: 7, type: 'Paint in the Dark' },
-					{ date: '2026-03-27', time: '6:00 PM', spots: 5, type: 'Paint in the Dark' },
-				];
+				const events = window.__DENART_EVENTS__ || [];
 				
-				const result = classes.slice(0, limit);
+				const result = events.slice(0, limit).map(e => ({
+					date: e.dateStr,
+					fullDate: e.fullDate,
+					time: e.timeStr,
+					url: e.url,
+					type: 'UV Body Painting Class'
+				}));
 				
 				return {
 					content: [{ type: 'text', text: JSON.stringify(result) }]
@@ -532,6 +547,109 @@ const navLinks = [
 			}
 		});
 		console.log('[WebMCP] Tool registered: getPortfolio');
+
+		// Tool 5: getAvailableClasses - from Pretix
+		navigator.modelContext.registerTool({
+			name: 'getAvailableClasses',
+			description: 'Get available upcoming classes from Pretix with date, time, and booking URL',
+			inputSchema: {
+				type: 'object',
+				properties: {
+					limit: { type: 'number', description: 'Number of classes to return (default: 10)' }
+				},
+				required: []
+			},
+			execute: async (args) => {
+				const limit = args.limit || 10;
+				const events = window.__DENART_EVENTS__ || [];
+				
+				const result = events.slice(0, limit).map(e => ({
+					id: e.id,
+					date: e.fullDate,
+					time: e.timeStr,
+					bookingUrl: e.url,
+					pageUrl: e.pageUrl
+				}));
+				
+				return { content: [{ type: 'text', text: JSON.stringify(result) }] };
+			}
+		});
+		console.log('[WebMCP] Tool registered: getAvailableClasses');
+
+		// Tool 6: getClassDetails - detailed info for a specific class
+		navigator.modelContext.registerTool({
+			name: 'getClassDetails',
+			description: 'Get detailed information about a specific class by ID or date',
+			inputSchema: {
+				type: 'object',
+				properties: {
+					classId: { type: 'number', description: 'The class ID (optional if date is provided)' },
+					date: { type: 'string', description: 'The class date string like "Fri, Mar 13" (optional if ID provided)' }
+				},
+				required: []
+			},
+			execute: async (args) => {
+				const events = window.__DENART_EVENTS__ || [];
+				let selectedEvent = null;
+				
+				if (args.classId) {
+					selectedEvent = events.find(e => e.id === args.classId);
+				} else if (args.date) {
+					selectedEvent = events.find(e => e.dateStr.includes(args.date));
+				}
+				
+				if (!selectedEvent) {
+					return { content: [{ type: 'text', text: JSON.stringify({ error: 'Class not found' }) }] };
+				}
+				
+				const result = {
+					id: selectedEvent.id,
+					date: selectedEvent.fullDate,
+					time: selectedEvent.timeStr,
+					bookingUrl: selectedEvent.url,
+					description: 'UV Body Painting experience at DenArt studio. Includes 1-hour painting session, photography, and complimentary prints.'
+				};
+				
+				return { content: [{ type: 'text', text: JSON.stringify(result) }] };
+			}
+		});
+		console.log('[WebMCP] Tool registered: getClassDetails');
+
+		// Tool 7: bookClass - generate booking link
+		navigator.modelContext.registerTool({
+			name: 'bookClass',
+			description: 'Get direct booking link for a specific class. Use getClassDetails or getAvailableClasses to find the class ID or date first.',
+			inputSchema: {
+				type: 'object',
+				properties: {
+					classId: { type: 'number', description: 'The class ID to book' },
+					date: { type: 'string', description: 'The class date string (alternative to classId)' }
+				},
+				required: []
+			},
+			execute: async (args) => {
+				const events = window.__DENART_EVENTS__ || [];
+				let selectedEvent = null;
+				
+				if (args.classId) {
+					selectedEvent = events.find(e => e.id === args.classId);
+				} else if (args.date) {
+					selectedEvent = events.find(e => e.dateStr.includes(args.date));
+				}
+				
+				if (!selectedEvent) {
+					return { content: [{ type: 'text', text: JSON.stringify({ error: 'Class not found. Use getAvailableClasses to see available dates.' }) }] };
+				}
+				
+				const result = {
+					bookingUrl: selectedEvent.url,
+					message: `Booking link for ${selectedEvent.fullDate} at ${selectedEvent.timeStr}. Click the URL to complete your booking on Pretix.`
+				};
+				
+				return { content: [{ type: 'text', text: JSON.stringify(result) }] };
+			}
+		});
+		console.log('[WebMCP] Tool registered: bookClass');
 	</script>
 </body>
 </html>
