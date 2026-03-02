@@ -11,6 +11,9 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ['webmcp-kit', 'zod'],
+    },
   },
   integrations: [sitemap()],
   redirects: {
