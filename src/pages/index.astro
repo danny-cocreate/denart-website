@@ -119,7 +119,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 						<!-- Events Grid -->
 						<div class="space-y-4">
 							{upcomingEvents.slice(0, 4).map((event) => (
-								<EventCard event={event} />
+								<EventCard event={event} variant="withTime" />
 							))}
 
 							{upcomingEvents.length === 0 && (
