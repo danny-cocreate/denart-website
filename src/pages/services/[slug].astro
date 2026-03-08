@@ -24,7 +24,9 @@ const scheduleSessionServiceSlugs = new Set([
   'hypnotic-body-painting',
 ]);
 const useScheduleSessionCta = scheduleSessionServiceSlugs.has(service.slug);
-const primaryCtaHref = useScheduleSessionCta ? '/calendar' : '/get-a-quote';
+const primaryCtaHref = useScheduleSessionCta
+  ? `/schedule-a-session?service=${service.slug}`
+  : '/get-a-quote';
 const primaryCtaLabel = useScheduleSessionCta ? 'Schedule a Session' : 'Get a Quote';
 
 // Default FAQs for body painting services
