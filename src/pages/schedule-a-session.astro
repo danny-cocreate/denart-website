@@ -1,0 +1,227 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const serviceParam = Astro.url.searchParams.get('service') || '';
+
+const serviceTitles: Record<string, string> = {
+  'fine-art-body-painting': 'Fine Art Body Painting',
+  'hypnotic-body-painting': 'Hypnotic Body Painting',
+  'maternity-belly-painting': 'Maternity Belly Painting',
+  'body-painting-for-events': 'Body Painting for Events',
+};
+
+const sessionOptionsByService: Record<string, { value: string; label: string }[]> = {
+  'fine-art-body-painting': [
+    { value: 'Fine Art Body Painting Session', label: 'Fine Art Body Painting' },
+    { value: 'Maternity', label: 'Maternity' },
+    { value: 'Ultimate Package', label: 'Ultimate Package' },
+    { value: 'Self-Visualization Session', label: 'Self-Visualization' },
+  ],
+  'hypnotic-body-painting': [
+    { value: 'Hypnotic Body Painting Session', label: 'Hypnotic Body Painting Session' },
+  ],
+  'maternity-belly-painting': [
+    { value: 'Maternity', label: 'Maternity Belly Painting' },
+  ],
+  'body-painting-for-events': [
+    { value: 'Event Body Painting', label: 'Event Body Painting' },
+  ],
+};
+
+const defaultOptions = [
+  { value: 'Fine Art Body Painting Session', label: 'Fine Art Body Painting' },
+  { value: 'Hypnotic Body Painting Session', label: 'Hypnotic Body Painting Session' },
+  { value: 'Maternity', label: 'Maternity Belly Painting' },
+  { value: 'Event Body Painting', label: 'Event Body Painting' },
+  { value: 'Ultimate Package', label: 'Ultimate Package' },
+  { value: 'Self-Visualization Session', label: 'Self-Visualization' },
+];
+
+const sessionOptions = sessionOptionsByService[serviceParam] || defaultOptions;
+const preselectedSessionType = sessionOptionsByService[serviceParam]?.[0]?.value || '';
+const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
+---
+
+<BaseLayout
+  title="Schedule a Session — DenArt Body Painting Studio"
+  description="Book your DenArt body painting session. Submit your preferred dates and details to schedule your experience."
+>
+  <main class="bg-deepest min-h-screen">
+    <section class="relative py-12 md:py-16 px-6 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-b from-void via-void/95 to-deepest"></div>
+      <div class="max-w-4xl mx-auto relative z-10 text-center">
+        <span class="inline-block px-3 py-1.5 bg-brand-red/10 text-brand-red rounded-full text-xs font-medium mb-4 border border-brand-red/30 uppercase tracking-wider">
+          Private Sessions
+        </span>
+        <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-sand mb-4 leading-tight">
+          Schedule a Session
+        </h1>
+        <p class="text-sand-muted text-lg md:text-xl max-w-2xl mx-auto">
+          {serviceTitle}
+        </p>
+      </div>
+    </section>
+
+    <section class="pb-20 px-6">
+      <div class="max-w-3xl mx-auto bg-void-light border border-zinc-700 rounded-2xl shadow-2xl shadow-black/30 overflow-hidden">
+        <div class="p-6 border-b border-zinc-800">
+          <h2 class="text-xl font-semibold text-sand">Tell us about your session</h2>
+          <p class="text-sand-muted text-sm mt-1">We usually reply within 24-48 hours.</p>
+        </div>
+
+        <div class="p-6">
+          <form id="schedule-form" class="space-y-4">
+            <input type="hidden" name="service" value={serviceParam || 'general-schedule'} />
+
+            <div>
+              <label for="schedule-name" class="block text-sm font-medium text-sand mb-1">Name *</label>
+              <input
+                type="text"
+                id="schedule-name"
+                name="name"
+                required
+                placeholder="E.g. John Doe"
+                class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label for="schedule-email" class="block text-sm font-medium text-sand mb-1">Email Address *</label>
+              <input
+                type="email"
+                id="schedule-email"
+                name="email"
+                required
+                placeholder="E.g. john@doe.com"
+                class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label for="schedule-phone" class="block text-sm font-medium text-sand mb-1">Phone</label>
+              <input
+                type="tel"
+                id="schedule-phone"
+                name="phone"
+                placeholder="E.g. +1 300 400 5000"
+                class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label for="schedule-session-type" class="block text-sm font-medium text-sand mb-1">Type of Session *</label>
+              <select
+                id="schedule-session-type"
+                name="sessionType"
+                required
+                class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              >
+                <option value="" selected={preselectedSessionType === ''}>Select a session type...</option>
+                {sessionOptions.map((option) => (
+                  <option value={option.value} selected={option.value === preselectedSessionType}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="schedule-date1" class="block text-sm font-medium text-sand mb-1">Preferred Date 1 *</label>
+                <input
+                  type="date"
+                  id="schedule-date1"
+                  name="date1"
+                  required
+                  class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand focus:ring-2 focus:ring-brand-red focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label for="schedule-date2" class="block text-sm font-medium text-sand mb-1">Preferred Date 2</label>
+                <input
+                  type="date"
+                  id="schedule-date2"
+                  name="date2"
+                  class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand focus:ring-2 focus:ring-brand-red focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="schedule-design" class="block text-sm font-medium text-sand mb-1">What's the design you'd like us to paint?</label>
+              <textarea
+                id="schedule-design"
+                name="design"
+                rows="3"
+                placeholder="E.g. Van Gogh's 'Starry Night' or describe your vision..."
+                class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent resize-none"
+              ></textarea>
+            </div>
+
+            <div>
+              <label for="schedule-promo" class="block text-sm font-medium text-sand mb-1">Promo Code</label>
+              <input
+                type="text"
+                id="schedule-promo"
+                name="promoCode"
+                class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              />
+            </div>
+
+            <div id="schedule-message" class="hidden p-4 rounded-lg text-sm"></div>
+
+            <button
+              type="submit"
+              id="schedule-submit-btn"
+              class="w-full py-4 bg-brand-red hover:bg-brand-red-hover text-white font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-brand-red/30 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              Send Request
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('schedule-form') as HTMLFormElement;
+  const messageEl = document.getElementById('schedule-message') as HTMLDivElement;
+  const submitBtn = document.getElementById('schedule-submit-btn') as HTMLButtonElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    messageEl.classList.add('hidden');
+    messageEl.className = 'hidden p-4 rounded-lg text-sm';
+
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/api/schedule', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      messageEl.classList.remove('hidden');
+      if (result.success) {
+        messageEl.textContent = result.message || "Thank you! We'll be in touch soon.";
+        messageEl.className = 'p-4 rounded-lg text-sm bg-emerald-900/20 border border-emerald-800/30 text-emerald-400';
+        form.reset();
+      } else {
+        messageEl.textContent = result.error || 'Something went wrong. Please try again.';
+        messageEl.className = 'p-4 rounded-lg text-sm bg-red-900/20 border border-red-800/30 text-red-400';
+      }
+    } catch (error) {
+      messageEl.classList.remove('hidden');
+      messageEl.textContent = 'Something went wrong. Please try again.';
+      messageEl.className = 'p-4 rounded-lg text-sm bg-red-900/20 border border-red-800/30 text-red-400';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Request';
+    }
+  });
+</script>
