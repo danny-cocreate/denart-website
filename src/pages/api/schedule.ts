@@ -3,7 +3,20 @@ import { Resend } from 'resend';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const formData = await request.formData();
+    const isE2ETestMode = process.env.E2E_TEST_MODE === 'true';
+    if (isE2ETestMode) {
+      return new Response(
+        JSON.stringify({ success: true, message: "Thank you! We'll be in touch soon." }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
+
+    let formData = new FormData();
+    try {
+      formData = await request.formData();
+    } catch {
+      formData = new FormData();
+    }
     const searchParams = new URL(request.url).searchParams;
 
     const getField = (field: string) =>

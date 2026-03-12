@@ -3,6 +3,18 @@ import { Resend } from 'resend';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    const isE2ETestMode = process.env.E2E_TEST_MODE === 'true';
+
+    if (isE2ETestMode) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Quote request sent successfully!',
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     const formData = await request.formData();
     
     const name = formData.get('name')?.toString() || '';
