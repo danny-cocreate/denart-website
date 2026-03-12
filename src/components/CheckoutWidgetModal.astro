@@ -32,14 +32,15 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
 
 <script is:inline define:vars={{ checkoutUrl }}>
   // Make functions globally available
-  window.openCheckoutWidgetModal = function() {
+  // subeventId is optional — when provided, pre-selects that session in the widget
+  window.openCheckoutWidgetModal = function(subeventId) {
     const modal = document.getElementById('checkout-widget-modal');
     const iframe = document.getElementById('checkout-widget-iframe');
-    
+
     if (modal) {
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
-      
+
       // Track begin_checkout in GA4
       if (typeof window.trackEvent === 'function') {
         window.trackEvent('begin_checkout', {
@@ -47,10 +48,10 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
           event_key: checkoutUrl.includes('speed-friending') ? 'speed-friending' : 'paint-in-the-dark'
         });
       }
-      
-      // Reset iframe src to ensure it reloads each time (clears previous state)
+
+      // Reset iframe src (clears previous state); append subevent param if provided
       if (iframe) {
-        iframe.src = checkoutUrl;
+        iframe.src = subeventId ? checkoutUrl + '&subevent=' + subeventId : checkoutUrl;
       }
     }
   };

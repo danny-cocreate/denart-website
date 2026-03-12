@@ -4,9 +4,10 @@ import EventCard from './EventCard.astro';
 
 interface Props {
   eventSlug?: string;
+  openCheckout?: boolean;
 }
 
-const { eventSlug = 'uc-class-couples-2' } = Astro.props;
+const { eventSlug = 'uc-class-couples-2', openCheckout = false } = Astro.props;
 
 // Fetch events for the specified slug
 const events = await fetchSubeventsForSlug(eventSlug);
@@ -17,9 +18,19 @@ const upcomingEvents = events.slice(0, 6);
   {upcomingEvents.length > 0 ? (
     <div class="flex flex-col gap-2">
       {upcomingEvents.map((event) => (
-        <EventCard event={event} variant="compact" showArrow={false} />
+        openCheckout ? (
+          <button
+            onclick={`openCheckoutWidgetModal(${event.id})`}
+            class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group w-full text-left cursor-pointer"
+          >
+            <span class="font-medium text-white">{event.dateStr}</span>
+            <span class="text-gray-400 group-hover:text-brand-red">{event.timeStr}</span>
+          </button>
+        ) : (
+          <EventCard event={event} variant="compact" showArrow={false} />
+        )
       ))}
-      <a 
+      <a
         href="/calendar"
         class="text-gray-500 text-xs py-1 hover:text-brand-red transition-colors"
       >
