@@ -19,17 +19,6 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
   <!-- Modal Panel -->
   <div class="relative min-h-screen md:min-h-0 md:flex md:items-center md:justify-center p-4">
     <div class="relative w-full max-w-[500px] h-[90vh] max-h-[800px] bg-[#000] rounded-[30px] overflow-hidden border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
-      <!-- Close Button -->
-      <button 
-        id="checkout-modal-close"
-        class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 border border-white/10 text-white/60 hover:text-white hover:bg-white/20 transition-all"
-        aria-label="Close checkout"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-      
       <!-- Iframe -->
       <iframe 
         id="checkout-widget-iframe"
@@ -81,15 +70,9 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
     }
   });
   
-  // Close button handler
+  // Close on backdrop click
   document.addEventListener('DOMContentLoaded', function() {
-    const closeBtn = document.getElementById('checkout-modal-close');
     const backdrop = document.getElementById('checkout-modal-backdrop');
-    
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closeCheckoutWidgetModal);
-    }
-    
     if (backdrop) {
       backdrop.addEventListener('click', closeCheckoutWidgetModal);
     }
