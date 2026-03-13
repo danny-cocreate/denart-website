@@ -69,11 +69,12 @@ jobs:
             *) STATUS_LABEL="[INFO]" ;;
           esac
 
-          MESSAGE="$STATUS_LABEL Regression tests: $RESULT
-Repo: $REPOSITORY
-Workflow: $WORKFLOW_NAME
-Branch: $BRANCH
-Run: $RUN_URL"
+          MESSAGE="$(printf '%s\n%s\n%s\n%s\n%s' \
+            "$STATUS_LABEL Regression tests: $RESULT" \
+            "Repo: $REPOSITORY" \
+            "Workflow: $WORKFLOW_NAME" \
+            "Branch: $BRANCH" \
+            "Run: $RUN_URL")"
 
           curl --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
