@@ -47,6 +47,17 @@ jobs:
     if: always()
 
     steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download Playwright artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: artifacts
+
       - name: Send Telegram status notification
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -69,12 +80,93 @@ jobs:
             *) STATUS_LABEL="[INFO]" ;;
           esac
 
+          node - <<'NODE' > /tmp/regression-test-lines.txt
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          function findFile(startDir, fileName) {
+            const entries = fs.readdirSync(startDir, { withFileTypes: true });
+            for (const entry of entries) {
+              const fullPath = path.join(startDir, entry.name);
+              if (entry.isFile() && entry.name === fileName) return fullPath;
+              if (entry.isDirectory()) {
+                const found = findFile(fullPath, fileName);
+                if (found) return found;
+              }
+            }
+            return null;
+          }
+
+          function gatherSpecs(suite, parents = [], output = []) {
+            const nextParents = suite.title ? [...parents, suite.title] : parents;
+            for (const child of suite.suites || []) {
+              gatherSpecs(child, nextParents, output);
+            }
+            for (const spec of suite.specs || []) {
+              const title = [...nextParents, spec.title].filter(Boolean).join(' > ');
+              let finalStatus = 'skipped';
+              for (const t of spec.tests || []) {
+                const lastResult = t.results && t.results.length ? t.results[t.results.length - 1] : null;
+                const status = (lastResult && lastResult.status) || t.status || 'unknown';
+                if (status === 'failed' || status === 'timedOut' || status === 'interrupted') {
+                  finalStatus = 'failed';
+                  break;
+                }
+                if (status === 'passed') {
+                  finalStatus = 'passed';
+                }
+                if (status === 'skipped' && finalStatus !== 'passed') {
+                  finalStatus = 'skipped';
+                }
+              }
+              output.push({ title, status: finalStatus });
+            }
+            return output;
+          }
+
+          const rootDir = path.resolve('artifacts');
+          if (!fs.existsSync(rootDir)) {
+            console.log('No detailed test results found.');
+            process.exit(0);
+          }
+
+          const reportPath = findFile(rootDir, 'regression-results.json');
+          if (!reportPath) {
+            console.log('No detailed test results found.');
+            process.exit(0);
+          }
+
+          const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+          const specs = gatherSpecs(report, [], []);
+          if (!specs.length) {
+            console.log('No detailed test results found.');
+            process.exit(0);
+          }
+
+          const icon = {
+            passed: '[PASS]',
+            failed: '[FAIL]',
+            skipped: '[SKIP]',
+            unknown: '[INFO]',
+          };
+
+          const lines = specs.map((s) => `${icon[s.status] || '[INFO]'} ${s.title}`);
+          const failed = specs.filter((s) => s.status === 'failed').length;
+          const passed = specs.filter((s) => s.status === 'passed').length;
+          const skipped = specs.filter((s) => s.status === 'skipped').length;
+
+          console.log(`Summary: ${passed} passed, ${failed} failed, ${skipped} skipped`);
+          console.log(...lines);
+          NODE
+
+          DETAILS="$(cat /tmp/regression-test-lines.txt)"
           MESSAGE="$(printf '%s\n%s\n%s\n%s\n%s' \
             "$STATUS_LABEL Regression tests: $RESULT" \
             "Repo: $REPOSITORY" \
             "Workflow: $WORKFLOW_NAME" \
             "Branch: $BRANCH" \
             "Run: $RUN_URL")"
+          MESSAGE="$(printf '%s\n\n%s' "$MESSAGE" "$DETAILS")"
 
           curl --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
