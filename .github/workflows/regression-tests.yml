@@ -156,7 +156,7 @@ jobs:
           const skipped = specs.filter((s) => s.status === 'skipped').length;
 
           console.log(`Summary: ${passed} passed, ${failed} failed, ${skipped} skipped`);
-          console.log(...lines);
+          console.log(lines.join('\n'));
           NODE
 
           DETAILS="$(cat /tmp/regression-test-lines.txt)"
