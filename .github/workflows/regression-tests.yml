@@ -48,7 +48,6 @@ jobs:
 
     steps:
       - name: Send Telegram status notification
-        if: ${{ secrets.TELEGRAM_BOT_TOKEN != '' && secrets.TELEGRAM_CHAT_ID != '' }}
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -58,6 +57,11 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set; skipping Telegram notification."
+            exit 0
+          fi
+
           case "$RESULT" in
             success) STATUS_LABEL="[PASS]" ;;
             failure) STATUS_LABEL="[FAIL]" ;;
@@ -65,17 +69,14 @@ jobs:
             *) STATUS_LABEL="[INFO]" ;;
           esac
 
-          MESSAGE="$STATUS_LABEL Regression tests: $RESULT
-Repo: $REPOSITORY
-Workflow: $WORKFLOW_NAME
-Branch: $BRANCH
-Run: $RUN_URL"
+          MESSAGE="$(printf '%s\n%s\n%s\n%s\n%s' \
+            "$STATUS_LABEL Regression tests: $RESULT" \
+            "Repo: $REPOSITORY" \
+            "Workflow: $WORKFLOW_NAME" \
+            "Branch: $BRANCH" \
+            "Run: $RUN_URL")"
 
           curl --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
             --data-urlencode "chat_id=$TELEGRAM_CHAT_ID" \
             --data-urlencode "text=$MESSAGE"
-
-      - name: Telegram not configured
-        if: ${{ secrets.TELEGRAM_BOT_TOKEN == '' || secrets.TELEGRAM_CHAT_ID == '' }}
-        run: echo "TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set; skipping Telegram notification."
