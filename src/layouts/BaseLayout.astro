@@ -5,9 +5,10 @@ import { fetchAllPretixEvents, type PretixEvent } from '../utils/pretix';
 interface Props {
 	title: string;
 	description?: string;
+	image?: string;
 }
 
-const { title, description = 'DenArt Body Painting Studio - NYC Body Art, Classes & Events' } = Astro.props;
+const { title, description = 'DenArt Body Painting Studio - NYC Body Art, Classes & Events', image = 'https://denartny.com/images/social-share.jpg' } = Astro.props;
 
 // Fetch pretix events for WebMCP tools (server-side)
 let pretixEvents: PretixEvent[] = [];
@@ -53,7 +54,13 @@ const navLinks = [
 	<meta name="keywords" content="body painting, NYC, Brooklyn, body art, fine art, maternity painting, UV painting, classes, events">
 	<meta property="og:title" content={title}>
 	<meta property="og:description" content={description}>
+	<meta property="og:image" content={image}>
 	<meta property="og:type" content="website">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content={title}>
+	<meta name="twitter:description" content={description}>
+	<meta name="twitter:image" content={image}>
+	<meta name="twitter:site" content="@denartny">
 	<link rel="canonical" href={Astro.url.href}>
 	<title>{title}</title>
 	
