@@ -16,7 +16,7 @@ const upcomingEvents = events.slice(0, 6);
 
 <div class="pretix-schedule" data-events={JSON.stringify(upcomingEvents)}>
   {upcomingEvents.length > 0 ? (
-    <div class="flex flex-col gap-2">
+    <div class="grid grid-cols-2 gap-2">
       {upcomingEvents.map((event) => (
         openCheckout ? (
           <button
@@ -32,7 +32,7 @@ const upcomingEvents = events.slice(0, 6);
       ))}
       <a
         href="/calendar"
-        class="text-gray-500 text-xs py-1 hover:text-brand-red transition-colors"
+        class="col-span-2 text-gray-500 text-xs py-1 hover:text-brand-red transition-colors"
       >
         + View all dates
       </a>
