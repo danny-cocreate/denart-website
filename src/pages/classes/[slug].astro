@@ -28,6 +28,7 @@ const showPrivateNote = classItem.data.showPrivateNote || false;
 const CLASS_TO_PRETIX_SLUG: Record<string, string> = {
   'speed-friending': 'speed-friending',
   'uv-body-paint-couples': 'uc-class-couples-2',
+  'redrawn': 'redrawn',
 };
 const pretixEventSlug = CLASS_TO_PRETIX_SLUG[classItem.slug] || 'uc-class-couples-2';
 
@@ -35,6 +36,7 @@ const pretixEventSlug = CLASS_TO_PRETIX_SLUG[classItem.slug] || 'uc-class-couple
 const CLASS_TO_CHECKOUT_EVENT: Record<string, string> = {
   'speed-friending': 'speed-friending',
   'uv-body-paint-couples': 'paint-in-the-dark',
+  'redrawn': 'redrawn',
 };
 const checkoutEventKey = CLASS_TO_CHECKOUT_EVENT[classItem.slug] || 'paint-in-the-dark';
 const privateNote = classItem.data.privateNote || "";
@@ -56,6 +58,33 @@ const singlesFAQs = [
   {
     question: "Can I come with a partner and paint only each other?",
     answer: "No. This experience is designed to connect you with new people, not to deepen an established connection that you already have."
+  }
+];
+
+const redrawnFAQs = [
+  {
+    question: "What should I wear?",
+    answer: "Comfortable, paint-friendly clothing. You'll be writing on your arms, shoulders, and hands. Wear something you don't mind getting a little paint on — it'll wash off, but dark colors show paint less."
+  },
+  {
+    question: "Do I need to be comfortable with partial skin exposure?",
+    answer: "Yes. This work involves writing on your arms, shoulders, and hands. If that feels like too much right now, this may not be the right fit. We're happy to talk about 1:1 options that might work better."
+  },
+  {
+    question: "Is this therapy?",
+    answer: "No. Redrawn is a somatic coaching and body painting experience — not therapy. It doesn't replace clinical mental health treatment. If you're in acute crisis, please consult a licensed therapist first."
+  },
+  {
+    question: "What if I'm not an artist?",
+    answer: "You don't need any artistic experience. This isn't about creating beautiful art — it's about accessing something real through your body. The painting is a tool, not the point."
+  },
+  {
+    question: "Will photos be taken?",
+    answer: "Yes. We'll have professional photography throughout the session, and you'll receive digital images within 24 hours. Sharing is always optional."
+  },
+  {
+    question: "What's the group size?",
+    answer: "6–8 people max. Small enough to feel safe, large enough to have a genuine group experience."
   }
 ];
 
@@ -86,7 +115,12 @@ const couplesFAQs = [
   }
 ];
 
-const faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
+let faqs;
+if (classItem.slug === 'redrawn') {
+  faqs = redrawnFAQs;
+} else {
+  faqs = classItem.data.category === 'singles' ? singlesFAQs : couplesFAQs;
+}
 ---
 
 <BaseLayout title={classItem.data.title} description={classItem.data.description}>
