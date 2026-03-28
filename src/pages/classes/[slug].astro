@@ -399,6 +399,20 @@ if (classItem.slug === 'redrawn') {
 	<!-- Checkout Widget Modal -->
 	<CheckoutWidgetModal eventKey={checkoutEventKey} />
 
+
+	<!-- Auto-open checkout if ?subevent= param is present -->
+	<script is:inline>
+	  document.addEventListener('DOMContentLoaded', function() {
+	    const urlParams = new URLSearchParams(window.location.search);
+	    const subeventId = urlParams.get('subevent');
+	    if (subeventId && typeof window.openCheckoutWidgetModal === 'function') {
+	      // Small delay to ensure modal is ready
+	      setTimeout(function() {
+	        window.openCheckoutWidgetModal(subeventId);
+	      }, 100);
+	    }
+	  });
+	</script>
 	<!-- Video Lightbox Modal -->
 	<div id="video-lightbox" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center p-4" onclick="closeVideoLightbox(event)">
 		<button 

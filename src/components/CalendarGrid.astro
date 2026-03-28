@@ -68,7 +68,7 @@ function getEventInfo(slug: string) {
               <div class={`flex flex-wrap gap-3 ${dayEvents.length === 1 ? 'max-w-[400px]' : ''}`}>
                 {dayEvents.map((event) => (
                   <a 
-                    href={event.pageUrl}
+                    href={`${event.pageUrl}?subevent=${event.id}`}
                     class="inline-flex items-center justify-between gap-4 px-4 py-3 bg-zinc-900/60 border border-zinc-800 rounded-lg text-decoration-none hover:bg-brand-red hover:border-brand-red hover:-translate-y-0.5 transition-all duration-300 min-w-[180px] flex-1"
                   >
                     <span class="text-sand text-sm font-medium">{event.timeStr}</span>
