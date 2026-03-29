@@ -67,13 +67,13 @@ const navLinks = [
 	})(window,document,'script','dataLayer','GTM-546P3Q');</script>
 	<!-- End Google Tag Manager -->
 	
-	<!-- Google Analytics 4 -->
-	<!-- Google Analytics -->
-	<script is:inline src="https://www.googletagmanager.com/gtag/js?id=G-E4945R08JE"></script>
+	<!-- Google Analytics 4 — proxied through /ga/* to avoid Instagram IAB blocking -->
+	<script is:inline src="/ga/gtag/js?id=G-E4945R08JE"></script>
 	<script is:inline>
 		window.dataLayer = window.dataLayer || [];
 		function gtag(){dataLayer.push(arguments);}
 		gtag('js', new Date());
+		gtag('set', 'transport_url', 'https://denartny.com/ga');
 		gtag('config', 'G-E4945R08JE');
 		
 		// Global function to track custom events

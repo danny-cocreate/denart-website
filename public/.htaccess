@@ -9,6 +9,10 @@ RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# GA4 first-party proxy — must come before any catch-all rules
+RewriteRule ^ga/gtag/js$ /ga/proxy.php [L,QSA]
+RewriteRule ^ga/g/collect$ /ga/proxy.php [L,QSA]
+
 # www to non-www
 RewriteCond %{HTTP_HOST} ^www\.denartny\.com [NC]
 RewriteRule ^(.*)$ https://denartny.com/$1 [L,R=301]
