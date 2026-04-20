@@ -59,6 +59,17 @@ const navLinks = [
 	<link rel="canonical" href={Astro.url.href}>
 	<title>{title}</title>
 	
+	<!-- WKWebView polyfill for iOS in-app browsers (Instagram, TikTok) -->
+	<script is:inline>
+		// Fix for window.webkit.messageHandlers errors in iOS WKWebView (Instagram/TikTok browsers)
+		if (typeof window.webkit === 'undefined') {
+			window.webkit = {};
+		}
+		if (typeof window.webkit.messageHandlers === 'undefined') {
+			window.webkit.messageHandlers = {};
+		}
+	</script>
+	
 	<!-- Google Tag Manager -->
 	<script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

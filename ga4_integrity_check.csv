@@ -1,0 +1,55 @@
+
+== Sessions by hostname ==
+hostName,sessions,totalUsers
+denartny.com,5287,5201
+checkout.denartny.com,2879,2842
+127.0.0.1,483,483
+localhost,2,1
+(not set),0,1
+
+== Source/medium for checkout.denartny.com sessions ==
+sessionSource,sessionMedium,sessions,totalUsers
+ig,paid,2359,2350
+(direct),(none),423,412
+google,organic,53,37
+(not set),(not set),36,35
+ig,social,21,18
+l.instagram.com,referral,9,9
+bing,organic,2,2
+chatgpt.com,(not set),2,2
+timeout.com,referral,2,2
+m.baidu.com,referral,1,1
+m.sogou.com,referral,1,1
+yahoo,organic,1,1
+
+== Event firing locations (hostname x event) ==
+hostName,eventName,eventCount,totalUsers
+denartny.com,page_view,6462,5185
+denartny.com,session_start,5312,5165
+denartny.com,first_visit,5166,5095
+checkout.denartny.com,page_view,3204,2842
+checkout.denartny.com,sessions_loaded,2526,2247
+denartny.com,scroll,1397,911
+denartny.com,user_engagement,1227,344
+checkout.denartny.com,scroll,689,556
+127.0.0.1,first_visit,483,483
+127.0.0.1,page_view,483,483
+127.0.0.1,session_start,483,483
+checkout.denartny.com,session_start,406,374
+checkout.denartny.com,first_visit,400,370
+127.0.0.1,scroll,66,66
+denartny.com,begin_checkout,44,34
+127.0.0.1,form_start,31,31
+checkout.denartny.com,begin_checkout,31,24
+checkout.denartny.com,user_engagement,29,22
+localhost,page_view,17,1
+checkout.denartny.com,checkout_abandoned,13,12
+denartny.com,click,10,6
+localhost,user_engagement,10,1
+denartny.com,form_start,8,6
+checkout.denartny.com,date_selected,7,7
+localhost,scroll,4,1
+localhost,session_start,2,1
+(not set),proxy_test,1,1
+checkout.denartny.com,purchase,1,1
+localhost,first_visit,1,1
