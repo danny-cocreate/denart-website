@@ -895,6 +895,17 @@ a:hover {
 }
 
 /* ==========================================================================
+   A/B Testing
+   ========================================================================== */
+
+/* Variant B content: hidden by default, shown only when JS assigns variant B */
+.ab-variant-b-only { display: none; }
+html.ab-B .ab-variant-b-only { display: block; }
+
+/* Variant A content: shown by default, hidden when B is active */
+html.ab-B .ab-variant-a-only { display: none; }
+
+/* ==========================================================================
    Utility Classes
    ========================================================================== */
 
@@ -939,3 +950,8 @@ a:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-sand-dim);
 }
+
+/* A/B testing variant visibility */
+.ab-variant-b-only { display: none; }
+html.ab-B .ab-variant-b-only { display: block; }
+html.ab-B .ab-variant-a-only { display: none; }

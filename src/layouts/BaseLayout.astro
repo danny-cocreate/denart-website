@@ -70,6 +70,40 @@ const navLinks = [
 		}
 	</script>
 	
+	<!-- A/B testing — variant assignment (runs before GTM/GA4, safe in IG IAB) -->
+	<script is:inline>
+		(function() {
+			try {
+				var EXPERIMENT_ID = 'exp-001';  // Set to active experiment id e.g. 'exp-001'. Empty = no test running.
+				if (!EXPERIMENT_ID) return;
+				var storageKey = 'ab_' + EXPERIMENT_ID;
+				var v = null;
+				// Cookie first (more persistent across IG IAB sessions)
+				document.cookie.split(';').forEach(function(c) {
+					var kv = c.trim().split('=');
+					if (kv[0] === storageKey) v = kv[1];
+				});
+				// localStorage fallback
+				if (!v) { try { v = localStorage.getItem(storageKey); } catch(e) {} }
+				// Assign if no valid variant found
+				if (v !== 'A' && v !== 'B') {
+					v = Math.random() < 0.5 ? 'A' : 'B';
+					var exp = new Date();
+					exp.setDate(exp.getDate() + 30);
+					document.cookie = storageKey + '=' + v + '; expires=' + exp.toUTCString() + '; path=/; SameSite=Lax';
+					try { localStorage.setItem(storageKey, v); } catch(e) {}
+				}
+				// Apply variant class to <html> — CSS uses this to show/hide content
+				document.documentElement.classList.add('ab-' + v);
+				// Expose for GA4 tracking (picked up by GTM/gtag after they load)
+				window.dataLayer = window.dataLayer || [];
+				window.dataLayer.push({ ab_variant: v, ab_experiment: EXPERIMENT_ID });
+				window.__AB_VARIANT = v;
+				window.__AB_EXPERIMENT = EXPERIMENT_ID;
+			} catch(e) {} // Never crash the page
+		})();
+	</script>
+
 	<!-- Google Tag Manager -->
 	<script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -86,6 +120,16 @@ const navLinks = [
 		gtag('js', new Date());
 		gtag('set', 'transport_url', 'https://denartny.com/ga');
 		gtag('config', 'G-E4945R08JE');
+
+		// A/B variant — send to GA4 as user property + named event so the review
+		// script can segment any funnel event by variant via customEvent:ab_variant
+		if (window.__AB_VARIANT) {
+			gtag('set', { 'user_properties': { 'ab_variant': window.__AB_VARIANT } });
+			gtag('event', 'ab_variant_assigned', {
+				ab_variant: window.__AB_VARIANT,
+				ab_experiment: window.__AB_EXPERIMENT
+			});
+		}
 		
 		// Global function to track custom events
 		window.trackEvent = function(eventName, params) {

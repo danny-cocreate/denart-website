@@ -1,0 +1,15 @@
+{
+  "ga4_dimension_ready": true,
+  "active_experiment": {
+    "id": "exp-001",
+    "name": "Hero headline restructure",
+    "page": "/classes/uv-body-paint-couples",
+    "start_date": "2026-04-22",
+    "target_metric": "begin_checkout",
+    "secondary_metrics": ["date_selected", "form_start"],
+    "min_days": 14,
+    "variant_a_desc": "Control: H1 'Paint in the Dark™' / Subtitle 'UV Body Painting Class for Couples'",
+    "variant_b_desc": "Test: H1 'UV Body Painting Class for Couples' / Subtitle 'The Most Unique Date Night in NYC'"
+  },
+  "completed_experiments": []
+}
