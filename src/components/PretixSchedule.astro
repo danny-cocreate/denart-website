@@ -1,6 +1,5 @@
 ---
 import { fetchSubeventsForSlug } from '../utils/pretix';
-import EventCard from './EventCard.astro';
 
 interface Props {
   eventSlug?: string;
@@ -9,35 +8,50 @@ interface Props {
 
 const { eventSlug = 'uc-class-couples-2', openCheckout = false } = Astro.props;
 
-// Fetch events for the specified slug
+// Fetch events for the specified slug (filtered at build time; client script re-filters stale dates)
 const events = await fetchSubeventsForSlug(eventSlug);
 const upcomingEvents = events.slice(0, 6);
 ---
 
 <div class="pretix-schedule" data-events={JSON.stringify(upcomingEvents)}>
-  {upcomingEvents.length > 0 ? (
-    <div class="grid grid-cols-2 gap-2">
-      {upcomingEvents.map((event) => (
-        openCheckout ? (
-          <button
-            onclick={`openCheckoutWidgetModal(${event.id})`}
-            class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group w-full text-left cursor-pointer"
-          >
-            <span class="font-medium text-white">{event.dateStr}</span>
-            <span class="text-gray-400 group-hover:text-brand-red">{event.timeStr}</span>
-          </button>
-        ) : (
-          <EventCard event={event} variant="compact" showArrow={false} />
-        )
-      ))}
-      <a
-        href="/calendar"
-        class="col-span-2 text-gray-500 text-xs py-1 hover:text-brand-red transition-colors"
-      >
-        + View all dates
-      </a>
-    </div>
-  ) : (
-    <p class="text-gray-400 text-sm">Check calendar for upcoming dates</p>
-  )}
+  <div class="pretix-schedule-grid grid grid-cols-2 gap-2" hidden={upcomingEvents.length === 0}>
+    {upcomingEvents.map((event) => (
+      openCheckout ? (
+        <button
+          type="button"
+          data-pretix-slot
+          data-raw-date={event.rawDate}
+          data-subevent-id={event.id}
+          onclick={`openCheckoutWidgetModal(${event.id})`}
+          class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group w-full text-left cursor-pointer"
+        >
+          <span class="font-medium text-white">{event.dateStr}</span>
+          <span class="text-gray-400 group-hover:text-brand-red">{event.timeStr}</span>
+        </button>
+      ) : (
+        <a
+          href={event.url}
+          data-pretix-slot
+          data-raw-date={event.rawDate}
+          class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group w-full text-left"
+        >
+          <span class="font-medium text-white">{event.dateStr}</span>
+          <span class="text-gray-400 group-hover:text-brand-red">{event.timeStr}</span>
+        </a>
+      )
+    ))}
+    <a
+      href="/calendar"
+      class="pretix-schedule-view-all col-span-2 text-gray-500 text-xs py-1 hover:text-brand-red transition-colors"
+    >
+      + View all dates
+    </a>
+  </div>
+  <p class="pretix-schedule-empty text-gray-400 text-sm" hidden={upcomingEvents.length > 0}>
+    Check calendar for upcoming dates
+  </p>
 </div>
+
+<script>
+  import '../scripts/pretix-schedule-client';
+</script>

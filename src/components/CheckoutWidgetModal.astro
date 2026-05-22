@@ -34,6 +34,10 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
   // Make functions globally available
   // subeventId is optional — when provided, pre-selects that session in the widget
   window.openCheckoutWidgetModal = function(subeventId) {
+    if (document.documentElement.dataset.bookingAvailable === 'false') {
+      return;
+    }
+
     const modal = document.getElementById('checkout-widget-modal');
     const iframe = document.getElementById('checkout-widget-iframe');
 
