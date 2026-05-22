@@ -9,6 +9,7 @@ import Card from '../../components/Card.astro';
 import CheckoutWidgetModal from '../../components/CheckoutWidgetModal.astro';
 import FAQ from '../../components/FAQ.astro';
 import PretixSchedule from '../../components/PretixSchedule.astro';
+import { fetchSubeventsForSlug } from '../../utils/pretix';
 
 export async function getStaticPaths() {
 	const classes = await getCollection('classes');
@@ -39,6 +40,8 @@ const CLASS_TO_CHECKOUT_EVENT: Record<string, string> = {
   'redrawn': 'redrawn',
 };
 const checkoutEventKey = CLASS_TO_CHECKOUT_EVENT[classItem.slug] || 'paint-in-the-dark';
+const scheduleEvents = await fetchSubeventsForSlug(pretixEventSlug);
+const hasUpcomingEvents = scheduleEvents.length > 0;
 const privateNote = classItem.data.privateNote || "";
 
 // FAQs data
@@ -237,7 +240,13 @@ if (classItem.slug === 'redrawn') {
 						) : (
 							<p class="text-3xl font-bold text-white mb-3">{classItem.data.price}</p>
 						)}
-						<CTAButton onclick="openCheckoutWidgetModal()" variant="primary" size="sm">
+						<CTAButton
+							onclick="openCheckoutWidgetModal()"
+							variant="primary"
+							size="sm"
+							bookingCta
+							disabled={!hasUpcomingEvents}
+						>
 							Book Now
 						</CTAButton>
 						<div class="mt-4 text-sm text-gray-400">
@@ -391,7 +400,13 @@ if (classItem.slug === 'redrawn') {
 			<section class="bg-void-light border-y border-zinc-800 py-16 mt-20">
 				<div class="text-center">
 					<h2 class="text-3xl font-display text-white mb-8">Ready to join this {classItem.data.category === 'singles' ? 'event' : 'class'}?</h2>
-				<CTAButton onclick="openCheckoutWidgetModal()" variant="primary" size="lg">
+				<CTAButton
+					onclick="openCheckoutWidgetModal()"
+					variant="primary"
+					size="lg"
+					bookingCta
+					disabled={!hasUpcomingEvents}
+				>
 					Book Now
 				</CTAButton>
 				<div class="mt-4 text-sm text-gray-400">
@@ -406,18 +421,23 @@ if (classItem.slug === 'redrawn') {
 	<CheckoutWidgetModal eventKey={checkoutEventKey} />
 
 
-	<!-- Auto-open checkout if ?subevent= param is present -->
+	<!-- Auto-open checkout if ?subevent= param is present and still upcoming -->
 	<script is:inline>
-	  document.addEventListener('DOMContentLoaded', function() {
+	  function maybeAutoOpenCheckout() {
 	    const urlParams = new URLSearchParams(window.location.search);
 	    const subeventId = urlParams.get('subevent');
-	    if (subeventId && typeof window.openCheckoutWidgetModal === 'function') {
-	      // Small delay to ensure modal is ready
-	      setTimeout(function() {
-	        window.openCheckoutWidgetModal(subeventId);
-	      }, 100);
-	    }
-	  });
+	    if (!subeventId || typeof window.openCheckoutWidgetModal !== 'function') return;
+	    if (document.documentElement.dataset.bookingAvailable === 'false') return;
+
+	    const slot = document.querySelector(
+	      '.pretix-schedule [data-pretix-slot][data-subevent-id="' + subeventId + '"]:not([hidden])'
+	    );
+	    if (!slot) return;
+
+	    window.openCheckoutWidgetModal(Number(subeventId));
+	  }
+
+	  document.addEventListener('denart-booking-availability-ready', maybeAutoOpenCheckout);
 	</script>
 	<!-- Video Lightbox Modal -->
 	<div id="video-lightbox" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center p-4" onclick="closeVideoLightbox(event)">

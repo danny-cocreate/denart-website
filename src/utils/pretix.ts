@@ -3,6 +3,8 @@
  * Fetches events from the Pretix ticketing API
  */
 
+import { isUpcomingPretixDate } from './pretix-events';
+
 const PRETIX_API_BASE = 'https://tickets.denartny.com/api/v1/organizers/denart-studio';
 const DEFAULT_EVENT_SLUGS = [
   'uc-class-couples-2',
@@ -45,12 +47,11 @@ export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]
 
     const data = await response.json();
     const now = new Date();
-    
+
     // Filter to only active, future events
     return data.results
       .filter((event: any) => {
-        const eventDate = new Date(event.date_from);
-        return event.active && eventDate > now;
+        return event.active && isUpcomingPretixDate(event.date_from, now);
       })
       .map((event: any) => {
         const date = new Date(event.date_from);
