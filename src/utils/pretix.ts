@@ -24,6 +24,10 @@ function getEventSlugs(): string[] {
  * Fetch subevents for a specific event slug
  */
 export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]> {
+  if (isE2ETestMode()) {
+    return getE2EMockSubevents(slug);
+  }
+
   const token = import.meta.env.PRETIX_API_TOKEN;
   
   if (!token) {
@@ -110,6 +114,49 @@ const SLUG_TO_PAGE: Record<string, string> = {
   'private-sessions': '/services/fine-art-body-painting/',
   'couples-body-painting': '/services/body-painting-for-2/',
 };
+
+const E2E_MOCK_SUBEVENT_ID = 90001;
+const E2E_MOCK_RAW_DATE = '2030-06-15T22:00:00.000Z';
+
+function isE2ETestMode(): boolean {
+  return process.env.E2E_TEST_MODE === 'true';
+}
+
+/** Stable upcoming subevent for Playwright (no Pretix API token in CI). */
+function getE2EMockSubevents(slug: string): PretixEvent[] {
+  const date = new Date(E2E_MOCK_RAW_DATE);
+  const tz = 'America/New_York';
+  const dayName = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: tz });
+  const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz });
+  const fullDate = date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: tz,
+  });
+  const timeStr = date
+    .toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: tz,
+    })
+    .toLowerCase();
+
+  return [
+    {
+      id: E2E_MOCK_SUBEVENT_ID,
+      slug,
+      dateStr: `${dayName}, ${monthDay}`,
+      fullDate,
+      timeStr,
+      rawDate: E2E_MOCK_RAW_DATE,
+      url: `https://tickets.denartny.com/denart-studio/${slug}/?subevent=${E2E_MOCK_SUBEVENT_ID}`,
+      pageUrl: SLUG_TO_PAGE[slug] || '/classes/',
+    },
+  ];
+}
 
 export interface PretixEvent {
   id: number;
