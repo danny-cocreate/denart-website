@@ -49,7 +49,8 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
       if (typeof window.trackEvent === 'function') {
         window.trackEvent('begin_checkout', {
           event_category: 'ecommerce',
-          event_key: checkoutUrl.includes('speed-friending') ? 'speed-friending' : 'paint-in-the-dark'
+          event_key: checkoutUrl.includes('speed-friending') ? 'speed-friending' : 'paint-in-the-dark',
+          ab_variant: window.__AB_VARIANT || null
         });
       }
 
