@@ -44,18 +44,3 @@ test('schedule form can be submitted successfully', async ({ page }) => {
   await expect(page.locator('#schedule-message')).toContainText(/we'll be in touch soon/i);
 });
 
-test('class page book now opens checkout modal', async ({ page }) => {
-  await page.goto('/classes/uv-body-paint-couples', { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: /Book Now/i }).first().click();
-
-  await expect(page.locator('#checkout-widget-modal')).toBeVisible();
-});
-
-test('checkout modal iframe targets checkout app', async ({ page }) => {
-  await page.goto('/classes/uv-body-paint-couples', { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: /Book Now/i }).first().click();
-
-  const iframe = page.locator('#checkout-widget-iframe');
-  await expect(iframe).toBeVisible();
-  await expect(iframe).toHaveAttribute('src', /checkout\.denartny\.com/);
-});

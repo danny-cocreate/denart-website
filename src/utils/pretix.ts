@@ -25,7 +25,7 @@ function getEventSlugs(): string[] {
  */
 export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]> {
   if (isE2ETestMode()) {
-    return getE2EMockSubevents(slug);
+    return getE2EUpcomingSlugs().has(slug) ? getE2EMockSubevents(slug) : [];
   }
 
   const token = import.meta.env.PRETIX_API_TOKEN;
@@ -122,7 +122,12 @@ function isE2ETestMode(): boolean {
   return process.env.E2E_TEST_MODE === 'true';
 }
 
-/** Stable upcoming subevent for Playwright (no Pretix API token in CI). */
+function getE2EUpcomingSlugs(): Set<string> {
+  const raw = process.env.E2E_PRETIX_UPCOMING_SLUGS || '';
+  return new Set(raw.split(',').map((slug) => slug.trim()).filter(Boolean));
+}
+
+/** Stable upcoming subevent for Playwright when slug is listed in E2E_PRETIX_UPCOMING_SLUGS. */
 function getE2EMockSubevents(slug: string): PretixEvent[] {
   const date = new Date(E2E_MOCK_RAW_DATE);
   const tz = 'America/New_York';
