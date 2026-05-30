@@ -12,19 +12,10 @@ privateNote: "This is a group class. Want a private session instead? We offer pr
 duration: "2 hours"
 order: 1
 schedule:
-  - "Fri, Feb 6 | 6p | 8:30p"
-  - "Fri, Feb 13 | 6p | 8:30p"
-  - "Fri, Feb 20 | 6p | 8:30p"
-  - "Fri, Feb 27 | 6p | 8:30p"
-  - "Fri, Mar 6 | 6p | 8:30p"
-  - "Fri, Mar 13 | 6p | 8:30p"
-  - "Fri, Feb 27 | 6p | 8:30p"
-  - "Fri, Mar 13 | 6p | 8:30p"
-  - "Fri, Mar 27 | 6p | 8:30p"
-  - "Fri, Apr 10 | 6p | 8:30p"
-  - "Fri, Apr 24 | 6p | 8:30p"
-  - "Fri, May 8 | 6p | 8:30p"
-  - "Fri, May 22 | 6p | 8:30p"
+  - "Fri, Aug 14 | 6p | 8:30p"
+  - "Fri, Aug 28 | 6p | 8:30p"
+  - "Fri, Sep 11 | 6p | 8:30p"
+  - "Fri, Sep 25 | 6p | 8:30p"
 includes:
   - "Demo by a professional artist"
   - "Intimate body painting session where you and your partner paint each other under UV lights"
