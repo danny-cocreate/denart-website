@@ -6,9 +6,12 @@ interface Props {
 	title: string;
 	description?: string;
 	image?: string;
+	ogTitle?: string;
+	ogDescription?: string;
+	noindex?: boolean;
 }
 
-const { title, description = 'DenArt Body Painting Studio - NYC Body Art, Classes & Events', image = 'https://denartny.com/images/social-share.jpg' } = Astro.props;
+const { title, description = 'DenArt Body Painting Studio - NYC Body Art, Classes & Events', image = 'https://denartny.com/images/social-share.jpg', ogTitle, ogDescription, noindex = false } = Astro.props;
 
 // Fetch pretix events for WebMCP tools (server-side)
 let pretixEvents: PretixEvent[] = [];
@@ -19,26 +22,28 @@ try {
 }
 
 const navLinks = [
-	{ 
-		href: '/services/fine-art-body-painting', 
+	{
+		href: '/services/embodied-manifestation',
 		label: 'Services',
 		hasDropdown: true,
 		dropdownItems: [
+			{ href: '/services/embodied-manifestation', label: 'Embodied Manifestation' },
 			{ href: '/services/fine-art-body-painting', label: 'Fine Art Body Painting' },
-			{ href: '/services/body-painting-for-events', label: 'For Events and Commercial Projects' },
-			{ href: '/services/hypnotic-body-painting', label: 'Hypnotic Body Painting' },
+			{ href: '/services/body-painting-for-events', label: 'Events & Commercial' },
+			{ href: '/services/private-party-at-studio', label: 'Private Parties' },
 		]
 	},
-	{ 
-		href: '/classes/uv-body-paint-couples', 
+	{
+		href: '/classes/uv-body-paint-couples',
 		label: 'Classes & Events',
 		hasDropdown: true,
 		dropdownItems: [
-			{ href: '/classes/uv-body-paint-couples', label: 'Paint in the Dark UV Class' },
-			{ href: '/classes/speed-friending', label: 'Speed Friending x Body Paint' },
-			{ href: '/classes/private-party', label: 'Private Party at Studio' },
+			{ href: '/classes/uv-body-paint-couples', label: 'Paint in the Dark (UV)' },
+			{ href: '/classes/speed-friending', label: 'Speed Friending' },
+			{ href: '/calendar', label: 'Calendar' },
 		]
 	},
+	{ href: '/manifestation', label: 'Manifestation' },
 	{ href: '/gallery', label: 'Gallery' },
 	{ href: '/in_media/', label: 'In Media' },
 	{ href: '/reviews', label: 'Reviews' },
@@ -51,9 +56,10 @@ const navLinks = [
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content={description}>
+	{noindex && <meta name="robots" content="noindex,follow" />}
 	<meta name="keywords" content="body painting, NYC, Brooklyn, body art, fine art, maternity painting, UV painting, classes, events">
-	<meta property="og:title" content={title}>
-	<meta property="og:description" content={description}>
+	<meta property="og:title" content={ogTitle || title}>
+	<meta property="og:description" content={ogDescription || description}>
 	<meta property="og:image" content={image}>
 	<meta property="og:type" content="website">
 	<link rel="canonical" href={Astro.url.href}>
@@ -193,7 +199,8 @@ const navLinks = [
   "name": "DenArt Body Painting Studio",
   "url": "https://denartny.com",
   "logo": "https://denartny.com/logo.png",
-  "description": "NYC\'s premier body painting studio, located in Brooklyn. Offering couples UV body painting classes, bachelorette events, private sessions, and fine art body painting.",
+  "description": "DenArt is a Brooklyn studio, est. 2011, offering Embodied Manifestation — a guided experience combining hypnosis, future-self visualization, and body art — alongside fine art body painting, UV classes, and events. Featured on NBC's TODAY Show.",
+  "foundingDate": "2011",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "99 Kingsland Ave #102",
@@ -204,7 +211,10 @@ const navLinks = [
   },
   "sameAs": [
     "https://www.instagram.com/denartny",
-    "https://www.facebook.com/denartny"
+    "https://www.facebook.com/denartny",
+    "https://www.yelp.com/biz/denart-body-painting-studio-brooklyn-3",
+    "https://denartny.com/in_media/today-show",
+    "https://denartny.com/in_media/carson-daly"
   ],
   "contactPoint": {
     "@type": "ContactPoint",
@@ -229,7 +239,7 @@ const navLinks = [
 				</a>
 
 				<!-- Desktop Navigation - centered -->
-				<ul class="hidden lg:flex items-center justify-center gap-8 absolute left-1/2 -translate-x-1/2">
+				<ul class="hidden lg:flex items-center justify-center gap-5 xl:gap-8 absolute left-1/2 -translate-x-1/2 w-max whitespace-nowrap">
 					{navLinks.map(link => (
 						<li class={link.hasDropdown ? 'relative group' : ''}>
 							{link.hasDropdown ? (
@@ -418,9 +428,10 @@ const navLinks = [
 				<nav aria-label="Services">
 					<h3 class="text-lg font-display font-semibold mb-5 text-sand tracking-wide">Services</h3>
 					<ul class="space-y-3">
+						<li><a href="/services/embodied-manifestation" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Embodied Manifestation</a></li>
+						<li><a href="/manifestation" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Manifestation Guide</a></li>
 						<li><a href="/services/fine-art-body-painting" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Fine Art Body Painting</a></li>
 						<li><a href="/services/body-painting-for-events" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Events & Commercial</a></li>
-						<li><a href="/services/hypnotic-body-painting" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Hypnotic Body Painting</a></li>
 						<li><a href="/services/private-party-at-studio" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Private Parties</a></li>
 					</ul>
 				</nav>
@@ -429,9 +440,9 @@ const navLinks = [
 					<h3 class="text-lg font-display font-semibold mb-5 text-sand tracking-wide">Classes & Events</h3>
 					<ul class="space-y-3">
 						<li><a href="/calendar" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Calendar</a></li>
-						<li><a href="/classes/uv-body-paint-couples" class="text-sand/60 hover:text-brand-red transition-colors duration-200">UV Body Paint Couples</a></li>
-						<li><a href="/classes/paint-in-the-dark" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Paint in the Dark</a></li>
-						<li><a href="/gift-certificates" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Gift Certificates</a></li>
+						<li><a href="/classes/uv-body-paint-couples" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Paint in the Dark (UV)</a></li>
+						<li><a href="/classes/speed-friending" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Speed Friending</a></li>
+						<li><a href="/get-a-quote" class="text-sand/60 hover:text-brand-red transition-colors duration-200">Gift Certificates</a></li>
 					</ul>
 				</nav>
 				<!-- Body Painting Gallery -->
@@ -541,7 +552,7 @@ const navLinks = [
 		const servicesData = [
 			{ name: 'Body Painting for 2', category: 'Private', tagline: 'Share the Experience', description: 'A romantic body painting experience for couples, friends, or family members.', price: 'From $899' },
 			{ name: 'Fine Art Body Painting', category: 'Private', tagline: 'Masterpiece on Your Body', description: 'Detailed, intricate body painting inspired by classical art.', price: 'From $699' },
-			{ name: 'Hypnotic Body Painting', category: 'Private', tagline: 'Visual Illusions', description: 'Optical illusions and mind-bending designs painted on your body.', price: 'From $799' },
+			{ name: 'Embodied Manifestation — The Wish-Fulfilled Session', category: 'Private', tagline: 'Manifestation you wear', description: 'A guided experience combining hypnosis, content-free future-self visualization, and body art — so you can see your desired identity vividly in trance and keep a physical, photographic anchor to hold that state afterward.', price: '$499' },
 			{ name: 'Maternity Belly Painting', category: 'Private', tagline: 'Celebrate New Life', description: 'Beautiful designs celebrating pregnancy on your belly.', price: 'From $499' },
 			{ name: 'Non-Nude Session', category: 'Private', tagline: 'Comfortable Experience', description: 'Body painting with clothing-optional approach for maximum comfort.', price: 'From $399' },
 			{ name: 'Private Party at Studio', category: 'Events', tagline: 'Exclusive Studio Rental', description: 'Host your own body painting party with friends at the studio.', price: 'From $1,499' },
