@@ -1,0 +1,128 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import FAQ from '../../components/FAQ.astro';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const entries = await getCollection('manifestation');
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry, all: entries },
+  }));
+}
+
+const clusterLabels: Record<string, string> = {
+  visualization: 'Visualization',
+  problem: 'The Problem',
+  method: 'The Method',
+  frameworks: 'The Frameworks',
+  threshold: 'The Threshold',
+};
+
+const { entry, all } = Astro.props;
+const { Content } = await entry.render();
+const data = entry.data;
+
+// Siblings: explicit list if given, else other pages in the same cluster.
+const siblingSlugs = data.siblings && data.siblings.length > 0
+  ? data.siblings
+  : all
+      .filter((e) => e.data.cluster === data.cluster && e.slug !== entry.slug && e.data.published)
+      .sort((a, b) => (a.data.order || 99) - (b.data.order || 99))
+      .slice(0, 3)
+      .map((e) => e.slug);
+// Only ever link sideways to published pages (never to "coming soon" stubs).
+const siblings = siblingSlugs
+  .map((s) => all.find((e) => e.slug === s))
+  .filter((e) => e && e.data.published);
+
+const pageUrl = `https://denartny.com/manifestation/${entry.slug}`;
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  'headline': data.title,
+  'description': data.description,
+  'mainEntityOfPage': { '@type': 'WebPage', '@id': pageUrl },
+  'author': { '@type': 'Person', 'name': 'Den', 'jobTitle': 'Body artist & practitioner since 2011' },
+  'publisher': {
+    '@type': 'Organization',
+    'name': 'DenArt Body Painting Studio',
+    'logo': { '@type': 'ImageObject', 'url': 'https://denartny.com/images/logo.png' },
+  },
+  ...(data.lastUpdated ? { 'dateModified': data.lastUpdated } : {}),
+};
+---
+
+<BaseLayout title={`${data.title} | DenArt`} description={data.description} noindex={!data.published}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+
+  <article class="bg-deepest text-sand">
+    <div class="max-w-3xl mx-auto px-6 py-14 md:py-20">
+      <!-- Up-link to pillar -->
+      <a href="/manifestation" class="inline-flex items-center gap-2 text-sm text-sand-muted hover:text-brand-red transition-colors mb-6">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        <span>Manifestation Guide · {clusterLabels[data.cluster]}</span>
+      </a>
+
+      <h1 class="font-display text-3xl md:text-5xl font-bold text-sand mb-6 leading-tight">{data.title}</h1>
+
+      {!data.published && (
+        <p class="mb-8 inline-block rounded-lg border border-zinc-700 bg-void-light px-4 py-2 text-sm text-sand-muted">
+          This guide is being written — full answer coming soon.
+        </p>
+      )}
+
+      {data.answerFirst && (
+        <p class="text-lg md:text-xl text-sand leading-relaxed border-l-4 border-brand-red pl-5 mb-10">{data.answerFirst}</p>
+      )}
+
+      <div class="prose prose-lg prose-invert max-w-none
+        prose-headings:font-display
+        prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-sand
+        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-sand
+        prose-p:text-sand-muted prose-p:leading-relaxed
+        prose-li:text-sand-muted prose-li:marker:text-brand-red
+        prose-strong:text-sand
+        prose-a:text-brand-red hover:prose-a:text-brand-red-light">
+        <Content />
+      </div>
+
+      {data.faqs && data.faqs.length > 0 && (
+        <div class="mt-16 pt-10 border-t border-zinc-800">
+          <FAQ items={data.faqs} title="Frequently Asked Questions" />
+        </div>
+      )}
+
+      <!-- In-context CTA to the money page -->
+      <div class="mt-14 p-8 bg-void-light rounded-2xl border border-zinc-800 text-center">
+        <p class="text-sand text-lg mb-5">See how a guided session makes this vivid — and gives you a physical anchor to hold it.</p>
+        <CTAButton href="/services/embodied-manifestation" variant="primary" showArrow={true}>Explore The Wish-Fulfilled Session</CTAButton>
+      </div>
+
+      <!-- Sideways sibling links -->
+      {siblings.length > 0 && (
+        <nav class="mt-14 pt-10 border-t border-zinc-800" aria-label="Related guides">
+          <p class="text-xs uppercase tracking-widest text-sand-muted mb-4">More on {clusterLabels[data.cluster]}</p>
+          <ul class="space-y-3">
+            {siblings.map((s) => (
+              <li>
+                <a href={`/manifestation/${s.slug}`} class="inline-flex items-center gap-2 font-display text-sand hover:text-brand-red transition-colors">
+                  <span>{s.data.title}</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
+      {data.lastUpdated && (
+        <p class="mt-10 text-sm text-sand-muted">Last updated: {data.lastUpdated}</p>
+      )}
+    </div>
+  </article>
+</BaseLayout>

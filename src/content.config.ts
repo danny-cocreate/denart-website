@@ -65,8 +65,36 @@ const testimonials = defineCollection({
   }),
 });
 
+// Manifestation content hub — pillar + topic clusters (AEO).
+const manifestation = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    // The single target question this page answers.
+    question: z.string().optional(),
+    description: z.string(),
+    // Cluster grouping per the hub plan.
+    cluster: z.enum(['visualization', 'problem', 'method', 'frameworks', 'threshold']),
+    tier: z.number().optional(),
+    order: z.number().optional(),
+    // Liftable, answer-first opening (2–4 sentences). Optional on stubs.
+    answerFirst: z.string().optional(),
+    // ISO date string, e.g. "2026-07-01".
+    lastUpdated: z.string().optional(),
+    // Explicit sibling slugs; if omitted, siblings are derived from the cluster.
+    siblings: z.array(z.string()).optional(),
+    faqs: z.array(z.object({
+      question: z.string(),
+      answer: z.string(),
+    })).optional(),
+    // false = stub/coming-soon (listed but not linked as a live page).
+    published: z.boolean().default(false),
+  }),
+});
+
 export const collections = {
   services,
   classes,
   testimonials,
+  manifestation,
 };

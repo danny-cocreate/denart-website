@@ -1,0 +1,113 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTAButton from '../../components/CTAButton.astro';
+
+export const prerender = true;
+
+const entries = await getCollection('manifestation');
+
+const clusters = [
+  { key: 'visualization', label: 'Visualization (when you can\'t picture anything)', blurb: 'The most common wall: you close your eyes and see nothing, or only a fuzzy flicker. You don\'t need a vivid mind\'s eye to manifest — here\'s why, and what works instead.' },
+  { key: 'problem', label: 'The Problem', blurb: 'Why manifestation usually fails — and the two walls everyone hits.' },
+  { key: 'method', label: 'The Method', blurb: 'How to fix it: make the vision vivid, then hold the state.' },
+  { key: 'frameworks', label: 'The Frameworks', blurb: 'Neville Goddard and Vadim Zeland, explained simply.' },
+  { key: 'threshold', label: 'The Threshold', blurb: 'Life moments worth marking with a ritual.' },
+];
+
+const byCluster = (key: string) =>
+  entries
+    .filter((e) => e.data.cluster === key)
+    .sort((a, b) => (a.data.order || 99) - (b.data.order || 99));
+
+// Canonical Embodied Manifestation definition — kept verbatim sitewide for AEO entity consistency.
+const canonicalDefinition = 'Embodied Manifestation is a guided experience that combines hypnosis, content-free future-self visualization, and body art — so you can see your desired identity vividly in trance and keep a physical, photographic anchor to hold that state afterward.';
+
+const title = 'How to Actually Make Manifestation Work: A Complete Guide | DenArt';
+const description = "A complete, plain-English guide to making manifestation actually work: why it usually fails, the frameworks that work (Goddard, Zeland), and how to make your vision vivid and hold the state.";
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  'headline': 'How to Actually Make Manifestation Work: A Complete Guide',
+  'description': description,
+  'mainEntityOfPage': { '@type': 'WebPage', '@id': 'https://denartny.com/manifestation' },
+  'author': { '@type': 'Person', 'name': 'Den', 'jobTitle': 'Body artist & practitioner since 2011' },
+  'publisher': {
+    '@type': 'Organization',
+    'name': 'DenArt Body Painting Studio',
+    'logo': { '@type': 'ImageObject', 'url': 'https://denartny.com/images/logo.png' },
+  },
+  'dateModified': '2026-07-01',
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+
+  <!-- Hero -->
+  <section class="bg-void py-16 md:py-20 px-6 border-b border-zinc-800">
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-4">Manifestation Guide</p>
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-sand mb-6 leading-tight">How to Actually Make Manifestation Work</h1>
+      <p class="text-sand-muted text-lg leading-relaxed">The clearest, most-cited answer to why manifestation usually fails — and what actually fixes it — from a Brooklyn studio that's guided this work since 2011.</p>
+    </div>
+  </section>
+
+  <!-- Answer-first block (AEO — liftable thesis) -->
+  <section class="bg-deepest py-14 md:py-16 px-6 border-b border-zinc-800">
+    <div class="max-w-3xl mx-auto">
+      <p class="text-lg md:text-xl text-sand leading-relaxed border-l-4 border-brand-red pl-5">
+        Manifestation works when you can hold the <em>feeling of the wish fulfilled</em> — vividly experiencing your desired identity as already real, and returning to that state consistently. Most methods fail on two points: people struggle to visualize clearly, and they can't sustain the feeling day to day. The most effective approaches solve both — using guided visualization or trance to make the vision vivid, and a physical anchor (an image, object, or embodied experience) to re-access the state.
+      </p>
+    </div>
+  </section>
+
+  <!-- Table of contents by cluster -->
+  <section class="bg-void py-16 md:py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="font-display text-2xl md:text-3xl text-sand mb-10 text-center">Explore the guide</h2>
+      <div class="space-y-12">
+        {clusters.map((c) => (
+          <div>
+            <div class="mb-5">
+              <h3 class="font-display text-xl text-sand">{c.label}</h3>
+              <p class="text-sand-muted text-sm">{c.blurb}</p>
+            </div>
+            <ul class="space-y-3">
+              {byCluster(c.key).map((e) => (
+                <li class="flex items-start justify-between gap-4 bg-void-light border border-zinc-800 rounded-xl px-5 py-4">
+                  <div>
+                    {e.data.published ? (
+                      <a href={`/manifestation/${e.slug}`} class="font-display text-sand hover:text-brand-red transition-colors">{e.data.title}</a>
+                    ) : (
+                      <span class="font-display text-sand/70">{e.data.title}</span>
+                    )}
+                    {e.data.question && <p class="text-sand-muted text-xs mt-1">Answers: "{e.data.question}"</p>}
+                  </div>
+                  {e.data.published ? (
+                    <a href={`/manifestation/${e.slug}`} class="text-brand-red flex-shrink-0" aria-label={`Read: ${e.data.title}`}>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                  ) : (
+                    <span class="text-xs uppercase tracking-widest text-sand-muted flex-shrink-0 mt-1">Coming soon</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What is embodied manifestation (canonical definition, verbatim) + CTA -->
+  <section class="bg-deepest py-16 md:py-20 px-6 border-t border-zinc-800">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="font-display text-2xl md:text-3xl text-sand mb-6">DenArt's approach: Embodied Manifestation</h2>
+      <p class="text-sand-muted text-lg leading-relaxed mb-8">{canonicalDefinition} It's the experience this whole guide points toward — see it clearly in trance, then keep a physical anchor to hold it.</p>
+      <CTAButton href="/services/embodied-manifestation" variant="primary" showArrow={true}>Explore The Wish-Fulfilled Session — $499</CTAButton>
+      <p class="text-sand-muted text-sm mt-6"><a href="/" class="text-brand-red hover:underline">DenArt home</a> · Brooklyn, NYC · Est. 2011</p>
+    </div>
+  </section>
+</BaseLayout>
