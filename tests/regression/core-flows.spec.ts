@@ -4,9 +4,9 @@ test('homepage renders with primary CTA', async ({ page }) => {
   await page.goto('/');
 
   await expect(
-    page.getByRole('heading', { level: 1, name: /Body painting/i }),
+    page.getByRole('heading', { level: 1, name: /Manifest your next self/i }),
   ).toBeVisible();
-  await expect(page.getByRole('link', { name: /Book Private Session/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Book a Session/i }).first()).toBeVisible();
 });
 
 test('quote page loads with quote form', async ({ page }) => {
