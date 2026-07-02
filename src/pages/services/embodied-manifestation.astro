@@ -79,6 +79,7 @@ const included = [
   'A professional body-art session translating that identity into art on your body (often continued in light trance to deepen the anchor)',
   'A photographic anchor — images of your embodied future self to keep',
   'Intention-setting beforehand and space to share your vision afterward',
+  'Full control over your comfort and coverage — go as bare or as covered as you like (a fully non-nude option is available), always in a private, one-on-one setting',
 ];
 
 const faqs = [
@@ -101,6 +102,14 @@ const faqs = [
   {
     question: 'What do I leave with?',
     answer: 'You leave with photographs of your embodied future self — a visual anchor you can return to any time to re-access the feeling — plus the kinesthetic memory of the experience.',
+  },
+  {
+    question: 'Do I have to be nude?',
+    answer: "Only as much as you're comfortable with — it's entirely your call. Full coverage tends to look best because clothing interrupts the flow of the painting, but you're welcome to keep underwear on, use pasties, or have areas covered with paint. Prefer to stay fully covered? We also offer a non-nude option. Every session is private and moves at your pace.",
+  },
+  {
+    question: 'What do I wear, and will I feel exposed?',
+    answer: "We agree on your comfort level before we begin, and the session is private and one-on-one (or a small group you choose), guided to keep you at ease the whole way through. Bring loose clothing to change into afterward and a hair tie. Most people find the being-painted part unexpectedly calming — even empowering.",
   },
   {
     question: 'Is the body paint safe? How do I remove it?',
@@ -164,10 +173,10 @@ const serviceSchema = {
         Embodied Manifestation · Brooklyn · Est. 2011
       </p>
       <h1 class="text-4xl md:text-6xl font-display font-bold text-white mb-5 leading-tight">
-        Manifestation you don't just think — you wear.
+        Manifestation that finally feels real — and sticks.
       </h1>
       <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-8 leading-relaxed">
-        Most manifestation stays in your head and fades by morning. The Wish-Fulfilled Session makes your future identity vivid enough to feel in trance — and gives you a physical anchor to hold it long after you leave.
+        You believe in it and you put in the reps, but it stays in your head and fades by morning. The Wish-Fulfilled Session makes your future identity vivid enough to feel in trance — then sends you home with photographs you can look at to bring that feeling back in seconds, long after you leave.
       </p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
         <CTAButton href={bookingHref} variant="primary" showArrow={true}>Book a Session — $499</CTAButton>
@@ -212,8 +221,9 @@ const serviceSchema = {
   <section class="bg-deepest py-16 md:py-20 border-y border-zinc-800">
     <div class="max-w-5xl mx-auto px-6">
       <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-10 text-center">Embodied Manifestation vs. other manifestation methods</h2>
-      <div class="overflow-x-auto rounded-2xl border border-zinc-800">
-        <table class="w-full text-left border-collapse min-w-[720px]">
+      <!-- Desktop: full comparison table -->
+      <div class="hidden md:block overflow-x-auto rounded-2xl border border-zinc-800">
+        <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-void-light">
               <th scope="col" class="p-4 text-sand-muted font-medium text-sm"></th>
@@ -235,6 +245,24 @@ const serviceSchema = {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <!-- Mobile: stacked cards, leading with the Wish-Fulfilled Session -->
+      <div class="md:hidden space-y-4">
+        {comparison.map((row) => (
+          <div class="rounded-xl border border-zinc-800 overflow-hidden">
+            <div class="bg-void-light px-4 py-2.5 text-sand font-medium text-sm">{row.dimension}</div>
+            <div class="px-4 py-3 bg-brand-red/10 border-l-2 border-brand-red">
+              <p class="text-brand-red text-[0.7rem] font-semibold uppercase tracking-wide mb-0.5">The Wish-Fulfilled Session</p>
+              <p class="text-sand text-sm font-medium">{row.session}</p>
+            </div>
+            <div class="px-4 py-3 space-y-1.5 text-xs border-t border-zinc-800/60">
+              <p class="text-sand-muted"><span class="text-sand-dim">Journaling:</span> {row.journaling}</p>
+              <p class="text-sand-muted"><span class="text-sand-dim">App:</span> {row.app}</p>
+              <p class="text-sand-muted"><span class="text-sand-dim">Coach:</span> {row.coach}</p>
+            </div>
+          </div>
+        ))}
       </div>
       <p class="text-sand-muted mt-8 max-w-3xl">The difference isn't intensity of effort — it's that Embodied Manifestation solves the two things every other method leaves to you: <em>seeing it clearly</em> and <em>holding the feeling</em>.</p>
     </div>
