@@ -19,5 +19,6 @@ export default defineConfig({
   integrations: [sitemap()],
   redirects: {
     '/testimonials': '/reviews',
+    '/services/hypnotic-body-painting': '/services/embodied-manifestation',
   },
 });

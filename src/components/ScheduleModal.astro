@@ -88,23 +88,11 @@ const { serviceName, serviceTitle } = Astro.props;
               class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand focus:ring-2 focus:ring-brand-red focus:border-transparent"
             >
               <option value="">Select a session type...</option>
-              {serviceName === 'fine-art-body-painting' && (
-                <>
-                  <option value="Fine Art Body Painting Session">Fine Art Body Painting</option>
-                  <option value="Maternity">Maternity</option>
-                  <option value="Ultimate Package">Ultimate Package</option>
-                  <option value="Self-Visualization Session">Self-Visualization</option>
-                </>
-              )}
-              {serviceName === 'hypnotic-body-painting' && (
-                <option value="Hypnotic Body Painting Session">Hypnotic Body Painting Session</option>
-              )}
-              {serviceName === 'maternity-belly-painting' && (
-                <option value="Maternity">Maternity Belly Painting</option>
-              )}
-              {serviceName === 'body-painting-for-events' && (
-                <option value="Event Body Painting">Event Body Painting</option>
-              )}
+              <option value="Wish-Fulfilled Session" selected={serviceName === 'embodied-manifestation' || serviceName === 'hypnotic-body-painting'}>Embodied Manifestation — The Wish-Fulfilled Session</option>
+              <option value="Fine Art Body Painting" selected={serviceName === 'fine-art-body-painting'}>Fine Art Body Painting</option>
+              <option value="Events & Commercial" selected={serviceName === 'body-painting-for-events'}>Events & Commercial</option>
+              <option value="Private Party" selected={serviceName === 'private-party-at-studio'}>Private Parties</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           

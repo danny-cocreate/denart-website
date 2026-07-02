@@ -4,41 +4,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const serviceParam = Astro.url.searchParams.get('service') || '';
 
 const serviceTitles: Record<string, string> = {
+  'embodied-manifestation': 'The Wish-Fulfilled Session',
+  'hypnotic-body-painting': 'The Wish-Fulfilled Session',
   'fine-art-body-painting': 'Fine Art Body Painting',
-  'hypnotic-body-painting': 'Hypnotic Body Painting',
-  'maternity-belly-painting': 'Maternity Belly Painting',
-  'body-painting-for-events': 'Body Painting for Events',
+  'body-painting-for-events': 'Events & Commercial',
+  'private-party-at-studio': 'Private Parties',
 };
 
-const sessionOptionsByService: Record<string, { value: string; label: string }[]> = {
-  'fine-art-body-painting': [
-    { value: 'Fine Art Body Painting Session', label: 'Fine Art Body Painting' },
-    { value: 'Maternity', label: 'Maternity' },
-    { value: 'Ultimate Package', label: 'Ultimate Package' },
-    { value: 'Self-Visualization Session', label: 'Self-Visualization' },
-  ],
-  'hypnotic-body-painting': [
-    { value: 'Hypnotic Body Painting Session', label: 'Hypnotic Body Painting Session' },
-  ],
-  'maternity-belly-painting': [
-    { value: 'Maternity', label: 'Maternity Belly Painting' },
-  ],
-  'body-painting-for-events': [
-    { value: 'Event Body Painting', label: 'Event Body Painting' },
-  ],
-};
-
-const defaultOptions = [
-  { value: 'Fine Art Body Painting Session', label: 'Fine Art Body Painting' },
-  { value: 'Hypnotic Body Painting Session', label: 'Hypnotic Body Painting Session' },
-  { value: 'Maternity', label: 'Maternity Belly Painting' },
-  { value: 'Event Body Painting', label: 'Event Body Painting' },
-  { value: 'Ultimate Package', label: 'Ultimate Package' },
-  { value: 'Self-Visualization Session', label: 'Self-Visualization' },
+// Canonical current offerings (Services only) — keep in sync with the nav, quote form, and booking modal.
+const sessionOptions = [
+  { value: 'Wish-Fulfilled Session', label: 'Embodied Manifestation — The Wish-Fulfilled Session' },
+  { value: 'Fine Art Body Painting', label: 'Fine Art Body Painting' },
+  { value: 'Events & Commercial', label: 'Events & Commercial' },
+  { value: 'Private Party', label: 'Private Parties' },
+  { value: 'Other', label: 'Other' },
 ];
 
-const sessionOptions = sessionOptionsByService[serviceParam] || defaultOptions;
-const preselectedSessionType = sessionOptionsByService[serviceParam]?.[0]?.value || '';
+// Preselect the option matching where the visitor came from (?service=…).
+const preselectByService: Record<string, string> = {
+  'embodied-manifestation': 'Wish-Fulfilled Session',
+  'hypnotic-body-painting': 'Wish-Fulfilled Session',
+  'fine-art-body-painting': 'Fine Art Body Painting',
+  'body-painting-for-events': 'Events & Commercial',
+  'private-party-at-studio': 'Private Party',
+};
+const preselectedSessionType = preselectByService[serviceParam] || '';
 const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
 ---
 
@@ -56,7 +46,7 @@ const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
         <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-sand mb-4 leading-tight">
           Schedule a Session
         </h1>
-        <p class="text-sand-muted text-lg md:text-xl max-w-2xl mx-auto">
+        <p id="schedule-service-title" class="text-sand-muted text-lg md:text-xl max-w-2xl mx-auto">
           {serviceTitle}
         </p>
       </div>
@@ -188,6 +178,25 @@ const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
   const form = document.getElementById('schedule-form') as HTMLFormElement;
   const messageEl = document.getElementById('schedule-message') as HTMLDivElement;
   const submitBtn = document.getElementById('schedule-submit-btn') as HTMLButtonElement;
+
+  // Preselect the session type based on ?service=… (the site is static, so this must run client-side).
+  const serviceMap: Record<string, { value: string; title: string }> = {
+    'embodied-manifestation': { value: 'Wish-Fulfilled Session', title: 'The Wish-Fulfilled Session' },
+    'hypnotic-body-painting': { value: 'Wish-Fulfilled Session', title: 'The Wish-Fulfilled Session' },
+    'fine-art-body-painting': { value: 'Fine Art Body Painting', title: 'Fine Art Body Painting' },
+    'body-painting-for-events': { value: 'Events & Commercial', title: 'Events & Commercial' },
+    'private-party-at-studio': { value: 'Private Parties', title: 'Private Parties' },
+  };
+  const svcParam = new URLSearchParams(window.location.search).get('service');
+  if (svcParam && serviceMap[svcParam]) {
+    const { value, title } = serviceMap[svcParam];
+    const sel = document.getElementById('schedule-session-type') as HTMLSelectElement | null;
+    if (sel) sel.value = value;
+    const titleEl = document.getElementById('schedule-service-title');
+    if (titleEl) titleEl.textContent = title;
+    const hidden = form?.querySelector('input[name="service"]') as HTMLInputElement | null;
+    if (hidden) hidden.value = svcParam;
+  }
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();

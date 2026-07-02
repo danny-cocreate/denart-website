@@ -1,0 +1,372 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import FAQ from '../../components/FAQ.astro';
+
+export const prerender = true;
+
+const title = 'The Wish-Fulfilled Session — Embodied Manifestation in Brooklyn | DenArt';
+const description = "Manifestation fails when you can't picture it clearly or hold the feeling. The Wish-Fulfilled Session fixes both — guided hypnosis, future-self visualization, and body art you keep as a physical anchor. Brooklyn, NYC.";
+const ogTitle = 'Embodied Manifestation you can wear — The Wish-Fulfilled Session';
+const ogDescription = 'See your future self vividly in trance. Keep a physical anchor to hold that state. A guided hypnosis + body-art experience in Brooklyn.';
+
+// Canonical Embodied Manifestation definition — kept verbatim sitewide for AEO entity consistency.
+const canonicalDefinition = 'Embodied Manifestation is a guided experience that combines hypnosis, content-free future-self visualization, and body art — so you can see your desired identity vividly in trance and keep a physical, photographic anchor to hold that state afterward.';
+
+const bookingHref = '/schedule-a-session?service=embodied-manifestation';
+
+const galleryImages = [
+  '/images/services/hypnotic/gallery-1.jpg',
+  '/images/services/hypnotic/gallery-2.jpg',
+  '/images/services/hypnotic/gallery-3.jpg',
+  '/images/services/hypnotic/gallery-4.jpg',
+  '/images/services/hypnotic/gallery-5.jpg',
+  '/images/services/hypnotic/gallery-6.jpg',
+];
+
+const comparison = [
+  {
+    dimension: 'Makes the vision vivid',
+    journaling: 'You strain to picture it',
+    app: 'Prompts, still in your head',
+    coach: 'Talks you toward it',
+    session: 'Guided trance produces the imagery for you',
+  },
+  {
+    dimension: 'Physical anchor to hold the state',
+    journaling: 'None',
+    app: 'None',
+    coach: 'None',
+    session: 'Photographs + kinesthetic memory',
+  },
+  {
+    dimension: 'Content',
+    journaling: 'Your own words',
+    app: 'Templated',
+    coach: 'Coach-led',
+    session: 'Content-free — entirely yours',
+  },
+  {
+    dimension: 'Marks a threshold',
+    journaling: 'No',
+    app: 'No',
+    coach: 'Sometimes',
+    session: "A ritual you'll remember for years",
+  },
+  {
+    dimension: 'Format',
+    journaling: 'Solo, ongoing',
+    app: 'Solo, ongoing',
+    coach: 'Recurring calls',
+    session: 'One immersive in-studio experience',
+  },
+];
+
+const steps = [
+  { title: 'Arrive & set intention', body: 'A short grounding and a vague, open description of the end state you want — no scripts, no imposed content.' },
+  { title: 'Breathwork + tapping', body: 'A calming exercise to settle the nervous system and open the door to trance.' },
+  { title: 'Induction', body: 'A gentle hypnotic induction takes you down into a deep, comfortable state where imagery comes easily.' },
+  { title: 'Explore your magical place', body: 'You wander the reality where you already are who you want to be. The more you explore, the more you see, feel, and enjoy — the classic Goddard "feeling of the wish fulfilled," experienced from the inside.' },
+  { title: 'Re-emerge & share', body: 'You come back and put words or images to what you saw.' },
+  { title: 'Body art', body: 'The artist paints that identity onto your body — sometimes back in light trance, so the being-painted itself becomes a kinesthetic anchor.' },
+  { title: 'Capture it', body: 'We photograph your embodied future self. You leave with the visual anchor.' },
+];
+
+const included = [
+  'A private (or small-group) Wish-Fulfilled Session at the DenArt studio in Williamsburg, Brooklyn',
+  'Guided breathwork and a hypnotic induction to reach a deep, calm, receptive state',
+  'A content-free future-self visualization — nothing is placed in your mind; the vision is entirely yours',
+  'A professional body-art session translating that identity into art on your body (often continued in light trance to deepen the anchor)',
+  'A photographic anchor — images of your embodied future self to keep',
+  'Intention-setting beforehand and space to share your vision afterward',
+];
+
+const faqs = [
+  {
+    question: 'What is Embodied Manifestation?',
+    answer: 'Embodied Manifestation is a guided experience combining hypnosis, future-self visualization, and body art, so you can vividly feel your desired identity and keep a physical anchor to hold that state. It turns mental manifestation into a felt, wearable experience.',
+  },
+  {
+    question: 'How is this different from a manifestation coach or app?',
+    answer: 'Coaches and apps keep manifestation in your head. The Wish-Fulfilled Session makes your future self vivid through guided trance and gives you a physical, photographic anchor — solving the two things people struggle with most: picturing it clearly and holding the feeling.',
+  },
+  {
+    question: 'Do I need to be good at visualizing?',
+    answer: "No. That's the point of the guided trance — your subconscious produces the imagery for you, so you don't have to strain to \"picture\" anything on your own.",
+  },
+  {
+    question: 'Is it based on Neville Goddard?',
+    answer: 'Yes. The session is built on Goddard\'s principle of living in "the feeling of the wish fulfilled" and assuming the state of your desired identity, alongside Vadim Zeland\'s reality transurfing.',
+  },
+  {
+    question: 'What do I leave with?',
+    answer: 'You leave with photographs of your embodied future self — a visual anchor you can return to any time to re-access the feeling — plus the kinesthetic memory of the experience.',
+  },
+  {
+    question: 'Is the body paint safe? How do I remove it?',
+    answer: 'Yes. We use professional, skin-safe, hypoallergenic paints (Ben Nye, Kryolan, Mehron). It washes off with soap and water.',
+  },
+  {
+    question: 'How long is a session, and where is it?',
+    answer: 'Sessions run about 2–3 hours at the DenArt studio, 99 Kingsland Ave #102, Brooklyn, NY 11222. Private sessions allow you to go deepest.',
+  },
+  {
+    question: 'How do I prepare?',
+    answer: 'Skip lotion that day (it affects paint adhesion), eat beforehand, stay hydrated, and bring loose clothing and a hair tie.',
+  },
+];
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  'name': 'The Wish-Fulfilled Session',
+  'alternateName': 'Embodied Manifestation',
+  'serviceType': 'Embodied Manifestation experience',
+  'description': canonicalDefinition,
+  'provider': {
+    '@type': 'LocalBusiness',
+    'name': 'DenArt Body Painting Studio',
+    'image': 'https://denartny.com/images/logo.png',
+    'url': 'https://denartny.com',
+    'telephone': '+1-347-937-9973',
+    'address': {
+      '@type': 'PostalAddress',
+      'streetAddress': '99 Kingsland Ave #102',
+      'addressLocality': 'Brooklyn',
+      'addressRegion': 'NY',
+      'postalCode': '11222',
+      'addressCountry': 'US',
+    },
+    'priceRange': '$$',
+  },
+  'areaServed': {
+    '@type': 'Place',
+    'name': 'Brooklyn, New York City',
+  },
+  'offers': {
+    '@type': 'Offer',
+    'price': '499',
+    'priceCurrency': 'USD',
+    'url': 'https://denartny.com/services/embodied-manifestation',
+  },
+};
+---
+
+<BaseLayout title={title} description={description} ogTitle={ogTitle} ogDescription={ogDescription}>
+  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+
+  <!-- Hero -->
+  <section class="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+    <img src="/images/services/hypnotic/hero.jpg" alt="Embodied Manifestation body art at DenArt" class="absolute inset-0 w-full h-full object-cover object-[center_-80px]" />
+    <div class="absolute inset-0 bg-black/70"></div>
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto py-16">
+      <p class="inline-block px-4 py-1.5 rounded-full text-xs font-medium mb-5 uppercase tracking-[0.25em] border border-white/30 text-white/80">
+        Embodied Manifestation · Brooklyn · Est. 2011
+      </p>
+      <h1 class="text-4xl md:text-6xl font-display font-bold text-white mb-5 leading-tight">
+        Manifestation you don't just think — you wear.
+      </h1>
+      <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-8 leading-relaxed">
+        Most manifestation stays in your head and fades by morning. The Wish-Fulfilled Session makes your future identity vivid enough to feel in trance — and gives you a physical anchor to hold it long after you leave.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+        <CTAButton href={bookingHref} variant="primary" showArrow={true}>Book a Session — $499</CTAButton>
+        <CTAButton href="#how-it-works" variant="secondary" showArrow={false}>How it works ↓</CTAButton>
+      </div>
+    </div>
+  </section>
+
+  <!-- Answer-first opening (AEO — canonical definition, verbatim, plain crawlable text) -->
+  <section class="bg-deepest py-14 md:py-16 border-b border-zinc-800">
+    <div class="max-w-3xl mx-auto px-6">
+      <p class="text-lg md:text-xl text-sand leading-relaxed">
+        <strong class="text-sand">{canonicalDefinition}</strong> The Wish-Fulfilled Session is DenArt's signature Embodied Manifestation experience in Brooklyn, NYC. It's built on Neville Goddard's principle of living in "the feeling of the wish fulfilled" and Vadim Zeland's idea of tuning into the version of reality you want — but instead of asking you to imagine it alone, a trained guide takes you into a vivid inner vision and an artist paints that new identity onto your body.
+      </p>
+    </div>
+  </section>
+
+  <!-- The wedge -->
+  <section class="bg-void py-16 md:py-20">
+    <div class="max-w-4xl mx-auto px-6">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-10 text-center">Manifestation fails for two reasons. This fixes both.</h2>
+      <p class="text-sand-muted text-center max-w-2xl mx-auto mb-12">Manifestation coaches, apps, and journaling all run into the same two walls:</p>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-void-light border border-zinc-800 rounded-2xl p-8">
+          <p class="text-brand-red text-sm uppercase tracking-widest mb-3">Wall 1</p>
+          <h3 class="text-xl font-display text-sand mb-3">You can't picture it clearly.</h3>
+          <p class="text-sand-muted leading-relaxed">Every guide eventually admits it: "you don't need crystal-clear visuals — a soft feeling is fine." That's an apology for a real problem. In a guided trance, your subconscious speaks in images — so your future self becomes vivid, multi-sensory, and <em>felt</em>, not vaguely imagined.</p>
+        </div>
+        <div class="bg-void-light border border-zinc-800 rounded-2xl p-8">
+          <p class="text-brand-red text-sm uppercase tracking-widest mb-3">Wall 2</p>
+          <h3 class="text-xl font-display text-sand mb-3">You can't hold the feeling.</h3>
+          <p class="text-sand-muted leading-relaxed">The state you live in is the one that wins — but nobody gives you a way to stay there. Your session ends with photographs of the new you. That's not a keepsake; it's a <strong class="text-sand">re-access trigger</strong> — a physical anchor that brings the feeling back in seconds, any morning you need it.</p>
+        </div>
+      </div>
+      <blockquote class="mt-12 border-l-4 border-brand-red bg-void-light/50 py-4 px-6 rounded-r-lg italic text-lg text-sand text-center md:text-left">
+        See it clearly. Hold it after. That's the whole game — and it's what a journal can't do.
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- Comparison table -->
+  <section class="bg-deepest py-16 md:py-20 border-y border-zinc-800">
+    <div class="max-w-5xl mx-auto px-6">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-10 text-center">Embodied Manifestation vs. other manifestation methods</h2>
+      <div class="overflow-x-auto rounded-2xl border border-zinc-800">
+        <table class="w-full text-left border-collapse min-w-[720px]">
+          <thead>
+            <tr class="bg-void-light">
+              <th scope="col" class="p-4 text-sand-muted font-medium text-sm"></th>
+              <th scope="col" class="p-4 text-sand-muted font-medium text-sm">Journaling / scripting</th>
+              <th scope="col" class="p-4 text-sand-muted font-medium text-sm">Manifestation app</th>
+              <th scope="col" class="p-4 text-sand-muted font-medium text-sm">Manifestation coach</th>
+              <th scope="col" class="p-4 text-brand-red font-semibold text-sm">The Wish-Fulfilled Session</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparison.map((row) => (
+              <tr class="border-t border-zinc-800">
+                <th scope="row" class="p-4 text-sand font-medium align-top">{row.dimension}</th>
+                <td class="p-4 text-sand-muted align-top">{row.journaling}</td>
+                <td class="p-4 text-sand-muted align-top">{row.app}</td>
+                <td class="p-4 text-sand-muted align-top">{row.coach}</td>
+                <td class="p-4 text-sand align-top bg-brand-red/5 font-medium">{row.session}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-sand-muted mt-8 max-w-3xl">The difference isn't intensity of effort — it's that Embodied Manifestation solves the two things every other method leaves to you: <em>seeing it clearly</em> and <em>holding the feeling</em>.</p>
+    </div>
+  </section>
+
+  <!-- What's included + price -->
+  <section class="bg-void py-16 md:py-20">
+    <div class="max-w-4xl mx-auto px-6 grid md:grid-cols-5 gap-10">
+      <div class="md:col-span-3">
+        <h2 class="text-2xl md:text-3xl font-display font-bold text-sand mb-6">What's included</h2>
+        <ul class="space-y-3">
+          {included.map((item) => (
+            <li class="flex items-start gap-3 text-sand-muted">
+              <svg class="w-5 h-5 text-brand-red mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="md:col-span-2">
+        <div class="bg-void-light border border-zinc-800 rounded-2xl p-8 text-center sticky top-24">
+          <p class="text-xs uppercase tracking-widest text-sand-muted mb-2">Price</p>
+          <p class="text-4xl font-display font-bold text-sand mb-1">$499</p>
+          <p class="text-sand-muted text-sm mb-6">Private sessions go deepest.<br/>Multi-session packages available.</p>
+          <CTAButton href={bookingHref} variant="primary" showArrow={true}>Book your session</CTAButton>
+          <p class="text-sand-muted text-sm mt-4">Questions? <a href="/contact" class="text-brand-red hover:underline">Contact us</a> for private or multi-session options.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how-it-works" class="bg-deepest py-16 md:py-20 border-y border-zinc-800 scroll-mt-24">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-12 text-center">How it works — the session, start to finish</h2>
+      <ol class="space-y-8">
+        {steps.map((step, i) => (
+          <li class="flex gap-5">
+            <span class="flex-shrink-0 w-10 h-10 rounded-full bg-brand-red/20 text-brand-red font-display font-bold flex items-center justify-center">{i + 1}</span>
+            <div>
+              <h3 class="text-lg font-display text-sand mb-1">{step.title}</h3>
+              <p class="text-sand-muted leading-relaxed">{step.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- The thinking behind it -->
+  <section class="bg-void py-16 md:py-20">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-10 text-center">Where this comes from</h2>
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-display text-sand mb-2">Neville Goddard — living in the end.</h3>
+          <p class="text-sand-muted leading-relaxed">Your "I AM" — the state you assume you're in — is what tunes your reality. Manifestation is less about wanting and more about <em>being</em> the person who already has it. The Wish-Fulfilled Session lets you rehearse that state vividly instead of straining to imagine it.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-display text-sand mb-2">Vadim Zeland — tuning to your version of reality.</h3>
+          <p class="text-sand-muted leading-relaxed">You shift toward the version of reality you want by shifting who you're being. The body art makes that shift tangible and memorable.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-display text-sand mb-2">Why the body?</h3>
+          <p class="text-sand-muted leading-relaxed">The subconscious communicates in imagery, and novel physical experience creates strong memory. Getting painted is a pattern interrupt that anchors the state kinesthetically; the photos anchor it visually. Two anchors, one session.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who it's for -->
+  <section class="bg-deepest py-16 md:py-20 border-y border-zinc-800">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-8 text-center">Who it's for</h2>
+      <p class="text-sand-muted mb-6">The Wish-Fulfilled Session is for you if you're:</p>
+      <ul class="space-y-4 mb-8">
+        <li class="text-sand-muted"><strong class="text-sand">Standing at a threshold</strong> — a breakup or divorce, a milestone birthday, a new career, a move, entering motherhood, or simply "stuck" and ready for the next chapter.</li>
+        <li class="text-sand-muted"><strong class="text-sand">Already exploring manifestation</strong> — and frustrated that mental-only methods haven't stuck.</li>
+        <li class="text-sand-muted"><strong class="text-sand">Creative and open</strong> — you want a ritual that marks the moment, not another app.</li>
+      </ul>
+      <p class="text-sand-muted"><strong class="text-sand">Probably not for you if</strong> you're seeking therapy or medical treatment, or a quick novelty. This is a transformational experience built on 15 years of craft.</p>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="bg-void py-16 md:py-20">
+    <div class="max-w-5xl mx-auto px-6">
+      <h2 class="text-2xl md:text-3xl font-display text-sand mb-8 text-center">From past sessions</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {galleryImages.map((img) => (
+          <div class="aspect-[3/4] overflow-hidden rounded-xl">
+            <img src={img} alt="Embodied Manifestation body art" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Art, not therapy -->
+  <section class="bg-deepest py-12 border-y border-zinc-800">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="text-lg font-display text-sand mb-3 uppercase tracking-wide">Important — art, not therapy</h2>
+      <p class="text-sand-muted text-sm leading-relaxed">This is a creative experience using hypnotic visualization and body art — not psychotherapy or medical care. You're responsible for your wellbeing and integration. If you're working through intense emotions, please seek additional professional support. By booking, you acknowledge this session is art, not therapy.</p>
+    </div>
+  </section>
+
+  <!-- Credibility strip -->
+  <section class="bg-void-light py-10 border-b border-zinc-800">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <p class="text-sand-muted text-sm mb-6">Est. 2011 · 2000+ bodies painted · As seen on NBC's TODAY Show, Carson Daly, CBS · Yelp 4.8★</p>
+      <div class="flex flex-wrap justify-center items-center gap-8 opacity-70">
+        <img src="/images/logos/logo-today.png" alt="TODAY Show" class="h-8 md:h-10" />
+        <img src="/images/logos/logo-nbc.png" alt="NBC" class="h-8 md:h-10" />
+        <img src="/images/logos/logo-carson.png" alt="Carson Daly" class="h-8 md:h-10" />
+        <img src="/images/logos/logo-1stlook.png" alt="1st Look" class="h-8 md:h-10" />
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ (FAQPage schema emitted by component) -->
+  <section class="bg-deepest py-16 md:py-20">
+    <div class="max-w-3xl mx-auto px-6">
+      <FAQ items={faqs} title="Frequently Asked Questions" />
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section class="bg-void py-16 md:py-20 border-t border-zinc-800">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-4">Mark this chapter. Become her.</h2>
+      <p class="text-sand-muted text-lg mb-8">You already know who you're becoming. Come see her clearly — and take her with you.</p>
+      <CTAButton href={bookingHref} variant="primary" showArrow={true}>Book a Session — $499</CTAButton>
+    </div>
+  </section>
+</BaseLayout>
