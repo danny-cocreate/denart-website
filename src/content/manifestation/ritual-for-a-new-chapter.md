@@ -1,7 +1,7 @@
 ---
 title: "A ritual for a new chapter: new job, new city, new you"
 question: "new chapter in life ritual"
-description: "Starting a new chapter — a new job, a new city, a new you? A ritual to make the transition real, not just a resolution that fades."
+description: "Starting a new chapter, a new job, a new city, a new you? A ritual to make the transition real, not just a resolution that fades."
 cluster: "threshold"
 order: 3
 lastUpdated: "2026-07-01"

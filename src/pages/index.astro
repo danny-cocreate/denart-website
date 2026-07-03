@@ -9,8 +9,8 @@ const services = await getCollection('services');
 const classes = await getCollection('classes');
 const testimonials = await getCollection('testimonials');
 
-// Canonical Embodied Manifestation definition — kept verbatim sitewide for AEO entity consistency.
-const canonicalDefinition = 'Embodied Manifestation is a guided experience that combines hypnosis, content-free future-self visualization, and body art — so you can see your desired identity vividly in trance and keep a physical, photographic anchor to hold that state afterward.';
+// Canonical Embodied Manifestation definition, kept verbatim sitewide for AEO entity consistency.
+const canonicalDefinition = 'Embodied Manifestation is a guided experience that combines hypnosis, content-free future-self visualization, and body art, so you can see your desired identity vividly in trance and keep a physical, photographic anchor to hold that state afterward.';
 
 // Fetch events from Pretix
 let pretixEvents = [];
@@ -25,9 +25,9 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 ---
 
 <BaseLayout
-	title="DenArt — Embodied Manifestation in Brooklyn | Manifest a New Identity Through Hypnosis & Body Art"
+	title="DenArt, Embodied Manifestation in Brooklyn | Manifest a New Identity Through Hypnosis & Body Art"
 	description="Manifestation that doesn't stay in your head. DenArt combines hypnosis, future-self visualization, and body art so you can see your next identity vividly and keep a physical anchor to hold it. Brooklyn, NYC. Est. 2011."
-	ogTitle="Manifestation you can wear — DenArt, Brooklyn"
+	ogTitle="Manifestation you can wear, DenArt, Brooklyn"
 	ogDescription="See your future self in trance. Wear it as art. Keep the anchor. Embodied Manifestation experiences in Brooklyn since 2011."
 >
 	<main class="bg-void">
@@ -57,7 +57,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 
 				<!-- Main Headline -->
 				<h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-sand mb-6 leading-[0.95] opacity-0 animate-fade-in-up" style="animation-delay: 400ms; animation-fill-mode: forwards;">
-					Manifest your next self —<br/>
+					Manifest your next self,<br/>
 					<span class="italic font-normal">through hypnosis &amp; body art.</span>
 				</h1>
 
@@ -66,13 +66,13 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 
 				<!-- Subhead -->
 				<p class="text-base md:text-lg text-sand/80 max-w-2xl mx-auto mb-8 leading-relaxed opacity-0 animate-fade-in-up" style="animation-delay: 700ms; animation-fill-mode: forwards;">
-					Most manifestation stays trapped in your head and fades by morning. At DenArt, a guided trance makes your future self vivid enough to feel — then we paint it onto your body and photograph it, so you leave with a way to bring that feeling back any time it fades.
+					Most manifestation stays trapped in your head and fades by morning. At DenArt, a guided trance makes your future self vivid enough to feel, then we paint it onto your body and photograph it, so you leave with a way to bring that feeling back any time it fades.
 				</p>
 
 				<!-- CTAs -->
 				<div class="flex flex-col sm:flex-row gap-3 justify-center items-center opacity-0 animate-fade-in-up" style="animation-delay: 900ms; animation-fill-mode: forwards;">
 					<CTAButton href="/services/embodied-manifestation" variant="primary" showArrow={true}>
-						Book a Session — $499
+						Book a Session ($499)
 					</CTAButton>
 					<CTAButton href="/services/embodied-manifestation#how-it-works" variant="secondary" showArrow={false}>
 						How it works →
@@ -109,14 +109,14 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 			</div>
 		</section>
 
-		<!-- One-line definition [AEO — canonical sentence, verbatim, crawlable] -->
+		<!-- One-line definition [AEO, canonical sentence, verbatim, crawlable] -->
 		<section class="py-12 md:py-14 px-6 bg-deepest border-b border-zinc-800">
 			<div class="max-w-3xl mx-auto text-center">
 				<p class="text-lg md:text-xl text-sand leading-relaxed">{canonicalDefinition}</p>
 			</div>
 		</section>
 
-		<!-- National TV — proof, moved up -->
+		<!-- National TV, proof, moved up -->
 		<section class="py-16 md:py-20 px-6 bg-void-light border-b border-zinc-800/50">
 			<div class="max-w-6xl mx-auto">
 				<div class="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
@@ -140,7 +140,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 						<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-3">Real craft, real credibility</p>
 						<h2 class="font-display text-3xl md:text-5xl text-sand mb-4">15 years. 2,000+ bodies. National TV.</h2>
 						<p class="text-sand-muted text-base md:text-lg leading-relaxed mb-6">
-							This isn't a gimmick. DenArt has been painting since 2011 and featured on NBC's TODAY Show, Carson Daly, 1st Look, and CBS — with a 4.8★ Yelp rating from people who've been in the chair.
+							This isn't a gimmick. DenArt has been painting since 2011 and featured on NBC's TODAY Show, Carson Daly, 1st Look, and CBS, with a 4.8★ Yelp rating from people who've been in the chair.
 						</p>
 						<a href="/in_media/today-show" class="inline-flex items-center gap-2 font-display font-medium text-brand-red hover:text-brand-red-light transition-colors group">
 							<span>Watch the segment</span>
@@ -153,7 +153,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 			</div>
 		</section>
 
-		<!-- Testimonial — social proof -->
+		<!-- Testimonial, social proof -->
 		<section class="py-16 md:py-20 px-6 bg-void">
 			<div class="max-w-4xl mx-auto text-center">
 				<svg class="w-12 h-12 text-brand-red/30 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
@@ -182,7 +182,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 			</div>
 		</section>
 
-		<!-- Body painting services — the studio's core offering -->
+		<!-- Body painting services, the studio's core offering -->
 		<section class="py-16 md:py-20 px-6 bg-void-light border-b border-zinc-800/50">
 			<div class="max-w-5xl mx-auto">
 				<div class="text-center mb-12">
@@ -190,7 +190,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 					<h2 class="font-display text-3xl md:text-4xl text-sand">Everything we offer</h2>
 				</div>
 
-				<!-- Services (private — book or request a quote) -->
+				<!-- Services (private, book or request a quote) -->
 				<div class="mb-14">
 					<h3 class="font-display text-xl text-sand mb-6 flex items-center gap-4"><span>Services</span><span class="flex-grow h-px bg-zinc-800"></span></h3>
 					<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -200,7 +200,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 							</div>
 							<div class="p-5">
 								<h4 class="font-display text-lg text-sand mb-1.5 group-hover:text-brand-red transition-colors">Embodied Manifestation</h4>
-								<p class="text-sand-muted text-sm leading-relaxed">Guided hypnosis and body art to embody your future self — our flagship session.</p>
+								<p class="text-sand-muted text-sm leading-relaxed">Guided hypnosis and body art to embody your future self, our flagship session.</p>
 							</div>
 						</a>
 						<a href="/services/fine-art-body-painting" class="group block bg-void border border-zinc-800 rounded-xl overflow-hidden hover:border-brand-red/40 transition-colors">
@@ -233,7 +233,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 					</div>
 				</div>
 
-				<!-- Classes & Events (scheduled — hosted at the studio) -->
+				<!-- Classes & Events (scheduled, hosted at the studio) -->
 				<div>
 					<h3 class="font-display text-xl text-sand mb-6 flex items-center gap-4"><span>Classes &amp; Events at the studio</span><span class="flex-grow h-px bg-zinc-800"></span></h3>
 					<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -252,7 +252,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 							</div>
 							<div class="p-5">
 								<h4 class="font-display text-lg text-sand mb-1.5 group-hover:text-brand-red transition-colors">Speed Friending</h4>
-								<p class="text-sand-muted text-sm leading-relaxed">Meet new people over body paint — our social studio night.</p>
+								<p class="text-sand-muted text-sm leading-relaxed">Meet new people over body paint, our social studio night.</p>
 							</div>
 						</a>
 						<a href="/calendar" class="group block bg-void border border-zinc-800 rounded-xl overflow-hidden hover:border-brand-red/40 transition-colors">
@@ -271,7 +271,7 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 			</div>
 		</section>
 
-		<!-- Upcoming Events + gift/stats/mission — operational, moved down -->
+		<!-- Upcoming Events + gift/stats/mission, operational, moved down -->
 		<section class="py-16 md:py-24 px-6 bg-void border-b border-zinc-800">
 			<div class="max-w-7xl mx-auto">
 				<div class="grid lg:grid-cols-12 gap-12 lg:gap-16">
@@ -367,9 +367,9 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 		<section class="py-16 md:py-24 px-6 bg-void">
 			<div class="max-w-3xl mx-auto text-center">
 				<h2 class="font-display text-3xl md:text-4xl text-sand mb-4">Come get painted at DenArt.</h2>
-				<p class="text-sand-muted text-lg mb-8">Book the flagship Wish-Fulfilled Session, or tell us what you have in mind — we paint for every occasion.</p>
+				<p class="text-sand-muted text-lg mb-8">Book the flagship Wish-Fulfilled Session, or tell us what you have in mind, we paint for every occasion.</p>
 				<div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
-					<CTAButton href="/services/embodied-manifestation" variant="primary" showArrow={true}>Book a Session — $499</CTAButton>
+					<CTAButton href="/services/embodied-manifestation" variant="primary" showArrow={true}>Book a Session ($499)</CTAButton>
 					<CTAButton href="/get-a-quote" variant="secondary" showArrow={false}>Get a quote</CTAButton>
 				</div>
 			</div>

@@ -1,7 +1,7 @@
 ---
 title: "Meaningful ways to mark turning 30 or 40"
 question: "how to celebrate turning 40 meaningfully"
-description: "Milestone birthdays deserve more than a party. Meaningful ways to mark turning 30 or 40 — including a threshold ritual for who you're becoming."
+description: "Milestone birthdays deserve more than a party. Meaningful ways to mark turning 30 or 40, including a threshold ritual for who you're becoming."
 cluster: "threshold"
 order: 2
 lastUpdated: "2026-07-01"
