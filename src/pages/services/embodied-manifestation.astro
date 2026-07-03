@@ -65,7 +65,7 @@ const comparison = [
 const steps = [
   { title: 'Arrive & set intention', body: 'A short grounding and a vague, open description of the end state you want, no scripts, no imposed content.' },
   { title: 'Breathwork + tapping', body: 'A calming exercise to settle the nervous system and open the door to trance.' },
-  { title: 'Induction', body: 'A gentle hypnotic induction takes you down into a deep, comfortable state where imagery comes easily.' },
+  { title: 'Induction', body: 'A gentle hypnotic induction takes you down into a deep, comfortable state where imagery comes easily. You stay aware and in control throughout, and you can pause or stop any time.' },
   { title: 'Explore your magical place', body: 'You wander the reality where you already are who you want to be. The more you explore, the more you see, feel, and enjoy, the classic Goddard "feeling of the wish fulfilled," experienced from the inside.' },
   { title: 'Re-emerge & share', body: 'You come back and put words or images to what you saw.' },
   { title: 'Body art', body: 'The artist paints that identity onto your body, sometimes back in light trance, so the being-painted itself becomes a kinesthetic anchor.' },
@@ -94,6 +94,14 @@ const faqs = [
   {
     question: 'Do I need to be good at visualizing?',
     answer: "No. That's the point of the guided trance, your subconscious produces the imagery for you, so you don't have to strain to \"picture\" anything on your own.",
+  },
+  {
+    question: 'Will I stay in control? Is this mind control like stage hypnosis?',
+    answer: 'You stay fully aware and in control the entire time. This is nothing like the stage hypnosis or "mind control" you\'ve seen in movies, that\'s theater. Guided hypnosis is simply a focused, deeply relaxed state, the same "state akin to sleep" (SATS) Neville Goddard described. You can hear, respond, pause, or stop whenever you want, and you remember the whole experience afterward.',
+  },
+  {
+    question: 'Will you put thoughts in my head or make me do something I don\'t want to?',
+    answer: 'No. The session is content-free: the guide directs only the feeling or state to reach, never the images or the scene. Your own subconscious supplies everything you see, so nothing is placed in your mind and the vision is entirely yours. You can\'t be made to do, say, or reveal anything against your will, and you can open your eyes or pause at any point.',
   },
   {
     question: 'Is it based on Neville Goddard?',
@@ -176,7 +184,7 @@ const serviceSchema = {
         Manifestation that finally feels real, and sticks.
       </h1>
       <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-8 leading-relaxed">
-        You believe in it and you put in the reps, but it stays in your head and fades by morning. The Wish-Fulfilled Session makes your future identity vivid enough to feel in trance, then sends you home with photographs you can look at to bring that feeling back in seconds, long after you leave.
+        You believe in it and put in the reps, but it stays in your head and fades by morning. The Wish-Fulfilled Session makes your future identity vivid enough to feel in trance, then sends you home with photos that bring the feeling back in seconds.
       </p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
         <CTAButton href={bookingHref} variant="primary" showArrow={true}>Book a Session ($499)</CTAButton>
@@ -189,7 +197,7 @@ const serviceSchema = {
   <section class="bg-deepest py-14 md:py-16 border-b border-zinc-800">
     <div class="max-w-3xl mx-auto px-6">
       <p class="text-lg md:text-xl text-sand leading-relaxed">
-        <strong class="text-sand">{canonicalDefinition}</strong> The Wish-Fulfilled Session is DenArt's signature Embodied Manifestation experience in Brooklyn, NYC. It's built on Neville Goddard's principle of living in "the feeling of the wish fulfilled" and Vadim Zeland's idea of tuning into the version of reality you want, but instead of asking you to imagine it alone, a trained guide takes you into a vivid inner vision and an artist paints that new identity onto your body.
+        <strong class="text-sand">{canonicalDefinition}</strong> The Wish-Fulfilled Session is DenArt's signature Embodied Manifestation experience in Brooklyn, NYC. It's built on Neville Goddard's principle of living in "the feeling of the wish fulfilled" and Vadim Zeland's idea of tuning into the version of reality you want, but instead of asking you to imagine it alone, a trained guide takes you into a vivid inner vision and an artist paints that new identity onto your body. You stay fully aware and in control the whole time, nothing is put in your mind: the guide directs only the feeling, and every image you see is your own.
       </p>
     </div>
   </section>
@@ -297,7 +305,7 @@ const serviceSchema = {
   <!-- How it works -->
   <section id="how-it-works" class="bg-deepest py-16 md:py-20 border-y border-zinc-800 scroll-mt-24">
     <div class="max-w-3xl mx-auto px-6">
-      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-12 text-center">How it works, the session, start to finish</h2>
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-12 text-center">How it works, start to finish</h2>
       <ol class="space-y-8">
         {steps.map((step, i) => (
           <li class="flex gap-5">
