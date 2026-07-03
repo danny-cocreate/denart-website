@@ -4,7 +4,7 @@ test('homepage renders with primary CTA', async ({ page }) => {
   await page.goto('/');
 
   await expect(
-    page.getByRole('heading', { level: 1, name: /Manifest your next self/i }),
+    page.getByRole('heading', { level: 1, name: /Manifestation, through body painting/i }),
   ).toBeVisible();
   await expect(page.getByRole('link', { name: /Book a Session/i }).first()).toBeVisible();
 });
