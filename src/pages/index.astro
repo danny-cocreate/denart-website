@@ -9,9 +9,6 @@ const services = await getCollection('services');
 const classes = await getCollection('classes');
 const testimonials = await getCollection('testimonials');
 
-// Canonical Embodied Manifestation definition, kept verbatim sitewide for AEO entity consistency.
-const canonicalDefinition = 'Embodied Manifestation is a guided experience that combines hypnosis, content-free future-self visualization, and body art, so you can see your desired identity vividly in trance and keep a physical, photographic anchor to hold that state afterward.';
-
 // Fetch events from Pretix
 let pretixEvents = [];
 try {
@@ -69,13 +66,10 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 					Most manifestation is just a feeling in your head that fades by morning. We paint that state on your body to help you hold it longer and return to it easily.
 				</p>
 
-				<!-- CTAs -->
-				<div class="flex flex-col sm:flex-row gap-3 justify-center items-center opacity-0 animate-fade-in-up" style="animation-delay: 900ms; animation-fill-mode: forwards;">
+				<!-- CTA -->
+				<div class="flex justify-center items-center opacity-0 animate-fade-in-up" style="animation-delay: 900ms; animation-fill-mode: forwards;">
 					<CTAButton href="/services/embodied-manifestation" variant="primary" showArrow={true}>
-						Book a Session ($499)
-					</CTAButton>
-					<CTAButton href="/services/embodied-manifestation#how-it-works" variant="secondary" showArrow={false}>
-						How it works →
+						See how it works
 					</CTAButton>
 				</div>
 				</div>
@@ -109,12 +103,6 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 			</div>
 		</section>
 
-		<!-- One-line definition [AEO, canonical sentence, verbatim, crawlable] -->
-		<section class="py-12 md:py-14 px-6 bg-deepest border-b border-zinc-800">
-			<div class="max-w-3xl mx-auto text-center">
-				<p class="text-lg md:text-xl text-sand leading-relaxed">{canonicalDefinition}</p>
-			</div>
-		</section>
 
 		<!-- National TV, proof, moved up -->
 		<section class="py-16 md:py-20 px-6 bg-void-light border-b border-zinc-800/50">
@@ -137,8 +125,8 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 					</div>
 					<!-- Content -->
 					<div class="order-1 md:order-2 text-center md:text-left">
-						<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-3">Real craft, real credibility</p>
-						<h2 class="font-display text-3xl md:text-5xl text-sand mb-4">15 years. 2,000+ bodies. National TV.</h2>
+						<p class="text-brand-red text-xs uppercase tracking-[0.25em] mb-3">Featured Media Appearance</p>
+						<h2 class="font-display text-3xl md:text-5xl text-sand mb-4">On the TODAY Show</h2>
 						<p class="text-sand-muted text-base md:text-lg leading-relaxed mb-6">
 							This isn't a gimmick. DenArt has been painting since 2011 and featured on NBC's TODAY Show, Carson Daly, 1st Look, and CBS, with a 4.8★ Yelp rating from people who've been in the chair.
 						</p>
@@ -359,18 +347,6 @@ const upcomingEvents = pretixEvents.slice(0, 4);
 							</p>
 						</div>
 					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- Closing CTA -->
-		<section class="py-16 md:py-24 px-6 bg-void">
-			<div class="max-w-3xl mx-auto text-center">
-				<h2 class="font-display text-3xl md:text-4xl text-sand mb-4">Come get painted at DenArt.</h2>
-				<p class="text-sand-muted text-lg mb-8">Book the flagship Wish-Fulfilled Session, or tell us what you have in mind, we paint for every occasion.</p>
-				<div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
-					<CTAButton href="/services/embodied-manifestation" variant="primary" showArrow={true}>Book a Session ($499)</CTAButton>
-					<CTAButton href="/get-a-quote" variant="secondary" showArrow={false}>Get a quote</CTAButton>
 				</div>
 			</div>
 		</section>
