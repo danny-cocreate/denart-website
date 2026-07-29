@@ -1,5 +1,5 @@
 ---
-title: "Paint in the Dark™"
+title: "UV Class for Couples"
 tagline: "Impress Your Date"
 description: "UV body painting class for couples in Brooklyn, NYC. A romantic experience where couples paint each other under black lights."
 heroImage: "/images/classes/uv-couples/paint-dark-hero.jpg"
