@@ -185,6 +185,25 @@ if (classItem.slug === 'redrawn') {
 					<p class="text-xl md:text-2xl text-gray-200 mb-4 ab-variant-b-only">The Most Unique Date Night in NYC</p>
 				</>
 			)}
+			{/*
+			  Above-the-fold booking CTA. Without this the only booking control
+			  visible on a mobile viewport is the global header link, which points
+			  at /schedule-a-session (a different, higher-priced service) — the
+			  in-page "Book Now" buttons sit ~1250px and ~4100px down the page.
+			  Rendered outside the ab-variant-* blocks so both A and B get it and
+			  the running experiment isn't confounded.
+			*/}
+			<div class="mt-6 flex justify-center">
+				<CTAButton
+					onclick="openCheckoutWidgetModal()"
+					variant="primary"
+					size="md"
+					bookingCta
+					disabled={!hasUpcomingEvents}
+				>
+					Book Now
+				</CTAButton>
+			</div>
 		</div>
 	</section>
 
