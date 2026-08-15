@@ -54,9 +54,30 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
         });
       }
 
+      // Meta attribution — forward the click id (_fbc) and browser id (_fbp)
+      // into the iframe. Both cookies are set by the pixel on denartny.com and
+      // are NOT readable from checkout.denartny.com, so the server-side
+      // Conversions API call can only attribute a purchase to the originating
+      // ad click if we pass them across explicitly.
+      var metaParams = '';
+      try {
+        var readCookie = function(name) {
+          var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+          return m ? m.pop() : '';
+        };
+        var fbp = readCookie('_fbp');
+        var fbc = readCookie('_fbc');
+        if (!fbc) {
+          var fbclid = new URLSearchParams(window.location.search).get('fbclid');
+          if (fbclid) fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+        }
+        if (fbp) metaParams += '&fbp=' + encodeURIComponent(fbp);
+        if (fbc) metaParams += '&fbc=' + encodeURIComponent(fbc);
+      } catch (e) { /* attribution is best-effort, never block booking */ }
+
       // Reset iframe src (clears previous state); append subevent param if provided
       if (iframe) {
-        iframe.src = subeventId ? checkoutUrl + '&subevent=' + subeventId : checkoutUrl;
+        iframe.src = (subeventId ? checkoutUrl + '&subevent=' + subeventId : checkoutUrl) + metaParams;
       }
     }
   };
