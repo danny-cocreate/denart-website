@@ -1,0 +1,88 @@
+
+== A. schedule-a-session pageviews by source/medium ==
+sessionSource,sessionMedium,screenPageViews,totalUsers,sessions
+(direct),(none),37,13,13
+ig,social,16,4,4
+google,organic,14,7,7
+m.baidu.com,referral,4,2,2
+yelp.com,referral,4,2,2
+baidu,organic,2,1,1
+chatgpt.com,ai-assistant,2,1,1
+(not set),(not set),1,1,1
+
+== B. schedule-a-session by landing page (where they came from) ==
+landingPage,screenPageViews,totalUsers
+/,70,25
+/schedule-a-session,6,3
+/gallery,2,1
+/services/embodied-manifestation,2,1
+
+== C. Pages viewed in sessions that LANDED on uv-body-paint-couples ==
+pagePath,screenPageViews,totalUsers
+/classes/uv-body-paint-couples/,2346,1089
+/index.html,1669,764
+/classes/uv-body-paint-couples,18,9
+/gallery/,18,5
+/calendar/,14,5
+/,5,3
+/gallery/asian-influenced/,4,2
+/gallery/glow/,4,2
+/gallery/my-body-my-story/,4,2
+/services/private-party-at-studio/,4,2
+/contact/,2,1
+/gallery/events/,2,1
+/gallery/original-design/,2,1
+/manifestation/,2,1
+/reviews/,2,1
+/unique-date-night-ideas-nyc-2026/,0,1
+
+== D. IG paid - all pages viewed ==
+pagePath,screenPageViews,totalUsers
+/classes/uv-body-paint-couples/,2154,1029
+/index.html,1478,707
+/,5,3
+
+== E. form_start by page path + hostname ==
+hostName,pagePath,eventCount,totalUsers
+denartny.com,/contact/,12,6
+127.0.0.1,/get-a-quote,6,3
+denartny.com,/schedule-a-session/,6,3
+
+== F. form_start by source/medium ==
+sessionSource,sessionMedium,eventCount,totalUsers
+(direct),(none),18,8
+google,organic,6,3
+
+== G. click event by page path + source ==
+pagePath,sessionSource,eventCount,totalUsers
+/classes/uv-body-paint-couples/,(direct),5,2
+/services/fine-art-body-painting/,ig,4,1
+/about/,ig,2,1
+/about/,t.co,2,1
+/services/embodied-manifestation/,(direct),2,1
+/classes/uv-body-paint-couples/,(not set),1,1
+
+== H. begin_checkout by source/medium + hostname ==
+sessionSource,sessionMedium,hostName,eventCount,totalUsers
+google,organic,denartny.com,22,7
+(direct),(none),denartny.com,18,7
+google,organic,checkout.denartny.com,14,3
+(direct),(none),checkout.denartny.com,10,6
+ig,paid,denartny.com,6,3
+(not set),(not set),checkout.denartny.com,2,2
+(not set),(not set),denartny.com,2,1
+ig,paid,checkout.denartny.com,2,1
+ig,social,checkout.denartny.com,2,1
+ig,social,denartny.com,2,1
+search.brave.com,referral,denartny.com,2,1
+sensuali.com,referral,checkout.denartny.com,2,1
+sensuali.com,referral,denartny.com,2,1
+
+== I. IG paid - landing page to page path pairs ==
+landingPage,pagePath,screenPageViews,totalUsers
+/classes/uv-body-paint-couples,/classes/uv-body-paint-couples/,2144,1027
+/classes/uv-body-paint-couples,/index.html,1478,707
+/index.html,/classes/uv-body-paint-couples/,9,7
+/classes/uv-body-paint-couples,/,5,3
+/,/classes/uv-body-paint-couples/,1,1
+(not set),/index.html,0,1

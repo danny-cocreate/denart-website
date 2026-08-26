@@ -1,0 +1,48 @@
+
+== Experiment: Hero headline restructure (exp-001) ==
+== Date range: 2026-04-22 -> today (day 115) ==
+
+== Users assigned per variant ==
+ab_variant,totalUsers,eventCount
+B,2771,8876
+A,2766,8510
+
+== Target metric (begin_checkout) by variant ==
+ab_variant,totalUsers,eventCount
+(not set),53,217
+,38,93
+A,34,89
+B,30,69
+
+== Secondary metric (date_selected) by variant ==
+ab_variant,totalUsers,eventCount
+,1901,4332
+(not set),377,1202
+
+== Secondary metric (form_start) by variant ==
+ab_variant,totalUsers,eventCount
+(not set),68,140
+,1,2
+
+""
+============================================================
+EXPERIMENT SUMMARY: Hero headline restructure
+ID: exp-001 | Day 115 of 14+ planned
+============================================================
+""
+Variant A (control) -- Control: H1 'Paint in the Dark™' / Subtitle 'UV Body Painting Class for Couples'
+"  Users assigned:  2,766"
+  begin_checkout: 34 (1.2%)
+""
+Variant B (test)   -- Test: H1 'UV Body Painting Class for Couples' / Subtitle 'The Most Unique Date Night in NYC'
+"  Users assigned:  2,771"
+  begin_checkout: 30 (1.1%)
+""
+Lift (B vs A): -11.9%
+p-value: 0.610 (threshold: 0.05)
+""
+STATUS: Not yet significant.
+"At current traffic, significance is ~1325 more days away."
+Recommendation: Keep running.
+"(Required per arm for 80% power, 20% MDE: ~34,651 users)"
+============================================================

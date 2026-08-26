@@ -1,0 +1,142 @@
+
+== PRE-FIX event totals (2026-03-20 to 2026-04-19) - all traffic ==
+eventName,eventCount,totalUsers
+session_start,6328,6011
+begin_checkout,76,37
+form_start,41,38
+date_selected,33,18
+checkout_abandoned,13,12
+purchase,1,1
+
+== POST-FIX event totals (2026-04-20 to 2026-04-22) - all traffic ==
+eventName,eventCount,totalUsers
+session_start,706,358
+date_selected,261,103
+begin_checkout,28,6
+form_start,8,4
+add_payment_info,6,3
+checkout_abandoned,4,2
+
+== PRE-FIX IG-only event funnel (2026-03-20 to 2026-04-19) ==
+eventName,eventCount,totalUsers
+session_start,4571,4494
+begin_checkout,26,12
+date_selected,25,14
+checkout_abandoned,5,5
+
+== POST-FIX IG-only event funnel (2026-04-20 to 2026-04-22) ==
+eventName,eventCount,totalUsers
+session_start,305,156
+date_selected,123,60
+
+== PRE-FIX sessions by source (2026-03-20 to 2026-04-19) ==
+sessionSource,sessionMedium,sessions,totalUsers
+ig,paid,4401,4458
+(direct),(none),1382,1356
+google,organic,184,141
+ig,social,39,36
+chatgpt.com,(not set),25,24
+(not set),(not set),19,20
+bing,organic,16,16
+l.instagram.com,referral,10,9
+chatgpt.com,referral,7,6
+duckduckgo,organic,6,6
+m.baidu.com,referral,4,3
+yahoo,organic,4,3
+m.facebook.com,referral,3,3
+m.sogou.com,referral,3,2
+timeout.com,referral,2,2
+facebook.com,referral,1,1
+google.com,referral,1,1
+rts.pitchbook.com,referral,1,1
+search.nifty.com,referral,1,1
+www.nerdydata.com,referral,1,1
+
+== POST-FIX sessions by source (2026-04-20 to 2026-04-22) ==
+sessionSource,sessionMedium,sessions,totalUsers
+(direct),(none),189,180
+ig,paid,159,155
+(not set),(not set),38,38
+google,organic,20,16
+timeout.com,referral,3,3
+m.baidu.com,referral,2,2
+chatgpt.com,(not set),1,1
+chatgpt.com,referral,1,1
+ig,social,1,1
+yahoo,organic,1,1
+
+== PRE-FIX purchases (2026-03-20 to 2026-04-19) ==
+transactions,totalRevenue,purchaseRevenue
+1,199,199
+
+== POST-FIX purchases (2026-04-20 to 2026-04-22) ==
+transactions,totalRevenue,purchaseRevenue
+
+== Day-by-day funnel events (2026-03-20 to 2026-04-22) ==
+date,eventName,eventCount
+20260420,date_selected,122
+20260421,date_selected,84
+20260422,date_selected,55
+20260419,date_selected,28
+20260321,begin_checkout,10
+20260420,begin_checkout,10
+20260421,begin_checkout,10
+20260422,begin_checkout,8
+20260328,begin_checkout,7
+20260418,begin_checkout,6
+20260419,begin_checkout,6
+20260322,begin_checkout,5
+20260327,begin_checkout,5
+20260322,form_start,4
+20260331,begin_checkout,4
+20260421,form_start,4
+20260326,begin_checkout,3
+20260330,form_start,3
+20260404,begin_checkout,3
+20260409,begin_checkout,3
+20260415,begin_checkout,3
+20260415,form_start,3
+20260416,form_start,3
+20260323,begin_checkout,2
+20260323,form_start,2
+20260327,form_start,2
+20260328,form_start,2
+20260329,begin_checkout,2
+20260330,begin_checkout,2
+20260402,begin_checkout,2
+20260403,form_start,2
+20260406,begin_checkout,2
+20260407,begin_checkout,2
+20260412,begin_checkout,2
+20260413,begin_checkout,2
+20260417,form_start,2
+20260419,form_start,2
+20260420,form_start,2
+20260422,form_start,2
+20260320,begin_checkout,1
+20260320,form_start,1
+20260321,form_start,1
+20260324,form_start,1
+20260325,form_start,1
+20260326,date_selected,1
+20260326,form_start,1
+20260328,date_selected,1
+20260328,purchase,1
+20260329,form_start,1
+20260330,date_selected,1
+20260401,form_start,1
+20260402,form_start,1
+20260404,date_selected,1
+20260404,form_start,1
+20260405,begin_checkout,1
+20260405,form_start,1
+20260406,form_start,1
+20260407,form_start,1
+20260408,begin_checkout,1
+20260408,form_start,1
+20260409,form_start,1
+20260410,begin_checkout,1
+20260411,form_start,1
+20260412,date_selected,1
+20260414,begin_checkout,1
+20260418,form_start,1

@@ -1,0 +1,127 @@
+
+== A. scroll-to-90pct by source/medium ==
+sessionSource,sessionMedium,eventCount,totalUsers
+google,organic,841,242
+(direct),(none),509,160
+ig,paid,100,40
+(not set),(not set),29,14
+baidu,organic,42,7
+ig,social,88,6
+m.baidu.com,referral,16,5
+bing,organic,22,3
+sensuali.com,referral,22,3
+facebook.com,referral,8,3
+search.brave.com,referral,16,2
+timeout.com,referral,14,2
+t.co,referral,8,2
+duckduckgo,organic,6,2
+cn.bing.com,referral,4,2
+yahoo,organic,12,1
+yelp.com,referral,10,1
+chatgpt.com,ai-assistant,8,1
+fr.search.yahoo.com,referral,4,1
+it.search.yahoo.com,referral,4,1
+claude.ai,ai-assistant,2,1
+modelmayhem.com,referral,2,1
+so.com,referral,2,1
+google.com,referral,1,1
+
+== B. Engagement quality by source/medium ==
+sessionSource,sessionMedium,sessions,totalUsers,engagedSessions,engagementRate,averageSessionDuration,userEngagementDuration,screenPageViews
+ig,paid,1038,1029,712,0.68593448940269752,283.92292876685934,70,3637
+(direct),(none),516,449,134,0.25968992248062017,341.14537151937986,7433,1526
+google,organic,335,294,115,0.34328358208955223,161.88255266268658,17836,1368
+(not set),(not set),58,57,0,0,72.533077637931029,1166,65
+m.baidu.com,referral,23,21,13,0.56521739130434778,334.69963847826091,992,90
+ig,social,14,13,14,1,532.71063921428572,1488,152
+openai,(not set),13,13,2,0.15384615384615385,31.516137692307691,0,24
+baidu,organic,10,9,8,0.8,80.2024036,431,46
+chatgpt.com,ai-assistant,6,6,5,0.83333333333333337,169.53999433333334,520,30
+duckduckgo,organic,6,5,3,0.5,220.36070616666666,834,30
+bing,organic,4,4,4,1,105.27842675,336,26
+sensuali.com,referral,4,3,3,0.75,721.46612225,2048,42
+facebook.com,referral,3,3,2,0.66666666666666663,45.763731666666665,16,8
+search.brave.com,referral,3,3,1,0.33333333333333331,85.614587666666679,224,24
+timeout.com,referral,3,2,2,0.66666666666666663,93.428557666666663,172,14
+cn.bing.com,referral,2,2,2,1,127.208473,64,4
+google.com,referral,2,1,0,0,0.6150825,0,2
+t.co,referral,2,2,2,1,300.201188,274,10
+yelp.com,referral,2,2,2,1,133.734616,160,16
+(data not available),(data not available),1,1,0,0,0,0,1
+claude.ai,ai-assistant,1,1,0,0,1.751701,0,2
+fr.search.yahoo.com,referral,1,1,1,1,58.077851,56,4
+it.search.yahoo.com,referral,1,1,1,1,54.841698,52,4
+modelmayhem.com,referral,1,1,1,1,32.519326,18,2
+so.com,referral,1,1,0,0,5.314714,4,2
+yahoo,organic,1,1,1,1,163.122829,154,12
+
+== C. IG paid by city ==
+city,region,sessions,totalUsers,engagementRate
+Boston,Massachusetts,1038,1029,0.68593448940269752
+
+== D. IG paid by country ==
+country,sessions,totalUsers
+United States,1038,1029
+
+== E. All traffic by city (comparison) ==
+city,sessions,totalUsers,conversions
+Boston,2015,1880,2
+
+== F. user_engagement event by source ==
+sessionSource,sessionMedium,eventCount,totalUsers
+(direct),(none),562,118
+google,organic,733,101
+m.baidu.com,referral,78,15
+(not set),(not set),55,13
+ig,social,90,12
+baidu,organic,44,7
+chatgpt.com,ai-assistant,20,5
+ig,paid,10,5
+bing,organic,26,4
+sensuali.com,referral,34,3
+duckduckgo,organic,26,3
+search.brave.com,referral,16,2
+yelp.com,referral,16,2
+timeout.com,referral,10,2
+t.co,referral,6,2
+facebook.com,referral,4,2
+yahoo,organic,12,1
+fr.search.yahoo.com,referral,4,1
+it.search.yahoo.com,referral,4,1
+cn.bing.com,referral,2,1
+modelmayhem.com,referral,2,1
+so.com,referral,2,1
+
+== G. IG paid daily trend ==
+date,sessions,totalUsers,engagementRate
+20260731,50,50,0.72
+20260729,49,49,0.69387755102040816
+20260719,46,43,0.58695652173913049
+20260724,44,43,0.77272727272727271
+20260804,44,44,0.84090909090909094
+20260716,42,42,0.47619047619047616
+20260811,42,42,0.7142857142857143
+20260720,41,41,0.6097560975609756
+20260807,40,39,0.6
+20260802,38,37,0.81578947368421051
+20260803,38,35,0.71052631578947367
+20260717,37,35,0.54054054054054057
+20260725,37,37,0.78378378378378377
+20260727,35,34,0.65714285714285714
+20260728,35,34,0.77142857142857146
+20260801,35,35,0.65714285714285714
+20260809,35,35,0.74285714285714288
+20260722,33,33,0.66666666666666663
+20260726,32,32,0.75
+20260730,32,32,0.78125
+20260715,31,30,0.45161290322580644
+20260808,31,31,0.61290322580645162
+20260721,27,27,0.7407407407407407
+20260723,27,27,0.85185185185185186
+20260718,26,26,0.69230769230769229
+20260812,23,23,0.91304347826086951
+20260805,22,22,0.72727272727272729
+20260813,21,21,0.7142857142857143
+20260814,21,21,0
+20260810,20,20,0.6
+20260806,14,14,0.7857142857142857
