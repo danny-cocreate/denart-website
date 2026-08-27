@@ -45,9 +45,12 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
 
-      // Track begin_checkout in GA4
+      // Track the widget opening in GA4.
+      // NOT begin_checkout: that name is reserved for the Continue click inside
+      // the widget (SessionPicker). Firing both under one name made the two
+      // steps indistinguishable except by hostname, which broke the funnel.
       if (typeof window.trackEvent === 'function') {
-        window.trackEvent('begin_checkout', {
+        window.trackEvent('checkout_widget_open', {
           event_category: 'ecommerce',
           event_key: checkoutUrl.includes('speed-friending') ? 'speed-friending' : 'paint-in-the-dark',
           ab_variant: window.__AB_VARIANT || null
