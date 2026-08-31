@@ -38,6 +38,7 @@ const classes = defineCollection({
     category: z.string().optional(),
     price: z.string().optional(),
     earlyBird: z.string().optional(),
+    earlyBirdUntil: z.string().optional(),
     duration: z.string().optional(),
     order: z.number().optional(),
     showPrivateNote: z.boolean().optional(),

@@ -30,6 +30,7 @@ const classesCollection = defineCollection({
 		showPrivateNote: z.boolean().optional(),
 		privateNote: z.string().optional(),
 		earlyBird: z.string().optional(),
+		earlyBirdUntil: z.string().optional(),
 		duration: z.string().optional(),
 		order: z.number().optional(),
 		schedule: z.array(z.string()).optional(),

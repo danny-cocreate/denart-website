@@ -47,9 +47,12 @@ const heroSubtitle = isSinglesEvent
 const scheduleEvents = await fetchSubeventsForSlug(pretixEventSlug);
 const hasUpcomingEvents = scheduleEvents.length > 0;
 const nextSession = scheduleEvents[0];
-const earlyBirdDeadline = classItem.data.earlyBird && nextSession
-	? ` for ${nextSession.dateStr}`
+const earlyBirdDeadline = classItem.data.earlyBird
+	? (classItem.data.earlyBirdUntil
+		? ` through ${classItem.data.earlyBirdUntil}`
+		: (nextSession ? ` for ${nextSession.dateStr}` : ''))
 	: '';
+const includedItems = classItem.data.includes || [];
 const privateNote = classItem.data.privateNote || "";
 
 // FAQs data
@@ -181,7 +184,7 @@ if (classItem.slug === 'redrawn') {
 		}
 	})} />
 	<!-- Hero with Background Image -->
-	<section id="class-hero" class="relative min-h-0 py-14 md:min-h-[50vh] md:py-0 flex items-center justify-center overflow-hidden">
+	<section id="class-hero" class={`relative flex items-center justify-center overflow-hidden ${isSinglesEvent ? 'min-h-0 py-6 md:min-h-[50vh] md:py-16' : 'min-h-0 py-14 md:min-h-[50vh] md:py-0'}`}>
 		{classItem.data.heroImage && (
 			<img 
 				src={classItem.data.heroImage} 
@@ -190,43 +193,45 @@ if (classItem.slug === 'redrawn') {
 			/>
 		)}
 		<div class="absolute inset-0 bg-black/60"></div>
-		<div class="relative z-10 text-center px-6">
-			<span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-3 uppercase tracking-wide border border-white/30 text-white/80">
+		<div class="relative z-10 text-center px-5 max-w-3xl mx-auto">
+			<span class={`inline-block px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide border border-white/30 text-white/80 ${isSinglesEvent ? 'mb-2' : 'mb-3'}`}>
 				{classItem.data.category === 'singles' ? 'Event' : 'Class'}
 			</span>
-			<h1 class={`text-3xl md:text-6xl font-bold text-white mb-3${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{classItem.data.title}</h1>
-			<p class={`text-lg md:text-2xl text-gray-200 mb-3${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{heroSubtitle}</p>
+			<h1 class={`${isSinglesEvent ? 'text-2xl leading-tight md:text-6xl mb-2' : 'text-3xl md:text-6xl mb-3'} font-bold text-white${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{classItem.data.title}</h1>
+			<p class={`${isSinglesEvent ? 'text-sm md:text-2xl mb-2' : 'text-lg md:text-2xl mb-3'} text-gray-200${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{heroSubtitle}</p>
 			{classItem.slug === 'uv-body-paint-couples' && (
 				<>
 					<h1 class="text-3xl md:text-6xl font-bold text-white mb-3 ab-variant-b-only">UV Body Painting Class for Couples</h1>
 					<p class="text-lg md:text-2xl text-gray-200 mb-3 ab-variant-b-only">The Most Unique Date Night in NYC</p>
 				</>
 			)}
+			{isSinglesEvent && (
+				<p class="text-white text-sm md:text-lg font-medium mb-2">
+					Everyone paints — and gets painted.
+				</p>
+			)}
 			{classItem.data.earlyBird ? (
-				<p class="text-white text-lg md:text-xl font-semibold mb-1">
+				<p class="text-white text-base md:text-xl font-semibold mb-0.5">
 					<span class="line-through text-white/45 mr-2">{classItem.data.price}</span>
 					<span>{classItem.data.earlyBird} early bird{earlyBirdDeadline}</span>
 				</p>
 			) : classItem.data.price ? (
-				<p class="text-white text-lg md:text-xl font-semibold mb-1">{classItem.data.price}</p>
+				<p class="text-white text-base md:text-xl font-semibold mb-0.5">{classItem.data.price}</p>
 			) : null}
 			{nextSession && (
-				<p class="text-gray-300 text-sm mb-3">{nextSession.dateStr} · {nextSession.timeStr}</p>
+				<p class="text-gray-300 text-sm mb-2">{nextSession.dateStr} · {nextSession.timeStr}</p>
 			)}
 			{isSinglesEvent && (
-				<p class="text-gray-200 text-sm max-w-md mx-auto mb-4 leading-relaxed">
-					Staff monitor every interaction — walk away anytime. No painting experience needed.
+				<p class="text-gray-200 text-xs md:text-sm max-w-md mx-auto mb-3 leading-snug">
+					Staff monitor throughout — you can step away from any interaction. No painting experience needed.
 				</p>
 			)}
 			{isSinglesEvent && (
-				<div class="flex flex-col items-center gap-2 mb-4" data-ticket-qty>
-					<div class="flex items-center gap-3">
-						<span class="text-xs uppercase tracking-widest text-white/60">Tickets</span>
-						<button type="button" data-qty-dec class="w-8 h-8 rounded-full border border-white/30 text-white text-lg leading-none" aria-label="Fewer tickets">−</button>
-						<span data-qty-value class="w-6 text-center text-white font-semibold">1</span>
-						<button type="button" data-qty-inc class="w-8 h-8 rounded-full border border-white/30 text-white text-lg leading-none" aria-label="More tickets">+</button>
-					</div>
-					<p class="text-xs text-white/60 max-w-xs">Coming with a friend? Add a second ticket — one name per checkout.</p>
+				<div class="flex items-center justify-center gap-3 mb-3" data-ticket-qty>
+					<span class="text-xs uppercase tracking-widest text-white/60">Tickets</span>
+					<button type="button" data-qty-dec class="w-7 h-7 rounded-full border border-white/30 text-white leading-none" aria-label="Fewer tickets">−</button>
+					<span data-qty-value class="w-5 text-center text-white font-semibold">1</span>
+					<button type="button" data-qty-inc class="w-7 h-7 rounded-full border border-white/30 text-white leading-none" aria-label="More tickets">+</button>
 				</div>
 			)}
 			{/*
@@ -237,11 +242,11 @@ if (classItem.slug === 'redrawn') {
 			  Rendered outside the ab-variant-* blocks so both A and B get it and
 			  the running experiment isn't confounded.
 			*/}
-			<div id="hero-book-cta" class="mt-2 flex justify-center">
+			<div id="hero-book-cta" class="flex justify-center">
 				<CTAButton
 					onclick="startClassCheckout()"
 					variant="primary"
-					size="md"
+					size={isSinglesEvent ? 'sm' : 'md'}
 					bookingCta
 					disabled={!hasUpcomingEvents}
 				>
@@ -256,9 +261,9 @@ if (classItem.slug === 'redrawn') {
 		<div class="max-w-4xl mx-auto px-6 text-center">
 			{classItem.data.category === 'singles' ? (
 				<>
-					<h2 class="text-2xl md:text-4xl font-bold text-white mb-4">Make authentic connections</h2>
+					<h2 class="text-2xl md:text-4xl font-bold text-white mb-4">Everyone paints — and gets painted</h2>
 					<p class="text-base md:text-xl text-gray-300 max-w-2xl mx-auto">
-						A non-nude body painting social event for singles. Meet new people through interactive UV body painting activities designed to help you connect in a fun, low-pressure environment.
+						A non-nude UV body painting social for singles. You paint other people and they paint you. That's the icebreaker: hands-on, not a two-minute pitch about your job.
 					</p>
 				</>
 			) : (
@@ -272,13 +277,29 @@ if (classItem.slug === 'redrawn') {
 		</div>
 	</section>
 
+	{includedItems.length > 0 && (
+		<section class="bg-void-light border-y border-zinc-800 py-8 md:py-12">
+			<div class="max-w-3xl mx-auto px-6">
+				<h2 class="text-2xl md:text-3xl font-bold text-white mb-6 text-center">What's included</h2>
+				<ul class="space-y-3">
+					{includedItems.map((item) => (
+						<li class="flex items-start gap-3 text-gray-300">
+							<span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-brand-red shrink-0"></span>
+							<span>{item}</span>
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+	)}
+
 	<!-- Where / Price / Schedule Info Bar -->
 	{classItem.data.price && (
 		<section class="bg-void-light border-y border-zinc-800 py-10">
 			<div class="max-w-5xl mx-auto px-6">
 				<div class="grid md:grid-cols-3 gap-8">
 					<!-- Schedule -->
-					<div class="text-center group">
+					<div class={`text-center group ${isSinglesEvent ? 'order-2 md:order-none' : ''}`}>
 						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
 							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -289,7 +310,7 @@ if (classItem.slug === 'redrawn') {
 					</div>
 					
 					<!-- Price & Ticket -->
-					<div class="text-center group">
+					<div class={`text-center group ${isSinglesEvent ? 'order-1 md:order-none' : ''}`}>
 						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
 							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -318,7 +339,7 @@ if (classItem.slug === 'redrawn') {
 					</div>
 					
 					<!-- Where -->
-					<div class="text-center group">
+					<div class={`text-center group ${isSinglesEvent ? 'order-3 md:order-none' : ''}`}>
 						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
 							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -346,7 +367,7 @@ if (classItem.slug === 'redrawn') {
 	)}
 
 	<!-- Main Content -->
-	<article class="bg-deepest text-text-primary">
+	<article class={`bg-deepest text-text-primary ${isSinglesEvent ? 'pb-24 md:pb-0' : ''}`}>
 		<div class="max-w-4xl mx-auto py-16 px-6">
 			<div class="prose prose-lg prose-invert max-w-none 
 				prose-headings:text-text-primary 
@@ -465,7 +486,7 @@ if (classItem.slug === 'redrawn') {
 					<h2 class="text-3xl font-display text-white mb-4">Ready to join this {classItem.data.category === 'singles' ? 'event' : 'class'}?</h2>
 					{isSinglesEvent && (
 						<p class="text-gray-300 text-sm max-w-md mx-auto mb-8">
-							Staff monitor every interaction — walk away anytime. No painting experience needed.
+							Staff monitor throughout — you can step away from any interaction. No painting experience needed.
 						</p>
 					)}
 				<CTAButton
@@ -488,11 +509,11 @@ if (classItem.slug === 'redrawn') {
 	<!-- Checkout Widget Modal -->
 	<CheckoutWidgetModal eventKey={checkoutEventKey} allowQuantity={isSinglesEvent} />
 
-	{hasUpcomingEvents && (
-		<div
-			id="sticky-book-bar"
-			class="fixed bottom-0 inset-x-0 z-40 md:hidden translate-y-full transition-transform duration-200 bg-void/95 border-t border-zinc-800 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
-		>
+	<div
+		id="sticky-book-bar"
+		class="fixed bottom-0 inset-x-0 z-40 md:hidden bg-void/95 border-t border-zinc-800 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+		data-sticky-cta
+	>
 			<div class="flex items-center gap-3 max-w-lg mx-auto">
 				<div class="min-w-0 flex-1">
 					<p class="text-white text-sm font-semibold truncate">
@@ -500,9 +521,11 @@ if (classItem.slug === 'redrawn') {
 							? `${classItem.data.earlyBird} early bird${earlyBirdDeadline}`
 							: classItem.data.price}
 					</p>
-					{nextSession && (
-						<p class="text-gray-400 text-xs truncate">{nextSession.dateStr} · {nextSession.timeStr}</p>
-					)}
+					<p class="text-gray-400 text-xs truncate">
+						{nextSession
+							? `${nextSession.dateStr} · ${nextSession.timeStr}`
+							: 'Staff monitor throughout — step away anytime'}
+					</p>
 				</div>
 				<CTAButton
 					onclick="startClassCheckout()"
@@ -515,7 +538,6 @@ if (classItem.slug === 'redrawn') {
 				</CTAButton>
 			</div>
 		</div>
-	)}
 
 
 	<!-- Auto-open checkout if ?subevent= param is present and still upcoming -->
@@ -551,15 +573,6 @@ if (classItem.slug === 'redrawn') {
 	    document.querySelectorAll('[data-qty-inc]').forEach(function (btn) {
 	      btn.addEventListener('click', function () { setQty((window.__ticketQty || 1) + 1); });
 	    });
-
-	    var heroCta = document.getElementById('hero-book-cta');
-	    var stickyBar = document.getElementById('sticky-book-bar');
-	    if (!heroCta || !stickyBar || typeof IntersectionObserver === 'undefined') return;
-	    var observer = new IntersectionObserver(function (entries) {
-	      var visible = entries.some(function (entry) { return entry.isIntersecting; });
-	      stickyBar.classList.toggle('translate-y-full', visible);
-	    }, { threshold: 0.2 });
-	    observer.observe(heroCta);
 	  })();
 	</script>
 	<!-- Video Lightbox Modal -->

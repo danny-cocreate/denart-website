@@ -6,6 +6,7 @@ heroImage: "/images/classes/speed-friending/avif/hero.avif"
 category: "singles"
 price: "$69"
 earlyBird: "$39"
+earlyBirdUntil: "09/11"
 duration: "2 hours"
 order: 2
 showPrivateNote: false
@@ -39,7 +40,7 @@ includes:
 
 ## About this event
 
-A different way to meet and connect with other singles through fast-paced interactive body painting activities designed to facilitate real connection.
+Everyone paints, and everyone gets painted. You meet by making something on each other's skin — not by pitching yourself in a two-minute chat.
 
 ## Why is this better than a traditional singles' event?
 
