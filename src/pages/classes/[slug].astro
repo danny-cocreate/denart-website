@@ -40,6 +40,9 @@ const CLASS_TO_CHECKOUT_EVENT: Record<string, string> = {
   'redrawn': 'redrawn',
 };
 const checkoutEventKey = CLASS_TO_CHECKOUT_EVENT[classItem.slug] || 'paint-in-the-dark';
+const heroSubtitle = classItem.slug === 'speed-friending'
+	? 'Make authentic connections with other singles'
+	: 'UV Body Painting Class for Couples';
 const scheduleEvents = await fetchSubeventsForSlug(pretixEventSlug);
 const hasUpcomingEvents = scheduleEvents.length > 0;
 const privateNote = classItem.data.privateNote || "";
@@ -178,7 +181,7 @@ if (classItem.slug === 'redrawn') {
 				{classItem.data.category === 'singles' ? 'Event' : 'Class'}
 			</span>
 			<h1 class={`text-4xl md:text-6xl font-bold text-white mb-4${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{classItem.data.title}</h1>
-			<p class={`text-xl md:text-2xl text-gray-200 mb-4${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>UV Body Painting Class for Couples</p>
+			<p class={`text-xl md:text-2xl text-gray-200 mb-4${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{heroSubtitle}</p>
 			{classItem.slug === 'uv-body-paint-couples' && (
 				<>
 					<h1 class="text-4xl md:text-6xl font-bold text-white mb-4 ab-variant-b-only">UV Body Painting Class for Couples</h1>
