@@ -1,14 +1,15 @@
 ---
 // Checkout Widget Modal Component
-// Opens an iframe modal with the checkout.denartny.com widget
-// Handles close messages from the widget
-
+// Opens an iframe modal with the same-origin checkout widget (patched copy of
+// checkout.denartny.com) so event-specific copy and skip-step behavior can ship
+// with this site. Orders still post to checkout.denartny.com/api.
 interface Props {
   eventKey: string; // e.g., 'paint-in-the-dark', 'speed-friending'
+  allowQuantity?: boolean;
 }
 
-const { eventKey } = Astro.props;
-const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`;
+const { eventKey, allowQuantity = false } = Astro.props;
+const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
 ---
 
 <!-- Checkout Widget Modal -->
@@ -25,14 +26,49 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
         src={checkoutUrl}
         class="w-full h-full border-none"
         allow="clipboard-write"
+        title="Checkout"
       ></iframe>
     </div>
   </div>
 </div>
 
-<script is:inline define:vars={{ checkoutUrl }}>
-  // Make functions globally available
-  // subeventId is optional — when provided, pre-selects that session in the widget
+<script is:inline define:vars={{ checkoutUrl, allowQuantity, eventKey }}>
+  window.__ticketQty = window.__ticketQty || 1;
+  window.__checkoutTicketIndex = 1;
+  window.__checkoutTicketTotal = 1;
+
+  function readTicketQty() {
+    if (!allowQuantity) return 1;
+    var qty = parseInt(String(window.__ticketQty || '1'), 10);
+    if (isNaN(qty) || qty < 1) return 1;
+    return Math.min(qty, 4);
+  }
+
+  function metaAttributionParams() {
+    var metaParams = '';
+    try {
+      var readCookie = function(name) {
+        var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return m ? m.pop() : '';
+      };
+      var fbp = readCookie('_fbp');
+      var fbc = readCookie('_fbc');
+      if (!fbc) {
+        var fbclid = new URLSearchParams(window.location.search).get('fbclid');
+        if (fbclid) fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+      }
+      if (fbp) metaParams += '&fbp=' + encodeURIComponent(fbp);
+      if (fbc) metaParams += '&fbc=' + encodeURIComponent(fbc);
+    } catch (e) { /* attribution is best-effort, never block booking */ }
+    return metaParams;
+  }
+
+  window.startClassCheckout = function(subeventId) {
+    window.__checkoutTicketIndex = 1;
+    window.__checkoutTicketTotal = readTicketQty();
+    window.openCheckoutWidgetModal(subeventId);
+  };
+
   window.openCheckoutWidgetModal = function(subeventId) {
     if (document.documentElement.dataset.bookingAvailable === 'false') {
       return;
@@ -45,42 +81,21 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
 
-      // Track the widget opening in GA4.
-      // NOT begin_checkout: that name is reserved for the Continue click inside
-      // the widget (SessionPicker). Firing both under one name made the two
-      // steps indistinguishable except by hostname, which broke the funnel.
       if (typeof window.trackEvent === 'function') {
         window.trackEvent('checkout_widget_open', {
           event_category: 'ecommerce',
-          event_key: checkoutUrl.includes('speed-friending') ? 'speed-friending' : 'paint-in-the-dark',
+          event_key: eventKey,
+          ticket_index: window.__checkoutTicketIndex || 1,
+          ticket_total: window.__checkoutTicketTotal || 1,
           ab_variant: window.__AB_VARIANT || null
         });
       }
 
-      // Meta attribution — forward the click id (_fbc) and browser id (_fbp)
-      // into the iframe. Both cookies are set by the pixel on denartny.com and
-      // are NOT readable from checkout.denartny.com, so the server-side
-      // Conversions API call can only attribute a purchase to the originating
-      // ad click if we pass them across explicitly.
-      var metaParams = '';
-      try {
-        var readCookie = function(name) {
-          var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-          return m ? m.pop() : '';
-        };
-        var fbp = readCookie('_fbp');
-        var fbc = readCookie('_fbc');
-        if (!fbc) {
-          var fbclid = new URLSearchParams(window.location.search).get('fbclid');
-          if (fbclid) fbc = 'fb.1.' + Date.now() + '.' + fbclid;
-        }
-        if (fbp) metaParams += '&fbp=' + encodeURIComponent(fbp);
-        if (fbc) metaParams += '&fbc=' + encodeURIComponent(fbc);
-      } catch (e) { /* attribution is best-effort, never block booking */ }
-
-      // Reset iframe src (clears previous state); append subevent param if provided
+      var qty = window.__checkoutTicketTotal || readTicketQty();
+      var ticket = window.__checkoutTicketIndex || 1;
+      var extra = '&qty=1&ticket=' + ticket + '&of=' + qty;
       if (iframe) {
-        iframe.src = (subeventId ? checkoutUrl + '&subevent=' + subeventId : checkoutUrl) + metaParams;
+        iframe.src = (subeventId ? checkoutUrl + '&subevent=' + subeventId : checkoutUrl) + extra + metaAttributionParams();
       }
     }
   };
@@ -91,16 +106,25 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
       modal.classList.add('hidden');
       document.body.style.overflow = '';
     }
+    window.__checkoutTicketIndex = 1;
+    window.__checkoutTicketTotal = readTicketQty();
   };
   
-  // Listen for messages from the iframe
   window.addEventListener('message', function(e) {
-    if (e.data && e.data.type === 'denart-checkout-close') {
+    if (!e.data) return;
+    if (e.data.type === 'denart-checkout-close') {
       closeCheckoutWidgetModal();
+      return;
+    }
+    if (e.data.type === 'denart-checkout-complete' && allowQuantity) {
+      var remaining = (window.__checkoutTicketTotal || 1) - (window.__checkoutTicketIndex || 1);
+      if (remaining > 0) {
+        window.__checkoutTicketIndex = (window.__checkoutTicketIndex || 1) + 1;
+        window.openCheckoutWidgetModal();
+      }
     }
   });
   
-  // Close on backdrop click
   document.addEventListener('DOMContentLoaded', function() {
     const backdrop = document.getElementById('checkout-modal-backdrop');
     if (backdrop) {
@@ -108,7 +132,6 @@ const checkoutUrl = `https://checkout.denartny.com/index.html?event=${eventKey}`
     }
   });
   
-  // Close on escape key
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       const modal = document.getElementById('checkout-widget-modal');

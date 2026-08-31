@@ -1,0 +1,200 @@
+/**
+ * Downloads checkout.denartny.com's widget bundle, then writes a same-origin
+ * copy with singles-event copy, API URLs, and skip-empty-session-step patches.
+ *
+ * Run: node scripts/patch-checkout-widget.mjs
+ */
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const CHECKOUT_JS_URL = 'https://checkout.denartny.com/assets/checkout.js';
+  const API_BASE = '/checkout-api';
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const outDir = join(root, 'public', 'checkout-widget');
+
+function replaceOnce(source, find, replace, label) {
+  const count = source.split(find).length - 1;
+  if (count !== 1) {
+    throw new Error(`Expected 1 occurrence of ${label}, found ${count}`);
+  }
+  return source.replace(find, replace);
+}
+
+function patchCheckoutJs(source) {
+  let js = source;
+
+  js = replaceOnce(
+    js,
+    'const s="/api"',
+    `const s="${API_BASE}"`,
+    'sessions API base',
+  );
+  js = replaceOnce(
+    js,
+    'const Z="/api"',
+    `const Z="${API_BASE}"`,
+    'create-order API base',
+  );
+
+  js = replaceOnce(
+    js,
+    'children:"for 1 couple"',
+    'children:(new URLSearchParams(window.location.search).get("event")==="speed-friending"?"per person":"for 1 couple")',
+    'unit label',
+  );
+
+  js = replaceOnce(
+    js,
+    'item_name:L.name||"UV Body Paint Class"',
+    'item_name:L.name||(new URLSearchParams(window.location.search).get("event")==="speed-friending"?"Speed Friending":"UV Body Paint Class")',
+    'begin_checkout item name',
+  );
+
+  js = replaceOnce(
+    js,
+    'content_name:L.name||"UV Body Paint Class"',
+    'content_name:L.name||(new URLSearchParams(window.location.search).get("event")==="speed-friending"?"Speed Friending":"UV Body Paint Class")',
+    'InitiateCheckout content name',
+  );
+
+  js = replaceOnce(
+    js,
+    'Et&&(T(Et.id),window.trackEvent&&window.trackEvent("session_preselected",{event:ct,session_id:Et.id,date:Et.date.toISOString(),is_early_bird:Et.isEarlyBird,price:Et.price,auto_selected:!0,ab_variant:ue()})),M(!1)',
+    'Et&&(T(Et.id),window.trackEvent&&window.trackEvent("session_preselected",{event:ct,session_id:Et.id,date:Et.date.toISOString(),is_early_bird:Et.isEarlyBird,price:Et.price,auto_selected:!0,ab_variant:ue()}));const _avail=J.filter(_s=>!_s.isSoldOut);window.__denartSingleSession=_avail.length<=1;if(window.__denartSingleSession&&Et){K(It.PAYMENT);window.trackEvent&&window.trackEvent("begin_checkout",{currency:"USD",value:Et.price,items:[{item_id:Et.itemId,item_name:Et.name||(ct==="speed-friending"?"Speed Friending":"UV Body Paint Class"),price:Et.price,quantity:1}],event_source:"checkout.denartny.com",skipped_session_step:!0,ab_variant:ue()})}M(!1)',
+    'auto-skip single session',
+  );
+
+  js = replaceOnce(
+    js,
+    'N.jsx("button",{onClick:f,className:"text-xs font-semibold uppercase tracking-wider text-brand-red hover:text-brand-red/80 transition-colors",children:"Change Date/Time"})',
+    '!window.__denartSingleSession&&N.jsx("button",{onClick:f,className:"text-xs font-semibold uppercase tracking-wider text-brand-red hover:text-brand-red/80 transition-colors",children:"Change Date/Time"})',
+    'hide change-date on single session',
+  );
+
+  js = replaceOnce(
+    js,
+    'x(!1),O()}catch(Z){window.trackEvent&&window.trackEvent("checkout_error"',
+    '(window.parent&&window.parent.postMessage({type:"denart-checkout-complete"},"*")),x(!1),O()}catch(Z){window.trackEvent&&window.trackEvent("checkout_error"',
+    'postMessage on purchase',
+  );
+
+  const qtyInject = 'const _qty=Math.max(1,parseInt(new URLSearchParams(window.location.search).get("qty")||"1",10)||1);Yt&&(Vt.event=Yt);_qty>1&&(Vt.quantity=_qty);';
+  js = replaceOnce(
+    js,
+    'Yt&&(Vt.event=Yt);',
+    qtyInject,
+    'quantity on create-order',
+  );
+
+  return js;
+}
+
+const widgetHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout</title>
+  <script>
+    (function () {
+      var eventKey = new URLSearchParams(window.location.search).get('event');
+      document.title = eventKey === 'speed-friending'
+        ? 'Speed Friending Checkout'
+        : 'UV Body Painting Checkout';
+    })();
+  </script>
+  <script>
+    if (typeof window.webkit === 'undefined') window.webkit = {};
+    if (typeof window.webkit.messageHandlers === 'undefined') window.webkit.messageHandlers = {};
+  </script>
+  <script async src="https://denartny.com/ga/gtag/js?id=G-E4945R08JE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('set', 'transport_url', 'https://denartny.com/ga');
+    gtag('config', 'G-E4945R08JE', { linker: { domains: ['denartny.com', 'checkout.denartny.com'] } });
+    window.trackEvent = function(eventName, params) {
+      gtag('event', eventName, params);
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,aspect-ratio"></script>
+  <link href="https://denartny.com/design-system.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { red: '#C41E3A', blue: '#135bec', dark: '#000000', surface: '#111111', border: '#222222' },
+            denart: { red: '#C41E3A', void: '#0a0a0e', sand: '#e8e6e1', gold: '#D4AF37' }
+          },
+          fontFamily: {
+            sans: ['Karla', 'sans-serif'],
+            serif: ['Cormorant Garamond', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html, body { height: 100%; margin: 0; background: #0a0a0e; color: #e8e6e1; font-family: Karla, sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    #ticket-banner { display: none; }
+    #ticket-banner.is-visible {
+      display: block;
+      background: rgba(196, 30, 58, 0.15);
+      border-bottom: 1px solid rgba(196, 30, 58, 0.35);
+      color: #e8e6e1;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 8px 12px;
+    }
+  </style>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+      "react/": "https://esm.sh/react@^19.2.4/",
+      "react": "https://esm.sh/react@^19.2.4"
+    }
+  }
+  </script>
+  <script type="module" crossorigin src="./checkout.js"></script>
+</head>
+<body>
+  <div id="ticket-banner"></div>
+  <div id="root"></div>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var ticket = parseInt(params.get('ticket') || '1', 10);
+      var of = parseInt(params.get('of') || '1', 10);
+      if (of > 1) {
+        var banner = document.getElementById('ticket-banner');
+        banner.textContent = 'Ticket ' + ticket + ' of ' + of + ' — one name per ticket';
+        banner.classList.add('is-visible');
+      }
+    })();
+  </script>
+</body>
+</html>
+`;
+
+const js = await fetch(CHECKOUT_JS_URL).then((res) => {
+  if (!res.ok) throw new Error(`Failed to download checkout.js: ${res.status}`);
+  return res.text();
+});
+
+const patched = patchCheckoutJs(js);
+await mkdir(outDir, { recursive: true });
+await writeFile(join(outDir, 'checkout.js'), patched);
+await writeFile(join(outDir, 'index.html'), widgetHtml);
+console.log(`Wrote patched checkout widget to ${outDir}`);

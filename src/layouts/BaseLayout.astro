@@ -9,9 +9,31 @@ interface Props {
 	ogTitle?: string;
 	ogDescription?: string;
 	noindex?: boolean;
+	headerCta?: {
+		label: string;
+		href?: string;
+		onclick?: string;
+		bookingCta?: boolean;
+		disabled?: boolean;
+	};
 }
 
-const { title, description = 'DenArt Body Painting Studio - NYC Body Art, Classes & Events', image = 'https://denartny.com/images/social-share.jpg', ogTitle, ogDescription, noindex = false } = Astro.props;
+const {
+	title,
+	description = 'DenArt Body Painting Studio - NYC Body Art, Classes & Events',
+	image = 'https://denartny.com/images/social-share.jpg',
+	ogTitle,
+	ogDescription,
+	noindex = false,
+	headerCta,
+} = Astro.props;
+
+const defaultHeaderCtaHref = '/schedule-a-session?service=embodied-manifestation';
+const headerCtaLabel = headerCta?.label ?? 'Book a Session';
+const headerCtaMobileLabel = headerCta?.label ?? 'Book Session';
+const headerCtaIsButton = Boolean(headerCta?.onclick);
+const headerCtaHref = headerCtaIsButton ? undefined : (headerCta?.href ?? defaultHeaderCtaHref);
+const headerCtaDisabled = Boolean(headerCta?.disabled);
 
 // Fetch pretix events for WebMCP tools (server-side)
 let pretixEvents: PretixEvent[] = [];
@@ -303,24 +325,52 @@ const navLinks = [
 				</ul>
 
 				<!-- CTA Button (Desktop) -->
-				<a
-					href="/schedule-a-session?service=embodied-manifestation"
-					class="hidden lg:inline-flex ml-auto items-center font-semibold uppercase tracking-wider px-4 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-brand-red/30 text-xs"
-					style="background-color: var(--color-brand-red); color: #fff;"
-				>
-					Book a Session
-				</a>
+				{headerCtaIsButton ? (
+					<button
+						type="button"
+						onclick={headerCta?.onclick}
+						disabled={headerCtaDisabled}
+						aria-disabled={headerCtaDisabled}
+						data-booking-cta={headerCta?.bookingCta ? '' : undefined}
+						class="hidden lg:inline-flex ml-auto items-center font-semibold uppercase tracking-wider px-4 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-brand-red/30 text-xs disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:hover:scale-100"
+						style="background-color: var(--color-brand-red); color: #fff;"
+					>
+						{headerCtaLabel}
+					</button>
+				) : (
+					<a
+						href={headerCtaHref}
+						class="hidden lg:inline-flex ml-auto items-center font-semibold uppercase tracking-wider px-4 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-brand-red/30 text-xs"
+						style="background-color: var(--color-brand-red); color: #fff;"
+					>
+						{headerCtaLabel}
+					</a>
+				)}
 
 				<!-- Mobile Menu CTA + Hamburger -->
 				<div class="flex items-center gap-3">
 					<!-- Mobile CTA (visible on small screens) -->
-					<a
-						href="/schedule-a-session?service=embodied-manifestation"
-						class="lg:hidden inline-flex items-center font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg text-xs"
-						style="background-color: var(--color-brand-red); color: #fff;"
-					>
-						Book Session
-					</a>
+					{headerCtaIsButton ? (
+						<button
+							type="button"
+							onclick={headerCta?.onclick}
+							disabled={headerCtaDisabled}
+							aria-disabled={headerCtaDisabled}
+							data-booking-cta={headerCta?.bookingCta ? '' : undefined}
+							class="lg:hidden inline-flex items-center font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg text-xs disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+							style="background-color: var(--color-brand-red); color: #fff;"
+						>
+							{headerCtaMobileLabel}
+						</button>
+					) : (
+						<a
+							href={headerCtaHref}
+							class="lg:hidden inline-flex items-center font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg text-xs"
+							style="background-color: var(--color-brand-red); color: #fff;"
+						>
+							{headerCtaMobileLabel}
+						</a>
+					)}
 					<button 
 						id="mobile-menu-btn"
 						class="lg:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-transparent space-y-1.5 group"
