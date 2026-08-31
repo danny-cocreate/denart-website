@@ -40,11 +40,16 @@ const CLASS_TO_CHECKOUT_EVENT: Record<string, string> = {
   'redrawn': 'redrawn',
 };
 const checkoutEventKey = CLASS_TO_CHECKOUT_EVENT[classItem.slug] || 'paint-in-the-dark';
-const heroSubtitle = classItem.slug === 'speed-friending'
+const isSinglesEvent = classItem.slug === 'speed-friending';
+const heroSubtitle = isSinglesEvent
 	? 'Make authentic connections with other singles'
 	: 'UV Body Painting Class for Couples';
 const scheduleEvents = await fetchSubeventsForSlug(pretixEventSlug);
 const hasUpcomingEvents = scheduleEvents.length > 0;
+const nextSession = scheduleEvents[0];
+const earlyBirdDeadline = classItem.data.earlyBird && nextSession
+	? ` for ${nextSession.dateStr}`
+	: '';
 const privateNote = classItem.data.privateNote || "";
 
 // FAQs data
@@ -129,7 +134,16 @@ if (classItem.slug === 'redrawn') {
 }
 ---
 
-<BaseLayout title={classItem.data.title} description={classItem.data.description}>
+<BaseLayout
+	title={classItem.data.title}
+	description={classItem.data.description}
+	headerCta={{
+		label: 'Book Now',
+		onclick: 'startClassCheckout()',
+		bookingCta: true,
+		disabled: !hasUpcomingEvents,
+	}}
+>
 	<!-- Event Schema for Classes -->
 	<script type="application/ld+json" set:html={JSON.stringify({
 		"@context": "https://schema.org",
@@ -167,7 +181,7 @@ if (classItem.slug === 'redrawn') {
 		}
 	})} />
 	<!-- Hero with Background Image -->
-	<section class="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+	<section id="class-hero" class="relative min-h-0 py-14 md:min-h-[50vh] md:py-0 flex items-center justify-center overflow-hidden">
 		{classItem.data.heroImage && (
 			<img 
 				src={classItem.data.heroImage} 
@@ -177,16 +191,43 @@ if (classItem.slug === 'redrawn') {
 		)}
 		<div class="absolute inset-0 bg-black/60"></div>
 		<div class="relative z-10 text-center px-6">
-			<span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-4 uppercase tracking-wide border border-white/30 text-white/80">
+			<span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-3 uppercase tracking-wide border border-white/30 text-white/80">
 				{classItem.data.category === 'singles' ? 'Event' : 'Class'}
 			</span>
-			<h1 class={`text-4xl md:text-6xl font-bold text-white mb-4${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{classItem.data.title}</h1>
-			<p class={`text-xl md:text-2xl text-gray-200 mb-4${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{heroSubtitle}</p>
+			<h1 class={`text-3xl md:text-6xl font-bold text-white mb-3${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{classItem.data.title}</h1>
+			<p class={`text-lg md:text-2xl text-gray-200 mb-3${classItem.slug === 'uv-body-paint-couples' ? ' ab-variant-a-only' : ''}`}>{heroSubtitle}</p>
 			{classItem.slug === 'uv-body-paint-couples' && (
 				<>
-					<h1 class="text-4xl md:text-6xl font-bold text-white mb-4 ab-variant-b-only">UV Body Painting Class for Couples</h1>
-					<p class="text-xl md:text-2xl text-gray-200 mb-4 ab-variant-b-only">The Most Unique Date Night in NYC</p>
+					<h1 class="text-3xl md:text-6xl font-bold text-white mb-3 ab-variant-b-only">UV Body Painting Class for Couples</h1>
+					<p class="text-lg md:text-2xl text-gray-200 mb-3 ab-variant-b-only">The Most Unique Date Night in NYC</p>
 				</>
+			)}
+			{classItem.data.earlyBird ? (
+				<p class="text-white text-lg md:text-xl font-semibold mb-1">
+					<span class="line-through text-white/45 mr-2">{classItem.data.price}</span>
+					<span>{classItem.data.earlyBird} early bird{earlyBirdDeadline}</span>
+				</p>
+			) : classItem.data.price ? (
+				<p class="text-white text-lg md:text-xl font-semibold mb-1">{classItem.data.price}</p>
+			) : null}
+			{nextSession && (
+				<p class="text-gray-300 text-sm mb-3">{nextSession.dateStr} · {nextSession.timeStr}</p>
+			)}
+			{isSinglesEvent && (
+				<p class="text-gray-200 text-sm max-w-md mx-auto mb-4 leading-relaxed">
+					Staff monitor every interaction — walk away anytime. No painting experience needed.
+				</p>
+			)}
+			{isSinglesEvent && (
+				<div class="flex flex-col items-center gap-2 mb-4" data-ticket-qty>
+					<div class="flex items-center gap-3">
+						<span class="text-xs uppercase tracking-widest text-white/60">Tickets</span>
+						<button type="button" data-qty-dec class="w-8 h-8 rounded-full border border-white/30 text-white text-lg leading-none" aria-label="Fewer tickets">−</button>
+						<span data-qty-value class="w-6 text-center text-white font-semibold">1</span>
+						<button type="button" data-qty-inc class="w-8 h-8 rounded-full border border-white/30 text-white text-lg leading-none" aria-label="More tickets">+</button>
+					</div>
+					<p class="text-xs text-white/60 max-w-xs">Coming with a friend? Add a second ticket — one name per checkout.</p>
+				</div>
 			)}
 			{/*
 			  Above-the-fold booking CTA. Without this the only booking control
@@ -196,9 +237,9 @@ if (classItem.slug === 'redrawn') {
 			  Rendered outside the ab-variant-* blocks so both A and B get it and
 			  the running experiment isn't confounded.
 			*/}
-			<div class="mt-6 flex justify-center">
+			<div id="hero-book-cta" class="mt-2 flex justify-center">
 				<CTAButton
-					onclick="openCheckoutWidgetModal()"
+					onclick="startClassCheckout()"
 					variant="primary"
 					size="md"
 					bookingCta
@@ -257,13 +298,13 @@ if (classItem.slug === 'redrawn') {
 						<p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Price</p>
 						{classItem.data.earlyBird ? (
 							<p class="text-3xl font-bold text-white mb-3">
-								{classItem.data.price} <span class="text-lg opacity-70">({classItem.data.earlyBird} Early Bird)</span>
+								{classItem.data.price} <span class="text-lg opacity-70">({classItem.data.earlyBird} Early Bird{earlyBirdDeadline})</span>
 							</p>
 						) : (
 							<p class="text-3xl font-bold text-white mb-3">{classItem.data.price}</p>
 						)}
 						<CTAButton
-							onclick="openCheckoutWidgetModal()"
+							onclick="startClassCheckout()"
 							variant="primary"
 							size="sm"
 							bookingCta
@@ -421,9 +462,14 @@ if (classItem.slug === 'redrawn') {
 			<!-- CTA Section -->
 			<section class="bg-void-light border-y border-zinc-800 py-16 mt-20">
 				<div class="text-center">
-					<h2 class="text-3xl font-display text-white mb-8">Ready to join this {classItem.data.category === 'singles' ? 'event' : 'class'}?</h2>
+					<h2 class="text-3xl font-display text-white mb-4">Ready to join this {classItem.data.category === 'singles' ? 'event' : 'class'}?</h2>
+					{isSinglesEvent && (
+						<p class="text-gray-300 text-sm max-w-md mx-auto mb-8">
+							Staff monitor every interaction — walk away anytime. No painting experience needed.
+						</p>
+					)}
 				<CTAButton
-					onclick="openCheckoutWidgetModal()"
+					onclick="startClassCheckout()"
 					variant="primary"
 					size="lg"
 					bookingCta
@@ -440,7 +486,36 @@ if (classItem.slug === 'redrawn') {
 	</article>
 
 	<!-- Checkout Widget Modal -->
-	<CheckoutWidgetModal eventKey={checkoutEventKey} />
+	<CheckoutWidgetModal eventKey={checkoutEventKey} allowQuantity={isSinglesEvent} />
+
+	{hasUpcomingEvents && (
+		<div
+			id="sticky-book-bar"
+			class="fixed bottom-0 inset-x-0 z-40 md:hidden translate-y-full transition-transform duration-200 bg-void/95 border-t border-zinc-800 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+		>
+			<div class="flex items-center gap-3 max-w-lg mx-auto">
+				<div class="min-w-0 flex-1">
+					<p class="text-white text-sm font-semibold truncate">
+						{classItem.data.earlyBird
+							? `${classItem.data.earlyBird} early bird${earlyBirdDeadline}`
+							: classItem.data.price}
+					</p>
+					{nextSession && (
+						<p class="text-gray-400 text-xs truncate">{nextSession.dateStr} · {nextSession.timeStr}</p>
+					)}
+				</div>
+				<CTAButton
+					onclick="startClassCheckout()"
+					variant="primary"
+					size="sm"
+					bookingCta
+					disabled={!hasUpcomingEvents}
+				>
+					Book Now
+				</CTAButton>
+			</div>
+		</div>
+	)}
 
 
 	<!-- Auto-open checkout if ?subevent= param is present and still upcoming -->
@@ -460,6 +535,32 @@ if (classItem.slug === 'redrawn') {
 	  }
 
 	  document.addEventListener('denart-booking-availability-ready', maybeAutoOpenCheckout);
+	</script>
+	<script is:inline>
+	  (function () {
+	    window.__ticketQty = 1;
+	    var qtyValueEls = document.querySelectorAll('[data-qty-value]');
+	    function setQty(next) {
+	      var qty = Math.min(4, Math.max(1, next));
+	      window.__ticketQty = qty;
+	      qtyValueEls.forEach(function (el) { el.textContent = String(qty); });
+	    }
+	    document.querySelectorAll('[data-qty-dec]').forEach(function (btn) {
+	      btn.addEventListener('click', function () { setQty((window.__ticketQty || 1) - 1); });
+	    });
+	    document.querySelectorAll('[data-qty-inc]').forEach(function (btn) {
+	      btn.addEventListener('click', function () { setQty((window.__ticketQty || 1) + 1); });
+	    });
+
+	    var heroCta = document.getElementById('hero-book-cta');
+	    var stickyBar = document.getElementById('sticky-book-bar');
+	    if (!heroCta || !stickyBar || typeof IntersectionObserver === 'undefined') return;
+	    var observer = new IntersectionObserver(function (entries) {
+	      var visible = entries.some(function (entry) { return entry.isIntersecting; });
+	      stickyBar.classList.toggle('translate-y-full', visible);
+	    }, { threshold: 0.2 });
+	    observer.observe(heroCta);
+	  })();
 	</script>
 	<!-- Video Lightbox Modal -->
 	<div id="video-lightbox" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center p-4" onclick="closeVideoLightbox(event)">
