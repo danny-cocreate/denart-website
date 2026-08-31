@@ -22,7 +22,7 @@ const upcomingEvents = events.slice(0, 20);
           data-pretix-slot
           data-raw-date={event.rawDate}
           data-subevent-id={event.id}
-          onclick={`openCheckoutWidgetModal(${event.id})`}
+          onclick={`startClassCheckout(${event.id})`}
           class="flex flex-col items-center gap-1 px-3 py-2 text-gray-300 text-xs rounded-lg border border-zinc-700/50 hover:border-brand-red/30 hover:bg-brand-red/5 transition-all group w-full text-left cursor-pointer"
         >
           <span class="font-medium text-white">{event.dateStr}</span>
