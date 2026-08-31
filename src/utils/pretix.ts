@@ -32,7 +32,7 @@ export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]
   
   if (!token) {
     console.error('PRETIX_API_TOKEN not configured');
-    return [];
+    return fetchSubeventsFromCheckout(slug);
   }
 
   const url = `${PRETIX_API_BASE}/events/${slug}/subevents/`;
@@ -46,7 +46,7 @@ export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]
 
     if (!response.ok) {
       console.error(`Pretix API error for ${slug}:`, response.status);
-      return [];
+      return fetchSubeventsFromCheckout(slug);
     }
 
     const data = await response.json();
@@ -99,7 +99,7 @@ export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]
       });
   } catch (error) {
     console.error(`Failed to fetch subevents for ${slug}:`, error);
-    return [];
+    return fetchSubeventsFromCheckout(slug);
   }
 }
 
@@ -114,6 +114,88 @@ const SLUG_TO_PAGE: Record<string, string> = {
   'private-sessions': '/services/fine-art-body-painting/',
   'couples-body-painting': '/services/body-painting-for-2/',
 };
+
+const SLUG_TO_CHECKOUT_EVENT: Record<string, string> = {
+  'uc-class-couples-2': 'paint-in-the-dark',
+  'speed-friending': 'speed-friending',
+};
+
+function formatPretixEvent(
+  slug: string,
+  id: number | string,
+  dateFrom: string,
+  dateTo?: string | null,
+): PretixEvent {
+  const date = new Date(dateFrom);
+  const endDate = dateTo ? new Date(dateTo) : null;
+  const tz = 'America/New_York';
+  const dayName = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: tz });
+  const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz });
+  const fullDate = date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: tz,
+  });
+  const startTime = date
+    .toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: tz,
+    })
+    .toLowerCase();
+  let timeStr = startTime;
+  if (endDate && endDate.getTime() !== date.getTime()) {
+    const endTime = endDate
+      .toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: tz,
+      })
+      .toLowerCase();
+    timeStr = `${startTime} - ${endTime}`;
+  }
+  return {
+    id: Number(id),
+    slug,
+    dateStr: `${dayName}, ${monthDay}`,
+    fullDate,
+    timeStr,
+    rawDate: date.toISOString(),
+    url: `https://tickets.denartny.com/denart-studio/${slug}/?subevent=${id}`,
+    pageUrl: SLUG_TO_PAGE[slug] || '/classes/',
+  };
+}
+
+/** Public checkout sessions API — used when the Pretix token is missing. */
+async function fetchSubeventsFromCheckout(slug: string): Promise<PretixEvent[]> {
+  const eventKey = SLUG_TO_CHECKOUT_EVENT[slug];
+  if (!eventKey) return [];
+
+  try {
+    const response = await fetch(
+      `https://checkout.denartny.com/api/sessions?event=${encodeURIComponent(eventKey)}`,
+    );
+    if (!response.ok) return [];
+    const data = await response.json();
+    if (data.status !== 'success' || !Array.isArray(data.sessions)) return [];
+    const now = new Date();
+    return data.sessions
+      .filter((session: { isSoldOut?: boolean; date?: string; startTime?: string }) => {
+        const raw = session.startTime || session.date;
+        return raw && !session.isSoldOut && isUpcomingPretixDate(raw, now);
+      })
+      .map((session: { id: string | number; date: string; startTime?: string; endTime?: string }) =>
+        formatPretixEvent(slug, session.id, session.startTime || session.date, session.endTime),
+      );
+  } catch (error) {
+    console.error(`Failed to fetch checkout sessions for ${slug}:`, error);
+    return [];
+  }
+}
 
 const E2E_MOCK_SUBEVENT_ID = 90001;
 const E2E_MOCK_RAW_DATE = '2030-06-15T22:00:00.000Z';

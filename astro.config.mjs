@@ -15,6 +15,15 @@ export default defineConfig({
     optimizeDeps: {
       include: ['webmcp-kit', 'zod'],
     },
+    server: {
+      proxy: {
+        '/checkout-api': {
+          target: 'https://checkout.denartny.com',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/checkout-api/, '/api'),
+        },
+      },
+    },
   },
   integrations: [sitemap()],
   redirects: {

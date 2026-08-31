@@ -9,7 +9,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const CHECKOUT_JS_URL = 'https://checkout.denartny.com/assets/checkout.js';
-const API_BASE = 'https://checkout.denartny.com/api';
+  const API_BASE = '/checkout-api';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'public', 'checkout-widget');
 
@@ -75,7 +75,7 @@ function patchCheckoutJs(source) {
   js = replaceOnce(
     js,
     'x(!1),O()}catch(Z){window.trackEvent&&window.trackEvent("checkout_error"',
-    'try{window.parent&&window.parent.postMessage({type:"denart-checkout-complete"},"*")}catch(_pm){}x(!1),O()}catch(Z){window.trackEvent&&window.trackEvent("checkout_error"',
+    '(window.parent&&window.parent.postMessage({type:"denart-checkout-complete"},"*")),x(!1),O()}catch(Z){window.trackEvent&&window.trackEvent("checkout_error"',
     'postMessage on purchase',
   );
 

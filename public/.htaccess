@@ -13,6 +13,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 RewriteRule ^ga/gtag/js$ /ga/proxy.php [L,QSA]
 RewriteRule ^ga/g/collect$ /ga/proxy.php [L,QSA]
 
+# Checkout API first-party proxy (widget on denartny.com → checkout.denartny.com/api)
+RewriteRule ^checkout-api(/.*)?$ /checkout-api/index.php [L,QSA]
+
 # www to non-www
 RewriteCond %{HTTP_HOST} ^www\.denartny\.com [NC]
 RewriteRule ^(.*)$ https://denartny.com/$1 [L,R=301]

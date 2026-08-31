@@ -27,3 +27,4 @@ pnpm-debug.log*
 *.mp4
 *.MP4
 test-results/
+playwright-report
