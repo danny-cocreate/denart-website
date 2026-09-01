@@ -46,9 +46,18 @@ jobs:
             echo "dist/checkout-widget missing — widget download did not run" >&2
             exit 1
           fi
-          rsync -avz -e "ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no -v" \
-            dist/ \
-            $USER@$HOST:$REMOTE_PATH/
-          rsync -avz --delete -e "ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no" \
+          SSH_OPTS="-p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=10"
+          # Widget first so --delete lands even if the full-site copy later drops
+          rsync -az --delete -e "ssh $SSH_OPTS" \
             dist/checkout-widget/ \
             $USER@$HOST:$REMOTE_PATH/checkout-widget/
+          attempt=1
+          until rsync -az -e "ssh $SSH_OPTS" dist/ "$USER@$HOST:$REMOTE_PATH/"; do
+            if [ "$attempt" -ge 4 ]; then
+              echo "full-site rsync failed after $attempt attempts" >&2
+              exit 1
+            fi
+            echo "full-site rsync dropped (attempt $attempt); retrying in $((attempt * 8))s"
+            sleep $((attempt * 8))
+            attempt=$((attempt + 1))
+          done
