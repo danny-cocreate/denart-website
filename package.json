@@ -4,6 +4,8 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "fetch-checkout-widget": "node scripts/fetch-checkout-widget.mjs",
+    "prebuild": "node scripts/fetch-checkout-widget.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",

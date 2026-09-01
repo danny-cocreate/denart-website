@@ -25,6 +25,7 @@ jobs:
       - name: Build Astro
         env:
           PRETIX_API_TOKEN: ${{ secrets.PRETIX_API_TOKEN }}
+          CHECKOUT_WIDGET_READ_TOKEN: ${{ secrets.CHECKOUT_WIDGET_READ_TOKEN }}
         run: npm run build
 
       - name: Deploy to Hostinger
@@ -41,6 +42,13 @@ jobs:
           echo "REMOTE_PATH=$REMOTE_PATH"
           echo "$SSH_KEY" > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
+          if [ ! -d dist/checkout-widget ]; then
+            echo "dist/checkout-widget missing — widget download did not run" >&2
+            exit 1
+          fi
           rsync -avz -e "ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no -v" \
             dist/ \
             $USER@$HOST:$REMOTE_PATH/
+          rsync -avz --delete -e "ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no" \
+            dist/checkout-widget/ \
+            $USER@$HOST:$REMOTE_PATH/checkout-widget/

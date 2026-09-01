@@ -1,14 +1,12 @@
 ---
 // Checkout Widget Modal Component
-// Opens an iframe modal with the same-origin checkout widget (patched copy of
-// checkout.denartny.com) so event-specific copy and skip-step behavior can ship
-// with this site. Orders still post to checkout.denartny.com/api.
+// Opens an iframe modal with the same-origin checkout widget (fetched from the
+// denart-custom-checkout widget-latest release at build time). Single-ticket only.
 interface Props {
   eventKey: string; // e.g., 'paint-in-the-dark', 'speed-friending'
-  allowQuantity?: boolean;
 }
 
-const { eventKey, allowQuantity = false } = Astro.props;
+const { eventKey } = Astro.props;
 const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
 ---
 
@@ -32,18 +30,7 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
   </div>
 </div>
 
-<script is:inline define:vars={{ checkoutUrl, allowQuantity, eventKey }}>
-  window.__ticketQty = window.__ticketQty || 1;
-  window.__checkoutTicketIndex = 1;
-  window.__checkoutTicketTotal = 1;
-
-  function readTicketQty() {
-    if (!allowQuantity) return 1;
-    var qty = parseInt(String(window.__ticketQty || '1'), 10);
-    if (isNaN(qty) || qty < 1) return 1;
-    return Math.min(qty, 4);
-  }
-
+<script is:inline define:vars={{ checkoutUrl, eventKey }}>
   function metaAttributionParams() {
     var metaParams = '';
     try {
@@ -64,8 +51,6 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
   }
 
   window.startClassCheckout = function(subeventId) {
-    window.__checkoutTicketIndex = 1;
-    window.__checkoutTicketTotal = readTicketQty();
     window.openCheckoutWidgetModal(subeventId);
   };
 
@@ -85,15 +70,13 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
         window.trackEvent('checkout_widget_open', {
           event_category: 'ecommerce',
           event_key: eventKey,
-          ticket_index: window.__checkoutTicketIndex || 1,
-          ticket_total: window.__checkoutTicketTotal || 1,
+          ticket_index: 1,
+          ticket_total: 1,
           ab_variant: window.__AB_VARIANT || null
         });
       }
 
-      var qty = window.__checkoutTicketTotal || readTicketQty();
-      var ticket = window.__checkoutTicketIndex || 1;
-      var extra = '&qty=1&ticket=' + ticket + '&of=' + qty;
+      var extra = '&qty=1&ticket=1&of=1';
       if (iframe) {
         iframe.src = (subeventId ? checkoutUrl + '&subevent=' + subeventId : checkoutUrl) + extra + metaAttributionParams();
       }
@@ -106,22 +89,12 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
       modal.classList.add('hidden');
       document.body.style.overflow = '';
     }
-    window.__checkoutTicketIndex = 1;
-    window.__checkoutTicketTotal = readTicketQty();
   };
   
   window.addEventListener('message', function(e) {
     if (!e.data) return;
     if (e.data.type === 'denart-checkout-close') {
       closeCheckoutWidgetModal();
-      return;
-    }
-    if (e.data.type === 'denart-checkout-complete' && allowQuantity) {
-      var remaining = (window.__checkoutTicketTotal || 1) - (window.__checkoutTicketIndex || 1);
-      if (remaining > 0) {
-        window.__checkoutTicketIndex = (window.__checkoutTicketIndex || 1) + 1;
-        window.openCheckoutWidgetModal();
-      }
     }
   });
   

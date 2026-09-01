@@ -31,10 +31,14 @@ RewriteRule ^xmlrpc\.php$ - [F,L]
 RewriteRule ^(blog|category|tag|author|feed|rss|atom)/.*$ / [R=301,L]
 RewriteRule ^[0-9]{4}/[0-9]{2}/.*$ / [R=301,L]
 
-# Cache static assets
+# Cache static assets (hashed checkout-widget files under /checkout-widget/assets/ included)
 <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|webp|avif|woff|woff2|ttf|eot)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
 </FilesMatch>
+
+# Unhashed widget entry must revalidate; do not pin it for a year
+SetEnvIf Request_URI "^/checkout-widget/index\.html" CHECKOUT_WIDGET_ENTRY
+Header set Cache-Control "no-cache" env=CHECKOUT_WIDGET_ENTRY
 
 # Security headers
 Header set X-Content-Type-Options "nosniff"
