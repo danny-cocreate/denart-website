@@ -226,14 +226,6 @@ if (classItem.slug === 'redrawn') {
 					Staff monitor throughout — you can step away from any interaction. No painting experience needed.
 				</p>
 			)}
-			{isSinglesEvent && (
-				<div class="flex items-center justify-center gap-3 mb-3" data-ticket-qty>
-					<span class="text-xs uppercase tracking-widest text-white/60">Tickets</span>
-					<button type="button" data-qty-dec class="w-7 h-7 rounded-full border border-white/30 text-white leading-none" aria-label="Fewer tickets">−</button>
-					<span data-qty-value class="w-5 text-center text-white font-semibold">1</span>
-					<button type="button" data-qty-inc class="w-7 h-7 rounded-full border border-white/30 text-white leading-none" aria-label="More tickets">+</button>
-				</div>
-			)}
 			{/*
 			  Above-the-fold booking CTA. Without this the only booking control
 			  visible on a mobile viewport is the global header link, which points
@@ -507,7 +499,7 @@ if (classItem.slug === 'redrawn') {
 	</article>
 
 	<!-- Checkout Widget Modal -->
-	<CheckoutWidgetModal eventKey={checkoutEventKey} allowQuantity={isSinglesEvent} />
+	<CheckoutWidgetModal eventKey={checkoutEventKey} />
 
 	<div
 		id="sticky-book-bar"
@@ -557,23 +549,6 @@ if (classItem.slug === 'redrawn') {
 	  }
 
 	  document.addEventListener('denart-booking-availability-ready', maybeAutoOpenCheckout);
-	</script>
-	<script is:inline>
-	  (function () {
-	    window.__ticketQty = 1;
-	    var qtyValueEls = document.querySelectorAll('[data-qty-value]');
-	    function setQty(next) {
-	      var qty = Math.min(4, Math.max(1, next));
-	      window.__ticketQty = qty;
-	      qtyValueEls.forEach(function (el) { el.textContent = String(qty); });
-	    }
-	    document.querySelectorAll('[data-qty-dec]').forEach(function (btn) {
-	      btn.addEventListener('click', function () { setQty((window.__ticketQty || 1) - 1); });
-	    });
-	    document.querySelectorAll('[data-qty-inc]').forEach(function (btn) {
-	      btn.addEventListener('click', function () { setQty((window.__ticketQty || 1) + 1); });
-	    });
-	  })();
 	</script>
 	<!-- Video Lightbox Modal -->
 	<div id="video-lightbox" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center p-4" onclick="closeVideoLightbox(event)">

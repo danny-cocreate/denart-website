@@ -1,5 +1,7 @@
 # build output
 dist/
+# fetched at build time from danny-cocreate/denart-custom-checkout widget-latest
+public/checkout-widget/
 # generated types
 .astro/
 

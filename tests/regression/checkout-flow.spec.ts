@@ -25,7 +25,7 @@ test('checkout modal iframe targets same-origin checkout widget when booking is 
   await expect(iframe).toHaveAttribute('src', /event=paint-in-the-dark/);
 });
 
-test('speed friending hero shows price, safety copy, tickets, and no 1:1 session CTA', async ({ page }) => {
+test('speed friending hero shows price, safety copy, and no 1:1 session CTA', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/classes/speed-friending');
 
@@ -42,7 +42,9 @@ test('speed friending hero shows price, safety copy, tickets, and no 1:1 session
   await expect(page.getByRole('heading', { name: /What's included/i })).toBeVisible();
   await expect(page.getByText(/All body painting supplies and tools provided/i)).toBeVisible();
   await expect(page.getByText('Wine').first()).toBeVisible();
-  await expect(page.getByText('Tickets').first()).toBeVisible();
+  await expect(page.locator('[data-ticket-qty]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /More tickets/i })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Fewer tickets/i })).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Book Now/i }).first()).toBeVisible();
   await expect(page.locator('#sticky-book-bar')).toBeVisible();
   await page.evaluate(() => window.scrollTo(0, 2500));
