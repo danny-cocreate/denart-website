@@ -9,7 +9,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import { createWriteStream } from 'node:fs';
-import { mkdtemp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -107,29 +107,43 @@ async function rewriteStripePublishableKey(dir) {
   }
 
   const found = [];
-  let rewrote = 0;
+  const rewrittenNames = [];
   for (const name of entries) {
     if (!name.endsWith('.js')) continue;
-    const path = join(assetsDir, name);
-    const source = await readFile(path, 'utf8');
+    const filePath = join(assetsDir, name);
+    const source = await readFile(filePath, 'utf8');
     const keys = stripeKeysIn(source);
     found.push(...keys);
     if (!keys.some(keyNeedsRewrite)) continue;
     const next = source.replace(/pk_(?:live|test)_[A-Za-z0-9]+/g, PRODUCTION_STRIPE_PK);
-    await writeFile(path, next);
-    rewrote += 1;
+    await writeFile(filePath, next);
+    rewrittenNames.push(name);
   }
 
   const unique = [...new Set(found)];
   if (!unique.length) {
     fail('unpacked widget has no Stripe publishable key in assets/*.js');
   }
-  if (unique.some(keyNeedsRewrite) && rewrote === 0) {
+  if (unique.some(keyNeedsRewrite) && rewrittenNames.length === 0) {
     fail(`failed to replace invalid Stripe pk: ${unique.join(', ')}`);
   }
-  if (rewrote) {
+
+  // Immutable cache is keyed by filename. Renaming after a pk rewrite so
+  // browsers that already cached the placeholder bundle pick up the real key.
+  if (rewrittenNames.length) {
+    let html = await readFile(join(dir, 'index.html'), 'utf8');
+    for (const name of rewrittenNames) {
+      const busted = name.replace(/\.js$/, '.pk.js');
+      await rename(join(assetsDir, name), join(assetsDir, busted));
+      const before = html;
+      html = html.split(name).join(busted);
+      if (html === before) {
+        fail(`rewrote ${name} but index.html does not reference it`);
+      }
+    }
+    await writeFile(join(dir, 'index.html'), html);
     console.log(
-      `fetch-checkout-widget: replaced Stripe pk in ${rewrote} file(s) (${unique.join(', ')})`,
+      `fetch-checkout-widget: replaced Stripe pk and cache-busted ${rewrittenNames.join(', ')} (${unique.join(', ')})`,
     );
   } else {
     console.log('fetch-checkout-widget: Stripe publishable key already valid');
