@@ -9,7 +9,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import { createWriteStream } from 'node:fs';
-import { mkdtemp, mkdir, readdir, readFile, rm, stat } from 'node:fs/promises';
+import { mkdtemp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -75,6 +75,65 @@ async function findIndexHtml(dir) {
     if (nested) return nested;
   }
   return null;
+}
+
+// Placeholder baked into widget-latest when the checkout repo is built without
+// VITE_STRIPE_PUBLISHABLE_KEY. Real Stripe pk_live_51 keys are ~100+ chars.
+const PLACEHOLDER_STRIPE_PK =
+  'pk_live_51SkeCqG3d5sX8dF3R8C2G0zJ0YqL4tN6wX7vB9mK3pH5jF8sA1cE4uI7oL0dG2hJ5kN8qT1wZ4';
+// Last known-good live publishable key (already shipped in the previous widget).
+const PRODUCTION_STRIPE_PK =
+  process.env.STRIPE_PUBLISHABLE_KEY
+  || 'pk_live_51Svq4b4K2wYoZdC7y9bg44LVQOxSHBdwx7tEobOsb3UJU0ADgF3fBEdfPWQmq4zg6dADLzYSLoz3csk3V1z9bzbB00ofgel8us';
+
+function stripeKeysIn(source) {
+  return [...source.matchAll(/pk_(?:live|test)_[A-Za-z0-9]+/g)].map((match) => match[0]);
+}
+
+function keyNeedsRewrite(key) {
+  if (!key || key === PRODUCTION_STRIPE_PK) return false;
+  if (key === PLACEHOLDER_STRIPE_PK) return true;
+  if (key.startsWith('pk_test_')) return true;
+  return key.length < 100;
+}
+
+async function rewriteStripePublishableKey(dir) {
+  const assetsDir = join(dir, 'assets');
+  let entries;
+  try {
+    entries = await readdir(assetsDir);
+  } catch (err) {
+    fail(`unpacked widget is missing assets/: ${err.message}`);
+  }
+
+  const found = [];
+  let rewrote = 0;
+  for (const name of entries) {
+    if (!name.endsWith('.js')) continue;
+    const path = join(assetsDir, name);
+    const source = await readFile(path, 'utf8');
+    const keys = stripeKeysIn(source);
+    found.push(...keys);
+    if (!keys.some(keyNeedsRewrite)) continue;
+    const next = source.replace(/pk_(?:live|test)_[A-Za-z0-9]+/g, PRODUCTION_STRIPE_PK);
+    await writeFile(path, next);
+    rewrote += 1;
+  }
+
+  const unique = [...new Set(found)];
+  if (!unique.length) {
+    fail('unpacked widget has no Stripe publishable key in assets/*.js');
+  }
+  if (unique.some(keyNeedsRewrite) && rewrote === 0) {
+    fail(`failed to replace invalid Stripe pk: ${unique.join(', ')}`);
+  }
+  if (rewrote) {
+    console.log(
+      `fetch-checkout-widget: replaced Stripe pk in ${rewrote} file(s) (${unique.join(', ')})`,
+    );
+  } else {
+    console.log('fetch-checkout-widget: Stripe publishable key already valid');
+  }
 }
 
 function hashedAssetFromIndex(html) {
@@ -151,6 +210,8 @@ async function main() {
   if (!hashed) {
     fail('unpacked index.html does not reference a hashed file under assets/. Refusing to ship.');
   }
+
+  await rewriteStripePublishableKey(outDir);
 
   console.log(`fetch-checkout-widget: unpacked ${TAG} (${archive.name}, ${archiveStat.size} bytes)`);
   console.log(`fetch-checkout-widget: hashed asset ${hashed}`);
