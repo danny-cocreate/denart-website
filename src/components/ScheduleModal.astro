@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { serviceName, serviceTitle } = Astro.props;
+const hideDesign = serviceName === 'embodied-manifestation' || serviceName === 'hypnotic-body-painting';
 ---
 
 <!-- Schedule Session Modal -->
@@ -119,13 +120,14 @@ const { serviceName, serviceTitle } = Astro.props;
             </div>
           </div>
           
-          <!-- Design Ideas -->
-          <div>
+          <!-- Design Ideas: hidden for Wish-Fulfilled — the imagery comes in session -->
+          <div id="schedule-design-wrap" class={hideDesign ? 'hidden' : undefined}>
             <label for="schedule-design" class="block text-sm font-medium text-sand mb-1">What's the design you'd like us to paint?</label>
             <textarea 
               id="schedule-design" 
               name="design"
               rows="2"
+              disabled={hideDesign}
               placeholder="E.g. Van Gogh's 'Starry Night' or describe your vision..."
               class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent resize-none"
             ></textarea>
@@ -195,6 +197,21 @@ const { serviceName, serviceTitle } = Astro.props;
     const form = document.getElementById('schedule-form');
     const messageEl = document.getElementById('schedule-message');
     const submitBtn = form?.querySelector('button[type="submit"]');
+    const sessionTypeEl = document.getElementById('schedule-session-type');
+    const designWrap = document.getElementById('schedule-design-wrap');
+    const designInput = document.getElementById('schedule-design');
+    const WISH_FULFILLED = 'Wish-Fulfilled Session';
+
+    const syncDesignField = () => {
+      const hide = sessionTypeEl && sessionTypeEl.value === WISH_FULFILLED;
+      if (designWrap) designWrap.classList.toggle('hidden', hide);
+      if (designInput) {
+        designInput.disabled = hide;
+        if (hide) designInput.value = '';
+      }
+    };
+    if (sessionTypeEl) sessionTypeEl.addEventListener('change', syncDesignField);
+    syncDesignField();
     
     if (form) {
       form.addEventListener('submit', async function(e) {
@@ -222,6 +239,7 @@ const { serviceName, serviceTitle } = Astro.props;
               messageEl.className = 'p-4 rounded-lg bg-green-900/30 border border-green-700 text-green-400';
               messageEl.textContent = 'Thank you! We\'ll be in touch soon.';
               form.reset();
+              syncDesignField();
               setTimeout(() => closeScheduleModal(), 2000);
             } else {
               messageEl.className = 'p-4 rounded-lg bg-red-900/30 border border-red-700 text-red-400';

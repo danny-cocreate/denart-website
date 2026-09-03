@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 const CORE_PAGE_PATHS = [
   '/services',
   '/services/fine-art-body-painting',
+  '/services/embodied-manifestation',
   '/services/hypnotic-body-painting',
   '/services/body-painting-for-events',
   '/gallery',
