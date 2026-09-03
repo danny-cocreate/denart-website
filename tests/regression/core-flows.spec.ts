@@ -60,3 +60,24 @@ test('wish-fulfilled booking hides the design field', async ({ page }) => {
   await expect(page.locator('#schedule-design-wrap')).toBeHidden();
 });
 
+test('wish-fulfilled page copy and booking funnel', async ({ page }) => {
+  await page.goto('/services/embodied-manifestation');
+
+  await expect(
+    page.getByRole('heading', { level: 1, name: /Manifestation that finally feels real/i }),
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: /Request a session/i }).first()).toBeVisible();
+  await expect(page.getByText(/coverage is your call/i).first()).toBeVisible();
+  await expect(page.getByText(/This isn't therapy or medical care/i)).toBeVisible();
+  await expect(page.getByText(/sit alongside professional support/i)).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Mark this chapter/i })).toBeVisible();
+  await expect(page.getByText(/Become her/i)).toHaveCount(0);
+  await expect(page.getByText(/Probably not for you if/i)).toHaveCount(0);
+
+  await page.getByRole('link', { name: /Request a session/i }).first().click();
+  await expect(page).toHaveURL(/schedule-a-session\?service=embodied-manifestation/);
+  await expect(page.locator('#schedule-session-type')).toHaveValue('Wish-Fulfilled Session');
+  await expect(page.locator('#schedule-design-wrap')).toBeHidden();
+  await expect(page.getByPlaceholder(/Van Gogh/i)).toBeHidden();
+});
+
