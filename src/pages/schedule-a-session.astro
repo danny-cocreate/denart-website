@@ -142,7 +142,7 @@ const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
               </div>
             </div>
 
-            <div>
+            <div id="schedule-design-wrap">
               <label for="schedule-design" class="block text-sm font-medium text-sand mb-1">What's the design you'd like us to paint?</label>
               <textarea
                 id="schedule-design"
@@ -152,6 +152,17 @@ const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
                 class="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sand placeholder-zinc-500 focus:ring-2 focus:ring-brand-red focus:border-transparent resize-none"
               ></textarea>
             </div>
+            <script is:inline>
+              (function () {
+                var svc = new URLSearchParams(location.search).get('service');
+                if (svc === 'embodied-manifestation' || svc === 'hypnotic-body-painting') {
+                  var wrap = document.getElementById('schedule-design-wrap');
+                  var input = document.getElementById('schedule-design');
+                  if (wrap) wrap.classList.add('hidden');
+                  if (input) { input.disabled = true; input.value = ''; }
+                }
+              })();
+            </script>
 
             <div>
               <label for="schedule-promo" class="block text-sm font-medium text-sand mb-1">Promo Code</label>
@@ -192,16 +203,32 @@ const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
     'body-painting-for-events': { value: 'Events & Commercial', title: 'Events & Commercial' },
     'private-party-at-studio': { value: 'Private Parties', title: 'Private Parties' },
   };
+  const sessionTypeEl = document.getElementById('schedule-session-type') as HTMLSelectElement | null;
+  const designWrap = document.getElementById('schedule-design-wrap');
+  const designInput = document.getElementById('schedule-design') as HTMLTextAreaElement | null;
+  const WISH_FULFILLED = 'Wish-Fulfilled Session';
+
+  const syncDesignField = () => {
+    const hide = sessionTypeEl?.value === WISH_FULFILLED;
+    designWrap?.classList.toggle('hidden', hide);
+    if (designInput) {
+      designInput.disabled = hide;
+      if (hide) designInput.value = '';
+    }
+  };
+
   const svcParam = new URLSearchParams(window.location.search).get('service');
   if (svcParam && serviceMap[svcParam]) {
     const { value, title } = serviceMap[svcParam];
-    const sel = document.getElementById('schedule-session-type') as HTMLSelectElement | null;
-    if (sel) sel.value = value;
+    if (sessionTypeEl) sessionTypeEl.value = value;
     const titleEl = document.getElementById('schedule-service-title');
     if (titleEl) titleEl.textContent = title;
     const hidden = form?.querySelector('input[name="service"]') as HTMLInputElement | null;
     if (hidden) hidden.value = svcParam;
   }
+
+  sessionTypeEl?.addEventListener('change', syncDesignField);
+  syncDesignField();
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -225,6 +252,7 @@ const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
         messageEl.textContent = result.message || "Thank you! We'll be in touch soon.";
         messageEl.className = 'p-4 rounded-lg text-sm bg-emerald-900/20 border border-emerald-800/30 text-emerald-400';
         form.reset();
+        syncDesignField();
       } else {
         messageEl.textContent = result.error || 'Something went wrong. Please try again.';
         messageEl.className = 'p-4 rounded-lg text-sm bg-red-900/20 border border-red-800/30 text-red-400';

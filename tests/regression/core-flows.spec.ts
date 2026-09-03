@@ -44,3 +44,19 @@ test('schedule form can be submitted successfully', async ({ page }) => {
   await expect(page.locator('#schedule-message')).toContainText(/we'll be in touch soon/i);
 });
 
+test('wish-fulfilled booking hides the design field', async ({ page }) => {
+  await page.goto('/schedule-a-session?service=embodied-manifestation');
+
+  await expect(page.locator('#schedule-design-wrap')).toBeHidden();
+
+  await page.selectOption('#schedule-session-type', {
+    label: 'Fine Art Body Painting',
+  });
+  await expect(page.locator('#schedule-design-wrap')).toBeVisible();
+
+  await page.selectOption('#schedule-session-type', {
+    label: 'Embodied Manifestation — The Wish-Fulfilled Session',
+  });
+  await expect(page.locator('#schedule-design-wrap')).toBeHidden();
+});
+
