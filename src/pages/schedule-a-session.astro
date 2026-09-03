@@ -217,16 +217,19 @@ const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
     }
   };
 
-  const svcParam = new URLSearchParams(window.location.search).get('service');
-  if (svcParam && serviceMap[svcParam]) {
-    const { value, title } = serviceMap[svcParam];
-    if (sessionTypeEl) sessionTypeEl.value = value;
-    const titleEl = document.getElementById('schedule-service-title');
-    if (titleEl) titleEl.textContent = title;
-    const hidden = form?.querySelector('input[name="service"]') as HTMLInputElement | null;
-    if (hidden) hidden.value = svcParam;
-  }
+  const applyServiceFromUrl = () => {
+    const svcParam = new URLSearchParams(window.location.search).get('service');
+    if (svcParam && serviceMap[svcParam]) {
+      const { value, title } = serviceMap[svcParam];
+      if (sessionTypeEl) sessionTypeEl.value = value;
+      const titleEl = document.getElementById('schedule-service-title');
+      if (titleEl) titleEl.textContent = title;
+      const hidden = form?.querySelector('input[name="service"]') as HTMLInputElement | null;
+      if (hidden) hidden.value = svcParam;
+    }
+  };
 
+  applyServiceFromUrl();
   sessionTypeEl?.addEventListener('change', syncDesignField);
   syncDesignField();
 
@@ -252,6 +255,7 @@ const serviceTitle = serviceTitles[serviceParam] || 'Private Session';
         messageEl.textContent = result.message || "Thank you! We'll be in touch soon.";
         messageEl.className = 'p-4 rounded-lg text-sm bg-emerald-900/20 border border-emerald-800/30 text-emerald-400';
         form.reset();
+        applyServiceFromUrl();
         syncDesignField();
       } else {
         messageEl.textContent = result.error || 'Something went wrong. Please try again.';
