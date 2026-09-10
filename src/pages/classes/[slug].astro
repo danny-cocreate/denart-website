@@ -213,7 +213,7 @@ if (classItem.slug === 'redrawn') {
 			) : classItem.data.price ? (
 				<p class="text-white text-base md:text-xl font-semibold mb-0.5">{classItem.data.price}</p>
 			) : null}
-			{nextSession && (
+			{nextSession && !isSinglesEvent && (
 				<p class="text-gray-300 text-sm mb-2">{nextSession.dateStr} · {nextSession.timeStr}</p>
 			)}
 			{/*

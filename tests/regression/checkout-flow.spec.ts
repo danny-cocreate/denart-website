@@ -45,7 +45,9 @@ test('speed friending hero shows price, mechanic, and no 1:1 session CTA', async
   await expect(page.getByRole('heading', { name: /What's included/i })).toBeVisible();
   await expect(page.getByText('All paint and supplies')).toBeVisible();
   await expect(page.getByText('Wine').first()).toBeVisible();
+  await expect(page.getByText('Chocolate')).toHaveCount(0);
   await expect(page.getByText('Mixer after')).toBeVisible();
+  await expect(hero.getByText(/Fri, |Sat, |Sun, |Mon, |Tue, |Wed, |Thu,/)).toHaveCount(0);
   await expect(page.locator('[data-ticket-qty]')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /More tickets/i })).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Fewer tickets/i })).toHaveCount(0);

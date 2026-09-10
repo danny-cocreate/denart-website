@@ -10,10 +10,6 @@ earlyBirdUntil: "09/11"
 duration: "2 hours"
 order: 2
 showPrivateNote: false
-schedule:
-  - "Fri, Jan 16 | 6p"
-  - "Fri, Jan 23 | 6p"
-  - "Fri, Jan 30 | 6p"
 ticketLink: "https://giftup.app/place-order/3627e342-22f4-411a-9308-4f4e132ecf05?platform=Hosted"
 galleryImages:
   - "/images/classes/speed-friending/avif/IMG_1557.avif"
@@ -32,7 +28,6 @@ location:
 includes:
   - "All paint and supplies"
   - "Wine"
-  - "Chocolate"
   - "2 hours of painting activities"
   - "Mixer after"
 ---
