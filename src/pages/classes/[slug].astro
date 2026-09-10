@@ -42,7 +42,7 @@ const CLASS_TO_CHECKOUT_EVENT: Record<string, string> = {
 const checkoutEventKey = CLASS_TO_CHECKOUT_EVENT[classItem.slug] || 'paint-in-the-dark';
 const isSinglesEvent = classItem.slug === 'speed-friending';
 const heroSubtitle = isSinglesEvent
-	? 'Make authentic connections with other singles'
+	? 'Everyone paints — and gets painted'
 	: 'UV Body Painting Class for Couples';
 const scheduleEvents = await fetchSubeventsForSlug(pretixEventSlug);
 const hasUpcomingEvents = scheduleEvents.length > 0;
@@ -205,11 +205,6 @@ if (classItem.slug === 'redrawn') {
 					<p class="text-lg md:text-2xl text-gray-200 mb-3 ab-variant-b-only">The Most Unique Date Night in NYC</p>
 				</>
 			)}
-			{isSinglesEvent && (
-				<p class="text-white text-sm md:text-lg font-medium mb-2">
-					Everyone paints — and gets painted.
-				</p>
-			)}
 			{classItem.data.earlyBird ? (
 				<p class="text-white text-base md:text-xl font-semibold mb-0.5">
 					<span class="line-through text-white/45 mr-2">{classItem.data.price}</span>
@@ -220,11 +215,6 @@ if (classItem.slug === 'redrawn') {
 			) : null}
 			{nextSession && (
 				<p class="text-gray-300 text-sm mb-2">{nextSession.dateStr} · {nextSession.timeStr}</p>
-			)}
-			{isSinglesEvent && (
-				<p class="text-gray-200 text-xs md:text-sm max-w-md mx-auto mb-3 leading-snug">
-					Staff monitor throughout — you can step away from any interaction. No painting experience needed.
-				</p>
 			)}
 			{/*
 			  Above-the-fold booking CTA. Without this the only booking control
@@ -251,7 +241,14 @@ if (classItem.slug === 'redrawn') {
 	<!-- Intro / Hook Section -->
 	<section class="bg-deepest py-8 md:py-12">
 		<div class="max-w-4xl mx-auto px-6 text-center">
-			{classItem.data.category === 'singles' ? (
+			{isSinglesEvent ? (
+				<>
+					<h2 class="text-2xl md:text-4xl font-bold text-white mb-4">Not a two-minute pitch</h2>
+					<p class="text-base md:text-xl text-gray-300 max-w-2xl mx-auto">
+						Typical singles events make you sell yourself. Here the icebreaker is painting someone, and getting painted.
+					</p>
+				</>
+			) : classItem.data.category === 'singles' ? (
 				<>
 					<h2 class="text-2xl md:text-4xl font-bold text-white mb-4">Everyone paints — and gets painted</h2>
 					<p class="text-base md:text-xl text-gray-300 max-w-2xl mx-auto">
@@ -476,23 +473,18 @@ if (classItem.slug === 'redrawn') {
 			<section class="bg-void-light border-y border-zinc-800 py-16 mt-20">
 				<div class="text-center">
 					<h2 class="text-3xl font-display text-white mb-4">Ready to join this {classItem.data.category === 'singles' ? 'event' : 'class'}?</h2>
-					{isSinglesEvent && (
-						<p class="text-gray-300 text-sm max-w-md mx-auto mb-8">
-							Staff monitor throughout — you can step away from any interaction. No painting experience needed.
-						</p>
-					)}
-				<CTAButton
-					onclick="startClassCheckout()"
-					variant="primary"
-					size="lg"
-					bookingCta
-					disabled={!hasUpcomingEvents}
-				>
-					Book Now
-				</CTAButton>
-				<div class="mt-4 text-sm text-gray-400">
-					🎁 &nbsp;Gift Certificate Available <a href={classItem.data.ticketLink} target="_blank" class="text-brand-red hover:underline ml-1">Buy Now</a>
-				</div>
+					<CTAButton
+						onclick="startClassCheckout()"
+						variant="primary"
+						size="lg"
+						bookingCta
+						disabled={!hasUpcomingEvents}
+					>
+						Book Now
+					</CTAButton>
+					<div class="mt-4 text-sm text-gray-400">
+						🎁 &nbsp;Gift Certificate Available <a href={classItem.data.ticketLink} target="_blank" class="text-brand-red hover:underline ml-1">Buy Now</a>
+					</div>
 				</div>
 			</section>
 		</div>
@@ -513,11 +505,11 @@ if (classItem.slug === 'redrawn') {
 							? `${classItem.data.earlyBird} early bird${earlyBirdDeadline}`
 							: classItem.data.price}
 					</p>
-					<p class="text-gray-400 text-xs truncate">
-						{nextSession
-							? `${nextSession.dateStr} · ${nextSession.timeStr}`
-							: 'Staff monitor throughout — step away anytime'}
-					</p>
+					{nextSession && (
+						<p class="text-gray-400 text-xs truncate">
+							{nextSession.dateStr} · {nextSession.timeStr}
+						</p>
+					)}
 				</div>
 				<CTAButton
 					onclick="startClassCheckout()"

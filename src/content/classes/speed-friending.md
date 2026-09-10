@@ -30,26 +30,13 @@ location:
   city: "Brooklyn, NY 11222"
   directions: "https://maps.app.goo.gl/uBkAyZiVJTNQCMdz5"
 includes:
-  - "All body painting supplies and tools provided"
+  - "All paint and supplies"
   - "Wine"
   - "Chocolate"
-  - "2 hours of structured mini activities in the form of body painting experience to form real connection with other attendees"
-  - "Mixer event right after the structured event to allow more connections to happen"
-  - "This is an event, not a class — no experience needed!"
+  - "2 hours of painting activities"
+  - "Mixer after"
 ---
 
-## About this event
+## Who it's for
 
-Everyone paints, and everyone gets painted. You meet by making something on each other's skin — not by pitching yourself in a two-minute chat.
-
-## Why is this better than a traditional singles' event?
-
-Typical singles' events puts pressure on you to be interesting by talking about yourself within few minutes. This is rarely effective, because in many cases, each person is concerned about looking and sounding good, instead of connecting with another person.
-
-In these situations, you normally end up asking and answering the same superficial questions that don't define who you really are (i.e. "what do you do?", "how old are you?" etc.), which rarely lead to building a real connection.
-
-Our approach focuses on creating a space for the attendees to play through the various mini activities involving body painting, sharing stories and lots of laughter. This brings out the real interesting person inside in a natural way. Our activities are designed to get the attendees to have fun and by doing so, bring out the attractive fun person inside.
-
-## Who is this for?
-
-Singles between 21 – 40. Although this event involves body painting, you don't have to be an artist to attend. Most attendees paint simple shapes or even use words. The focus of the activities is not on the finished paintings, but on the interaction during the painting activity.
+Singles 21–40. You don't need to be an artist.
