@@ -34,4 +34,4 @@ includes:
 
 ## Who it's for
 
-Singles 21–40. You don't need to be an artist.
+You don't need to be an artist.
