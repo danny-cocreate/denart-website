@@ -37,7 +37,7 @@ test('speed friending hero shows price, mechanic, and no 1:1 session CTA', async
   await expect(page.getByRole('heading', { name: /Not a two-minute pitch/i })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Who it[’']s for/i })).toBeVisible();
   await expect(page.getByText(/Singles 21[–-]40/i)).toBeVisible();
-  const earlyBird = hero.getByText(/\$39 early bird through 09\/11/i);
+  const earlyBird = hero.getByText(/\$39 early bird through 09\/16/i);
   await expect(earlyBird).toBeVisible();
   const earlyBirdBox = await earlyBird.boundingBox();
   expect(earlyBirdBox, 'Early-bird price should be in the hero').not.toBeNull();
