@@ -5,6 +5,8 @@
  * After creating or changing subevents in Pretix, redeploy the site
  * (push to main, or Actions → Deploy to Hostinger → Run workflow) so
  * class pages, the calendar, and the homepage pick up the new dates.
+ *
+ * Rebuild stamp: 2026-09-16 Speed Friending + UV Couples new nights.
  */
 
 import { isUpcomingPretixDate } from './pretix-events';
