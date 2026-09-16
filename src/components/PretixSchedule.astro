@@ -10,7 +10,8 @@ const { eventSlug = 'uc-class-couples-2', openCheckout = false } = Astro.props;
 
 // Fetch events for the specified slug (filtered at build time; client script re-filters stale dates)
 const events = await fetchSubeventsForSlug(eventSlug);
-const upcomingEvents = events.slice(0, 20);
+const MAX_VISIBLE_DATES = 10;
+const upcomingEvents = events.slice(0, MAX_VISIBLE_DATES);
 ---
 
 <div class="pretix-schedule" data-events={JSON.stringify(upcomingEvents)}>
