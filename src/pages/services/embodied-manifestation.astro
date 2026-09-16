@@ -44,7 +44,7 @@ const comparison = [
     journaling: 'Your own words',
     app: 'Templated',
     coach: 'Coach-led',
-    session: "Content-free — we don't pick the images; your mind does",
+    session: 'Content-free — your mind supplies the images',
   },
   {
     dimension: 'Marks a threshold',
@@ -64,8 +64,8 @@ const comparison = [
 
 const steps = [
   { title: 'Arrive & set intention', body: 'A short grounding and a vague, open description of the end state you want — no scripts, no imposed content.' },
-  { title: 'Breathwork + tapping', body: 'A calming exercise to settle the nervous system and open the door to trance.' },
-  { title: 'Induction', body: 'A gentle hypnotic induction into a deep, comfortable state. You stay aware and in control, and can pause or stop any time.' },
+  { title: 'Breathwork + tapping', body: 'Settle the nervous system and open the door to trance.' },
+  { title: 'Induction', body: 'A gentle hypnotic induction into a deep, comfortable state. You stay aware and can pause or stop any time.' },
   { title: 'Explore your magical place', body: 'You wander the reality where you already are who you want to be — Goddard\'s "feeling of the wish fulfilled," from the inside.' },
   { title: 'Re-emerge & share', body: 'You come back and put words or images to what you saw.' },
   { title: 'Body art', body: 'The artist paints that identity onto your body, sometimes back in light trance, so being painted itself becomes a kinesthetic anchor.' },
@@ -83,39 +83,39 @@ const included = [
 const faqs = [
   {
     question: 'What is Embodied Manifestation?',
-    answer: 'Embodied Manifestation is a guided experience combining hypnosis, future-self visualization, and body art, so you can vividly feel your desired identity and keep a physical anchor to hold that state. It turns mental manifestation into a felt, wearable experience.',
+    answer: 'Embodied Manifestation is a guided experience combining hypnosis, future-self visualization, and body art, so you can vividly feel your desired identity and keep a physical anchor to hold that state.',
   },
   {
     question: 'How is this different from a manifestation coach or app?',
-    answer: 'Coaches and apps keep manifestation in your head. The Wish-Fulfilled Session makes your future self vivid through guided trance and gives you a physical, photographic anchor, solving the two things people struggle with most: picturing it clearly and holding the feeling.',
+    answer: 'Coaches and apps keep manifestation in your head. This session makes your future self vivid through guided trance and gives you photographs to hold the feeling.',
   },
   {
     question: 'Do I need to be good at visualizing?',
-    answer: "No. That's the point of the guided trance, your subconscious produces the imagery for you, so you don't have to strain to \"picture\" anything on your own.",
+    answer: "No. That's the point of the guided trance: your subconscious produces the imagery, so you don't have to strain to \"picture\" anything on your own.",
   },
   {
     question: 'Will I stay in control? Is this mind control like stage hypnosis?',
-    answer: 'You stay fully aware and in control the entire time. This is nothing like the stage hypnosis or "mind control" you\'ve seen in movies, that\'s theater. Guided hypnosis is simply a focused, deeply relaxed state, the same "state akin to sleep" (SATS) Neville Goddard described. You can hear, respond, pause, or stop whenever you want, and you remember the whole experience afterward.',
+    answer: 'You stay aware and in control the entire time. This isn\'t stage hypnosis — that\'s theater. Guided hypnosis is a focused, deeply relaxed state, the same "state akin to sleep" (SATS) Neville Goddard described. You can pause or stop whenever you want, and you remember the whole experience.',
   },
   {
     question: 'Will you put thoughts in my head or make me do something I don\'t want to?',
-    answer: 'No. The session is content-free: the guide directs only the feeling or state to reach, never the images or the scene. Your own subconscious supplies everything you see, so nothing is placed in your mind and the vision is entirely yours. You can\'t be made to do, say, or reveal anything against your will, and you can open your eyes or pause at any point.',
+    answer: 'No. The session is content-free: the guide directs only the feeling to reach, never the scene. Your subconscious supplies the images. You can\'t be made to do or reveal anything against your will, and you can pause at any point.',
   },
   {
     question: 'Is it based on Neville Goddard?',
-    answer: 'Yes. The session is built on Goddard\'s principle of living in "the feeling of the wish fulfilled" and assuming the state of your desired identity, alongside Vadim Zeland\'s reality transurfing.',
+    answer: 'Yes. The session is built on Goddard\'s "feeling of the wish fulfilled" and assuming the state of your desired identity, alongside Vadim Zeland\'s reality transurfing.',
   },
   {
     question: 'What do I leave with?',
-    answer: 'You leave with photographs of your embodied future self, a visual anchor you can return to any time to re-access the feeling, plus the kinesthetic memory of the experience.',
+    answer: 'Photographs of your embodied future self — a visual anchor you can return to any time — plus the kinesthetic memory of the experience.',
   },
   {
     question: 'Do I have to be nude?',
-    answer: "Only as much as you're comfortable with. It's entirely your call. Full coverage tends to look best because clothing interrupts the flow of the painting, but you're welcome to keep underwear on, use pasties, or have areas covered with paint. Prefer to stay fully covered? We also offer a non-nude option. Every session is private and moves at your pace.",
+    answer: "Only as much as you're comfortable with. Full coverage tends to look best because clothing interrupts the paint, but you can keep underwear on, use pasties, or stay fully covered. Every session is private and moves at your pace.",
   },
   {
     question: 'What do I wear, and will I feel exposed?',
-    answer: "We agree on your comfort level before we begin, and the session is private and one-on-one (or a small group you choose), guided to keep you at ease the whole way through. Bring loose clothing to change into afterward and a hair tie. Most people find the being-painted part unexpectedly calming, even empowering.",
+    answer: 'We agree on coverage before we begin. The session is private and one-on-one. Bring loose clothing for afterward and a hair tie. Most people find being painted unexpectedly calming.',
   },
   {
     question: 'Is the body paint safe? How do I remove it?',
@@ -123,7 +123,7 @@ const faqs = [
   },
   {
     question: 'How long is a session, and where is it?',
-    answer: 'Sessions run about 2–3 hours at the DenArt studio, 99 Kingsland Ave #102, Brooklyn, NY 11222. Private sessions allow you to go deepest.',
+    answer: 'About 2–3 hours at the DenArt studio, 99 Kingsland Ave #102, Brooklyn, NY 11222.',
   },
   {
     question: 'How do I prepare?',
@@ -182,13 +182,12 @@ const serviceSchema = {
         Manifestation that finally feels real, and sticks.
       </h1>
       <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-8 leading-relaxed">
-        You believe in it and put in the reps, but it stays in your head and fades by morning. The Wish-Fulfilled Session makes your future identity vivid enough to feel in trance, then sends you home with photos that bring the feeling back in seconds.
+        You believe in it, but it stays in your head and fades by morning. The Wish-Fulfilled Session makes the identity vivid in trance, then sends you home with photos that bring the feeling back.
       </p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
         <CTAButton href={bookingHref} variant="primary" showArrow={true}>Request a session</CTAButton>
         <CTAButton href="#how-it-works" variant="secondary" showArrow={false}>How it works ↓</CTAButton>
       </div>
-      <p class="text-sm text-white/70 mt-4">Private, one-on-one. You stay in control, and coverage is your call.</p>
     </div>
   </section>
 
@@ -196,7 +195,7 @@ const serviceSchema = {
   <section class="bg-deepest py-14 md:py-16 border-b border-zinc-800">
     <div class="max-w-3xl mx-auto px-6">
       <p class="text-lg md:text-xl text-sand leading-relaxed">
-        <strong class="text-sand">{canonicalDefinition}</strong> The Wish-Fulfilled Session is DenArt's version in Brooklyn. A guide takes you into the feeling; an artist paints the identity that arises. You stay aware and in control — nothing is put in your mind.
+        <strong class="text-sand">{canonicalDefinition}</strong> The Wish-Fulfilled Session is DenArt's version in Brooklyn. A guide takes you into the feeling; an artist paints the identity that arises.
       </p>
     </div>
   </section>
@@ -204,18 +203,17 @@ const serviceSchema = {
   <!-- The wedge -->
   <section class="bg-void py-16 md:py-20">
     <div class="max-w-4xl mx-auto px-6">
-      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-10 text-center">Manifestation fails for two reasons. This fixes both.</h2>
-      <p class="text-sand-muted text-center max-w-2xl mx-auto mb-12">Manifestation coaches, apps, and journaling all run into the same two walls:</p>
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-12 text-center">Manifestation fails for two reasons. This fixes both.</h2>
       <div class="grid md:grid-cols-2 gap-8">
         <div class="bg-void-light border border-zinc-800 rounded-2xl p-8">
           <p class="text-brand-red text-sm uppercase tracking-widest mb-3">Wall 1</p>
           <h3 class="text-xl font-display text-sand mb-3">You can't picture it clearly.</h3>
-          <p class="text-sand-muted leading-relaxed">Every guide eventually admits it: "you don't need crystal-clear visuals, a soft feeling is fine." That's an apology for a real problem. In a guided trance, your subconscious speaks in images, so your future self becomes vivid, multi-sensory, and <em>felt</em>, not vaguely imagined.</p>
+          <p class="text-sand-muted leading-relaxed">Most methods ask you to picture it alone. In guided trance, your subconscious speaks in images, so your future self is vivid and <em>felt</em>, not vaguely imagined.</p>
         </div>
         <div class="bg-void-light border border-zinc-800 rounded-2xl p-8">
           <p class="text-brand-red text-sm uppercase tracking-widest mb-3">Wall 2</p>
           <h3 class="text-xl font-display text-sand mb-3">You can't hold the feeling.</h3>
-          <p class="text-sand-muted leading-relaxed">The state you live in is the one that wins, but nobody gives you a way to stay there. Your session ends with photographs of the new you. That's not a keepsake; it's a <strong class="text-sand">re-access trigger</strong>, a physical anchor that brings the feeling back in seconds, any morning you need it.</p>
+          <p class="text-sand-muted leading-relaxed">The state you occupy is the one that wins, but it fades. You leave with photographs of the new you: a <strong class="text-sand">re-access trigger</strong> that brings the feeling back in seconds.</p>
         </div>
       </div>
       <blockquote class="mt-12 border-l-4 border-brand-red bg-void-light/50 py-4 px-6 rounded-r-lg italic text-lg text-sand text-center md:text-left">
@@ -271,7 +269,6 @@ const serviceSchema = {
           </div>
         ))}
       </div>
-      <p class="text-sand-muted mt-8 max-w-3xl">The difference isn't intensity of effort. It's that Embodied Manifestation solves the two things every other method leaves to you: <em>seeing it clearly</em> and <em>holding the feeling</em>.</p>
     </div>
   </section>
 
@@ -293,9 +290,9 @@ const serviceSchema = {
         <div class="bg-void-light border border-zinc-800 rounded-2xl p-8 text-center sticky top-24">
           <p class="text-xs uppercase tracking-widest text-sand-muted mb-2">Price</p>
           <p class="text-4xl font-display font-bold text-sand mb-1">$499</p>
-          <p class="text-sand-muted text-sm mb-6">Private sessions go deepest.<br/>Multi-session packages available.</p>
+          <p class="text-sand-muted text-sm mb-6">2–3 hours in Brooklyn.<br/>Multi-session packages available.</p>
           <CTAButton href={bookingHref} variant="primary" showArrow={true}>Book your session</CTAButton>
-          <p class="text-sand-muted text-sm mt-4">Questions? <a href="/contact" class="text-brand-red hover:underline">Contact us</a> for private or multi-session options.</p>
+          <p class="text-sand-muted text-sm mt-4">Questions? <a href="/contact" class="text-brand-red hover:underline">Contact us</a>.</p>
         </div>
       </div>
     </div>
@@ -322,21 +319,8 @@ const serviceSchema = {
   <!-- The thinking behind it -->
   <section class="bg-void py-16 md:py-20">
     <div class="max-w-3xl mx-auto px-6">
-      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-10 text-center">Where this comes from</h2>
-      <div class="space-y-8">
-        <div>
-          <h3 class="text-xl font-display text-sand mb-2">Neville Goddard, living in the end.</h3>
-          <p class="text-sand-muted leading-relaxed">Manifestation is occupying the state of already being that person. The session lets you rehearse it instead of straining to imagine it.</p>
-        </div>
-        <div>
-          <h3 class="text-xl font-display text-sand mb-2">Vadim Zeland, tuning to your version of reality.</h3>
-          <p class="text-sand-muted leading-relaxed">You shift reality by shifting who you're being. The body art makes that shift tangible.</p>
-        </div>
-        <div>
-          <h3 class="text-xl font-display text-sand mb-2">Why the body?</h3>
-          <p class="text-sand-muted leading-relaxed">The subconscious speaks in images, and novel physical experience sticks. Paint is the kinesthetic anchor; photos are the visual one.</p>
-        </div>
-      </div>
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-6 text-center">Where this comes from</h2>
+      <p class="text-sand-muted leading-relaxed text-center">Neville Goddard's living in the end, and Vadim Zeland's reality transurfing: occupy the state of already being that person. Paint makes the shift tangible; photos let you return to it.</p>
     </div>
   </section>
 
@@ -344,7 +328,6 @@ const serviceSchema = {
   <section class="bg-deepest py-16 md:py-20 border-y border-zinc-800">
     <div class="max-w-3xl mx-auto px-6">
       <h2 class="text-3xl md:text-4xl font-display font-bold text-sand mb-8 text-center">Who it's for</h2>
-      <p class="text-sand-muted mb-6">The Wish-Fulfilled Session is for you if you're:</p>
       <ul class="space-y-4 mb-8">
         <li class="text-sand-muted"><strong class="text-sand">Standing at a threshold</strong>, a breakup or divorce, a milestone birthday, a new career, a move, entering motherhood, or simply "stuck" and ready for the next chapter.</li>
         <li class="text-sand-muted"><strong class="text-sand">Already exploring manifestation</strong>, and frustrated that mental-only methods haven't stuck.</li>
