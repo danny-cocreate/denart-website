@@ -13,6 +13,14 @@ test('uv couples Book Now opens checkout modal when upcoming dates exist', async
   await expect(page.locator('#checkout-widget-modal')).toBeVisible();
 });
 
+test('class schedule shows at most 10 upcoming dates and a view-all link', async ({ page }) => {
+  await gotoClassAndWaitForBookingState(page, '/classes/uv-body-paint-couples');
+
+  const slots = page.locator('.pretix-schedule [data-pretix-slot]:not([hidden])');
+  expect(await slots.count()).toBeLessThanOrEqual(10);
+  await expect(page.locator('.pretix-schedule .pretix-schedule-view-all')).toBeVisible();
+});
+
 test('checkout modal iframe targets same-origin checkout widget when booking is available', async ({ page }) => {
   await gotoClassAndWaitForBookingState(page, '/classes/uv-body-paint-couples');
   await expectBookNowEnabled(page);
