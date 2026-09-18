@@ -6,7 +6,7 @@ heroImage: "/images/classes/speed-friending/avif/hero.avif"
 category: "singles"
 price: "$69"
 earlyBird: "$39"
-earlyBirdUntil: "09/16"
+earlyBirdUntil: "11/11"
 duration: "2 hours"
 order: 2
 showPrivateNote: false
