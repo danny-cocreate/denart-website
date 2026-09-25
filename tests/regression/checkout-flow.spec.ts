@@ -21,6 +21,15 @@ test('class schedule shows at most 10 upcoming dates and a view-all link', async
   await expect(page.locator('.pretix-schedule .pretix-schedule-view-all')).toBeVisible();
 });
 
+test('uv couples schedule slots show start time only', async ({ page }) => {
+  await gotoClassAndWaitForBookingState(page, '/classes/uv-body-paint-couples');
+
+  const slots = page.locator('.pretix-schedule [data-pretix-slot]:not([hidden])');
+  await expect(slots.first()).toBeVisible();
+  await expect(slots.first()).toContainText('8:30 pm');
+  await expect(slots.first()).not.toContainText('8:30 pm -');
+});
+
 test('checkout modal iframe targets same-origin checkout widget when booking is available', async ({ page }) => {
   await gotoClassAndWaitForBookingState(page, '/classes/uv-body-paint-couples');
   await expectBookNowEnabled(page);

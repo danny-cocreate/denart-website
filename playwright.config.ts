@@ -18,7 +18,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /checkout-flow\.spec\.ts/,
+      testIgnore: /checkout-flow\.spec\.ts|calendar-listing\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL: 'http://127.0.0.1:4321',
@@ -38,6 +38,17 @@ export default defineConfig({
         video: 'retain-on-failure',
       },
     },
+    {
+      name: 'chromium-calendar',
+      testMatch: /calendar-listing\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://127.0.0.1:4323',
+        trace: 'on-first-retry',
+        screenshot: 'only-on-failure',
+        video: 'retain-on-failure',
+      },
+    },
   ],
   webServer: [
     {
@@ -49,6 +60,12 @@ export default defineConfig({
       command:
         'E2E_TEST_MODE=true E2E_PRETIX_UPCOMING_SLUGS=uc-class-couples-2 npm run dev -- --host 127.0.0.1 --port 4322',
       url: 'http://127.0.0.1:4322',
+      ...webServerDefaults,
+    },
+    {
+      command:
+        'E2E_TEST_MODE=true E2E_PRETIX_UPCOMING_SLUGS=uc-class-couples-2,speed-friending npm run dev -- --host 127.0.0.1 --port 4323',
+      url: 'http://127.0.0.1:4323',
       ...webServerDefaults,
     },
   ],
