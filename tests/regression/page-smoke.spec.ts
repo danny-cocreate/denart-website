@@ -11,6 +11,7 @@ const CORE_PAGE_PATHS = [
   '/gallery/events',
   '/classes',
   '/classes/speed-friending',
+  '/calendar',
   '/contact',
   '/reviews',
 ] as const;

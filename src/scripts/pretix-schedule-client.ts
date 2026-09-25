@@ -30,14 +30,24 @@ function applyCalendarVisibility(wrapper: HTMLElement): void {
   const articles = wrapper.querySelectorAll<HTMLElement>('[data-pretix-day]');
 
   articles.forEach((article) => {
-    const slots = article.querySelectorAll<HTMLElement>('[data-pretix-slot]');
+    const groups = article.querySelectorAll<HTMLElement>('[data-pretix-event-group]');
+    const slotRoots = groups.length > 0 ? Array.from(groups) : [article];
     let visibleCount = 0;
 
-    slots.forEach((slot) => {
-      const rawDate = slot.dataset.rawDate;
-      const show = rawDate ? isUpcomingPretixDate(rawDate) : false;
-      slot.hidden = !show;
-      if (show) visibleCount += 1;
+    slotRoots.forEach((root) => {
+      let rootVisible = 0;
+      root.querySelectorAll<HTMLElement>('[data-pretix-slot]').forEach((slot) => {
+        const rawDate = slot.dataset.rawDate;
+        const show = rawDate ? isUpcomingPretixDate(rawDate) : false;
+        slot.hidden = !show;
+        if (show) {
+          rootVisible += 1;
+          visibleCount += 1;
+        }
+      });
+      if (root !== article) {
+        root.hidden = rootVisible === 0;
+      }
     });
 
     article.hidden = visibleCount === 0;

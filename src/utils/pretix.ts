@@ -63,46 +63,7 @@ export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]
       .filter((event: any) => {
         return event.active && isUpcomingPretixDate(event.date_from, now);
       })
-      .map((event: any) => {
-        const date = new Date(event.date_from);
-        const endDate = event.date_to ? new Date(event.date_to) : null;
-        
-        const tz = 'America/New_York';
-        
-        // Format: "Fri, Feb 13"
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: tz });
-        const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz });
-        const fullDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: tz });
-        
-        const startTime = date.toLocaleTimeString('en-US', { 
-          hour: 'numeric', 
-          minute: '2-digit',
-          hour12: true,
-          timeZone: tz 
-        }).toLowerCase();
-        
-        let timeStr = startTime;
-        if (endDate) {
-          const endTime = endDate.toLocaleTimeString('en-US', { 
-            hour: 'numeric', 
-            minute: '2-digit',
-            hour12: true,
-            timeZone: tz 
-          }).toLowerCase();
-          timeStr = `${startTime} - ${endTime}`;
-        }
-        
-        return {
-          id: event.id,
-          slug,
-          dateStr: `${dayName}, ${monthDay}`,
-          fullDate,
-          timeStr,
-          rawDate: date.toISOString(),
-          url: `https://tickets.denartny.com/denart-studio/${slug}/?subevent=${event.id}`,
-          pageUrl: SLUG_TO_PAGE[slug] || '/classes/',
-        };
-      });
+      .map((event: any) => formatPretixEvent(slug, event.id, event.date_from, event.date_to));
   } catch (error) {
     console.error(`Failed to fetch subevents for ${slug}:`, error);
     return fetchSubeventsFromCheckout(slug);
@@ -130,10 +91,9 @@ function formatPretixEvent(
   slug: string,
   id: number | string,
   dateFrom: string,
-  dateTo?: string | null,
+  _dateTo?: string | null,
 ): PretixEvent {
   const date = new Date(dateFrom);
-  const endDate = dateTo ? new Date(dateTo) : null;
   const tz = 'America/New_York';
   const dayName = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: tz });
   const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz });
@@ -144,7 +104,9 @@ function formatPretixEvent(
     year: 'numeric',
     timeZone: tz,
   });
-  const startTime = date
+  // Start time only — some Pretix nights include a 2-hour date_to and used
+  // to render "8:30 pm - 10:30 pm" next to slots that only show "8:30 pm".
+  const timeStr = date
     .toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
@@ -152,18 +114,6 @@ function formatPretixEvent(
       timeZone: tz,
     })
     .toLowerCase();
-  let timeStr = startTime;
-  if (endDate && endDate.getTime() !== date.getTime()) {
-    const endTime = endDate
-      .toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-        timeZone: tz,
-      })
-      .toLowerCase();
-    timeStr = `${startTime} - ${endTime}`;
-  }
   return {
     id: Number(id),
     slug,
@@ -204,7 +154,11 @@ async function fetchSubeventsFromCheckout(slug: string): Promise<PretixEvent[]> 
 }
 
 const E2E_MOCK_SUBEVENT_ID = 90001;
-const E2E_MOCK_RAW_DATE = '2030-06-15T22:00:00.000Z';
+const E2E_MOCK_RAW_DATES: Record<string, string> = {
+  'speed-friending': '2030-06-15T22:00:00.000Z',
+  'uc-class-couples-2': '2030-06-16T00:30:00.000Z',
+};
+const E2E_MOCK_DEFAULT_RAW_DATE = '2030-06-15T22:00:00.000Z';
 
 function isE2ETestMode(): boolean {
   return process.env.E2E_TEST_MODE === 'true';
@@ -217,38 +171,9 @@ function getE2EUpcomingSlugs(): Set<string> {
 
 /** Stable upcoming subevent for Playwright when slug is listed in E2E_PRETIX_UPCOMING_SLUGS. */
 function getE2EMockSubevents(slug: string): PretixEvent[] {
-  const date = new Date(E2E_MOCK_RAW_DATE);
-  const tz = 'America/New_York';
-  const dayName = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: tz });
-  const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz });
-  const fullDate = date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: tz,
-  });
-  const timeStr = date
-    .toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-      timeZone: tz,
-    })
-    .toLowerCase();
-
-  return [
-    {
-      id: E2E_MOCK_SUBEVENT_ID,
-      slug,
-      dateStr: `${dayName}, ${monthDay}`,
-      fullDate,
-      timeStr,
-      rawDate: E2E_MOCK_RAW_DATE,
-      url: `https://tickets.denartny.com/denart-studio/${slug}/?subevent=${E2E_MOCK_SUBEVENT_ID}`,
-      pageUrl: SLUG_TO_PAGE[slug] || '/classes/',
-    },
-  ];
+  const start = E2E_MOCK_RAW_DATES[slug] || E2E_MOCK_DEFAULT_RAW_DATE;
+  const end = new Date(new Date(start).getTime() + 2 * 60 * 60 * 1000).toISOString();
+  return [formatPretixEvent(slug, E2E_MOCK_SUBEVENT_ID, start, end)];
 }
 
 export interface PretixEvent {
