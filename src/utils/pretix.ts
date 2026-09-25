@@ -6,7 +6,7 @@
  * (push to main, or Actions → Deploy to Hostinger → Run workflow) so
  * class pages, the calendar, and the homepage pick up the new dates.
  *
- * Rebuild stamp: 2026-09-25 drop Sep 25 6pm UV; add Nov 13 UV nights.
+ * Rebuild stamp: 2026-09-25b Speed Friending Nov 13 6pm; drop Nov 13 6pm UV.
  */
 
 import { isUpcomingPretixDate } from './pretix-events';
