@@ -16,8 +16,8 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
   <div id="checkout-modal-backdrop" class="absolute inset-0 bg-black/90 backdrop-blur-sm transition-opacity"></div>
   
   <!-- Modal Panel -->
-  <div class="relative min-h-screen md:min-h-0 md:flex md:items-center md:justify-center p-4">
-    <div class="relative w-full max-w-[500px] h-[90vh] max-h-[800px] bg-[#000] rounded-[30px] overflow-hidden border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
+  <div class="relative h-[100dvh] md:h-auto md:min-h-screen md:flex md:items-center md:justify-center md:p-4">
+    <div id="checkout-widget-panel" class="relative w-full h-full md:h-[90vh] md:max-w-[500px] md:max-h-[800px] bg-[#000] md:rounded-[30px] overflow-hidden md:border md:border-white/10 md:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
       <!-- Iframe -->
       <iframe 
         id="checkout-widget-iframe"
@@ -54,6 +54,20 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
     window.openCheckoutWidgetModal(subeventId);
   };
 
+  var checkoutPanel = document.getElementById('checkout-widget-panel');
+  function fitCheckoutPanelToViewport() {
+    if (!checkoutPanel) return;
+    // Full-screen sheet only below 768px; desktop keeps the centered panel.
+    if (window.matchMedia('(max-width: 767px)').matches && window.visualViewport) {
+      checkoutPanel.style.height = window.visualViewport.height + 'px';
+    } else {
+      checkoutPanel.style.height = '';
+    }
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', fitCheckoutPanelToViewport);
+  }
+
   window.openCheckoutWidgetModal = function(subeventId) {
     if (document.documentElement.dataset.bookingAvailable === 'false') {
       return;
@@ -65,6 +79,7 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
     if (modal) {
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
+      fitCheckoutPanelToViewport();
 
       if (typeof window.trackEvent === 'function') {
         window.trackEvent('checkout_widget_open', {
