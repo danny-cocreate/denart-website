@@ -41,7 +41,7 @@ const faqSchema = {
 					</span>
 				</summary>
 				<div class="px-5 md:px-6 pb-5 md:pb-6 text-text-secondary">
-					<p class="leading-relaxed">{item.answer}</p>
+					<p class="leading-relaxed" set:html={item.answer} />
 				</div>
 			</details>
 		))}
