@@ -126,6 +126,26 @@ const couplesFAQs = [
   {
     question: "Do I have to be nude for this class?",
     answer: "No, nudity is not required for this class. Many students prefer to be topless for the class. However, if you don't feel comfortable being topless, you can get the painting on your back and you can cover your front torso."
+  },
+  {
+    question: "Do we share the room with other couples?",
+    answer: "Yes. The class runs with 2 to 10 couples, and each couple has its own station and table of paints. In practice everyone is focused on their own painting, not watching yours."
+  },
+  {
+    question: "What should we wear?",
+    answer: "Wear clothes you don't mind getting paint on. Aprons are provided, but UV paint can reach sleeves and hems."
+  },
+  {
+    question: "Will the paint wash off?",
+    answer: "Yes. It washes off with soap and water. Towels and supplies are provided at the end of class."
+  },
+  {
+    question: "Can we bring wine?",
+    answer: "Yes, feel free to bring a bottle to share with your partner."
+  },
+  {
+    question: "What is the cancellation policy?",
+    answer: "Please see our <a href=\"/cancellation-and-reschedule-policy/\">Cancellation and Reschedule Policy</a> page for the full terms."
   }
 ];
 
@@ -265,6 +285,37 @@ if (classItem.slug === 'redrawn') {
 			)}
 		</div>
 	</section>
+
+	{classItem.slug === 'uv-body-paint-couples' && (
+	<!-- Your evening, step by step -->
+	<section class="bg-void-light border-y border-zinc-800 py-8 md:py-12">
+		<div class="max-w-3xl mx-auto px-6">
+			<h2 class="text-2xl md:text-3xl font-bold text-white mb-6 text-center">Your evening, step by step</h2>
+			<ol class="space-y-4">
+				<li class="flex items-start gap-4">
+					<span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red font-bold flex items-center justify-center">1</span>
+					<p class="text-gray-300 pt-1"><strong class="text-white font-semibold">Arrive and settle in.</strong> Check in at CoCreate Space and claim your station with your partner. Aprons are provided.</p>
+				</li>
+				<li class="flex items-start gap-4">
+					<span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red font-bold flex items-center justify-center">2</span>
+					<p class="text-gray-300 pt-1"><strong class="text-white font-semibold">Watch a quick demo.</strong> A professional artist shows the technique so you start with confidence. No art background needed.</p>
+				</li>
+				<li class="flex items-start gap-4">
+					<span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red font-bold flex items-center justify-center">3</span>
+					<p class="text-gray-300 pt-1"><strong class="text-white font-semibold">Paint each other.</strong> This is the main event: most of the two hours is you and your partner painting each other's bodies in a dark studio under black lights. The instructor circles to help with ideas and technique.</p>
+				</li>
+				<li class="flex items-start gap-4">
+					<span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red font-bold flex items-center justify-center">4</span>
+					<p class="text-gray-300 pt-1"><strong class="text-white font-semibold">Photos under the lights.</strong> Once you are done, photograph your glowing art while it is fresh.</p>
+				</li>
+				<li class="flex items-start gap-4">
+					<span class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-red/20 text-brand-red font-bold flex items-center justify-center">5</span>
+					<p class="text-gray-300 pt-1"><strong class="text-white font-semibold">Wipe down and head out.</strong> Towels and supplies are provided so you leave clean.</p>
+				</li>
+			</ol>
+		</div>
+	</section>
+	)}
 
 	{includedItems.length > 0 && (
 		<section class="bg-void-light border-y border-zinc-800 py-8 md:py-12">
@@ -438,6 +489,9 @@ if (classItem.slug === 'redrawn') {
 						</>
 					) : (
 						<>
+							{classItem.slug === 'uv-body-paint-couples' && (
+								<p class="text-brand-red font-semibold mb-4">Rated 4.8 out of 5 across 17 reviews on Fever</p>
+							)}
 							<blockquote class="font-display text-xl md:text-2xl text-sand leading-relaxed mb-8 italic">
 								"This is definitely an intimate activity, excellent for couples, but make sure you are comfortable with other couples in the room! There was a table set with plenty of glowing paints and brushes for our creativity and the instructor offered to help with ideas."
 							</blockquote>
