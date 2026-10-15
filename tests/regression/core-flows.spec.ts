@@ -64,13 +64,13 @@ test('wish-fulfilled page copy and booking funnel', async ({ page }) => {
   await page.goto('/services/embodied-manifestation');
 
   await expect(
-    page.getByRole('heading', { level: 1, name: /Manifestation that finally feels real/i }),
+    page.getByRole('heading', { level: 1, name: /Unblock what's holding you back/i }),
   ).toBeVisible();
   await expect(page.getByRole('link', { name: /Request a session/i }).first()).toBeVisible();
   await expect(page.getByText(/coverage is your call/i).first()).toBeVisible();
   await expect(page.getByText(/This isn't therapy or medical care/i)).toBeVisible();
   await expect(page.getByText(/sit alongside professional support/i)).toBeVisible();
-  await expect(page.getByRole('heading', { name: /Mark this chapter/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Walk in stuck/i })).toBeVisible();
   await expect(page.getByText(/Become her/i)).toHaveCount(0);
   await expect(page.getByText(/Probably not for you if/i)).toHaveCount(0);
 
