@@ -276,22 +276,27 @@ function townMark(state, city) {
     <title>${esc(city.name)} · ${esc(FACTIONS[city.faction].name)} · ${city.soldiers.toLocaleString()} troops</title>
     <circle class="hit" r="22"/>
     ${selected ? `<circle class="ring" r="20">${pulse}</circle>` : ""}
-    ${threatened ? `<circle class="threat-ring" r="17"/>` : ""}
+    ${threatened ? `<circle class="threat-ring" r="18"/><circle class="threat-ring late" r="18"/>` : ""}
     ${ally ? `<circle class="ally-mark" r="22"/>` : ""}
     ${emperor ? `<circle class="emperor-glow" r="15"/>` : ""}
     <ellipse class="shade" cx="0" cy="9.2" rx="15" ry="2.8"/>
     <path class="keep" d="M-12,8 L-12,-1 L-9,-1 L-9,-5.2 L-5,-5.2 L-5,-1 L-1,-1 L-1,-5.2 L3,-5.2 L3,-1 L7,-1 L7,-5.2 L11,-5.2 L11,-1 L12,-1 L12,8 Z"/>
     <polygon class="roof" points="-6.2,-5 0,-14 6.2,-5" fill="${color}"/>
+    <line class="ridge" x1="-5.6" y1="-5.4" x2="0" y2="-13.2"/>
+    <line class="ridge" x1="5.6" y1="-5.4" x2="0" y2="-13.2"/>
+    <rect class="slit" x="-7.6" y="0.4" width="1.4" height="3.5"/>
+    <rect class="slit" x="6.1" y="0.4" width="1.4" height="3.5"/>
     <rect class="gate" x="-2.1" y="2.2" width="4.2" height="5.8"/>
+    ${city.soldiers >= 1800 ? `<path class="smoke" style="animation-delay:-${delay}s" d="M-9,-7 q-4,-9 1,-18"/>` : ""}
     <g class="banner-flag">
-      <line x1="13" y1="1" x2="13" y2="-18"/>
-      <g transform="translate(13 -18)">
+      <line x1="13" y1="2" x2="13" y2="-21"/>
+      <g transform="translate(13 -21)">
         <g class="cloth" style="animation-delay:-${delay}s">
-          <path d="M0,0 h10.5 l-2.3,3.3 2.3,3.3 h-10.5 z" fill="${color}"/>
+          <path d="M0,0 h15 l-3.1,4.6 3.1,4.6 H0 z" fill="${color}" stroke="rgba(255,248,236,0.8)" stroke-width="0.6"/>
         </g>
       </g>
     </g>
-    ${city.soldiers >= 4500 ? `<circle class="ember" cx="-15" cy="6" r="1.6"/>` : ""}
+    ${city.soldiers >= 4500 ? `<circle class="ember" cx="-15" cy="6" r="2.2"/>` : ""}
     ${job ? `<g class="job" transform="translate(-16 1)">${job}</g>` : ""}
     <text class="garrison" y="20">${men}</text>
     ${emperor ? `<text class="emperor-mark" y="-22">帝</text>` : ""}
@@ -347,39 +352,71 @@ function drift(motion, dur, values) {
   return `<animateTransform attributeName="transform" type="translate" values="${values}" dur="${dur}" repeatCount="indefinite"/>`;
 }
 
+function birdMark(x, y, i, motion) {
+  const glide = 90 + i * 28;
+  const lift = 16 + i * 6;
+  return `<g class="bird" transform="translate(${x} ${y})">
+    <g class="bird-flight">
+      ${drift(motion, `${6.5 + i}s`, `0,0; ${glide},${-lift}; 0,0`)}
+      <g class="wing left"><path d="M0,1 C-12,-8 -22,-12 -32,-3"/></g>
+      <g class="wing right"><path d="M0,1 C12,-8 22,-12 32,-3"/></g>
+    </g>
+  </g>`;
+}
+
 function weatherLayer(state) {
   const season = seasonName(state.month);
   const motion = motionOk();
   const clouds = [
-    [820, 70, 0],
-    [880, 150, 1],
-    [760, 560, 2],
-    [120, 48, 3],
-  ].map(([x, y, i]) => `<g class="cloud">
-      ${drift(motion, `${34 + i * 6}s`, "0,0; 26,-6; 0,0")}
-      <ellipse cx="${x}" cy="${y}" rx="22" ry="6"/>
-      <ellipse cx="${x + 16}" cy="${y + 2}" rx="14" ry="5"/>
+    [150, 52, 70, -10, 0],
+    [470, 36, 86, -14, 1],
+    [860, 78, -64, 12, 2],
+    [900, 430, -48, -10, 3],
+  ].map(([x, y, dx, dy, i]) => `<g class="cloud">
+      ${drift(motion, `${12 + i * 2}s`, `0,0; ${dx},${dy}; 0,0`)}
+      <ellipse cx="${x}" cy="${y}" rx="36" ry="11"/>
+      <ellipse cx="${x + 24}" cy="${y - 4}" rx="24" ry="9"/>
+      <ellipse cx="${x - 20}" cy="${y + 3}" rx="16" ry="7"/>
     </g>`).join("");
   let fall = "";
   if (season === "winter") {
-    const flakes = [[140, 40], [260, 90], [400, 30], [560, 70], [700, 24], [840, 110], [180, 220], [640, 180], [300, 360], [760, 320], [120, 480], [500, 440], [860, 500], [240, 600], [680, 640], [420, 200]];
-    fall = flakes.map(([x, y], i) => `<circle class="flake" cx="${x}" cy="${y}" r="${i % 3 === 0 ? 1.8 : 1.15}">
-      ${motion ? `<animate attributeName="cy" values="${y - 16};${y + 70}" dur="${6 + (i % 4)}s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.9;0" dur="${6 + (i % 4)}s" repeatCount="indefinite"/>` : ""}
+    const flakes = [[140, 40], [260, 90], [400, 30], [560, 70], [700, 24], [840, 110], [180, 220], [640, 180], [300, 360], [760, 320], [120, 480], [500, 440], [860, 500], [240, 600], [680, 640], [420, 200], [90, 150], [510, 120], [330, 520], [910, 260]];
+    fall = flakes.map(([x, y], i) => `<circle class="flake" cx="${x}" cy="${y}" r="${i % 3 === 0 ? 2.6 : 1.7}">
+      ${motion ? `<animate attributeName="cy" values="${y - 20};${y + 130}" dur="${3.2 + (i % 4) * 0.45}s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.95;0" dur="${3.2 + (i % 4) * 0.45}s" repeatCount="indefinite"/>` : ""}
     </circle>`).join("");
   } else if (season === "autumn") {
-    const leaves = [[200, 80], [360, 140], [520, 60], [690, 160], [180, 300], [470, 260], [740, 340], [300, 480], [620, 520], [150, 600]];
-    fall = leaves.map(([x, y], i) => `<ellipse class="leaf" cx="${x}" cy="${y}" rx="3.2" ry="1.5">
-      ${motion ? `<animate attributeName="cy" values="${y};${y + 56}" dur="${8 + (i % 3)}s" repeatCount="indefinite"/>` : ""}
+    const leaves = [[200, 80], [360, 140], [520, 60], [690, 160], [180, 300], [470, 260], [740, 340], [300, 480], [620, 520], [150, 600], [820, 200], [90, 240]];
+    fall = leaves.map(([x, y], i) => `<ellipse class="leaf" cx="${x}" cy="${y}" rx="5.2" ry="2.2" transform="rotate(${i * 28} ${x} ${y})">
+      ${motion ? `<animate attributeName="cy" values="${y};${y + 90}" dur="${4.5 + (i % 3)}s" repeatCount="indefinite"/>` : ""}
     </ellipse>`).join("");
   } else if (season === "spring") {
-    fall = [[180, 90], [460, 50], [720, 120]].map(([x, y], i) => `<g class="bird" transform="translate(${x} ${y})">
-      ${drift(motion, `${11 + i * 3}s`, `${x},${y}; ${x + 90},${y - 12}; ${x},${y}`)}
-      <path fill="none" stroke="#3a2a1c" stroke-width="1.15" stroke-linecap="round" d="M0,0 l6,-3 l6,3"/>
-    </g>`).join("");
+    fall = [[150, 78, 0], [400, 42, 1], [660, 108, 2]].map(([x, y, i]) => birdMark(x, y, i, motion)).join("");
   } else if (season === "summer") {
-    fall = `<g class="sun"><circle cx="868" cy="46" r="16"/>${motion ? `<animate attributeName="opacity" values="0.72;1;0.72" dur="4.5s" repeatCount="indefinite"/>` : ""}</g>`;
+    const rays = [0, 45, 90, 135, 180, 225, 270, 315].map((a) => `<line transform="rotate(${a})" x1="0" y1="-22" x2="0" y2="-32"/>`).join("");
+    fall = `<g class="sun" transform="translate(868 48)">
+      <g class="rays">${motion ? `<animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="18s" repeatCount="indefinite"/>` : ""}${rays}</g>
+      <circle r="18">${motion ? `<animate attributeName="opacity" values="0.78;1;0.78" dur="2.8s" repeatCount="indefinite"/>` : ""}</circle>
+    </g>`;
   }
   return `<g class="sky" aria-hidden="true">${clouds}${fall}</g>`;
+}
+
+function seaWaves() {
+  const waves = [
+    [800, 150, 78],
+    [860, 196, 70],
+    [905, 250, 36],
+    [840, 318, 96],
+    [868, 372, 72],
+    [850, 428, 88],
+    [888, 486, 52],
+    [820, 128, 54],
+  ];
+  return `<g class="waves" aria-hidden="true">${waves.map(([x, y, w], i) => {
+    const half = (w / 2).toFixed(1);
+    const q = (w / 4).toFixed(1);
+    return `<path class="wave" style="animation-delay:-${(i * 0.28).toFixed(2)}s" d="M${x},${y} q${q},-6 ${half},0 t${half},0"/>`;
+  }).join("")}</g>`;
 }
 
 function mapSvg(state) {
@@ -433,6 +470,7 @@ function mapSvg(state) {
     </defs>
     <rect class="sea" width="${MAP_W}" height="${MAP_H}"/>
     <path class="grat" d="${GRATICULE}"/>
+    ${seaWaves()}
     <path class="land" fill="url(#landShade)" fill-rule="evenodd" d="${LAND}"/>
     <path class="season-wash" fill="${seasonWash(state.month)}" fill-rule="evenodd" d="${LAND}"/>
     <path class="grain" filter="url(#grain)" fill-rule="evenodd" d="${LAND}"/>

@@ -76,6 +76,8 @@ img { max-width: 100%; }
   gap: 14px;
 }
 .lord-card {
+  position: relative;
+  overflow: hidden;
   display: grid;
   grid-template-columns: 86px 1fr;
   gap: 10px;
@@ -85,6 +87,18 @@ img { max-width: 100%; }
   border: 1px solid rgba(230, 211, 161, 0.28);
   color: var(--paper-2);
 }
+.lord-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 36%, rgba(255, 244, 220, 0.16) 50%, transparent 64%);
+  transform: translateX(-130%);
+  animation: sheen 8s ease-in-out infinite;
+  pointer-events: none;
+}
+.lord-card:nth-child(2)::after { animation-delay: -2s; }
+.lord-card:nth-child(3)::after { animation-delay: -4s; }
+.lord-card:nth-child(4)::after { animation-delay: -6s; }
 .lord-card:hover { background: rgba(239, 226, 200, 0.14); }
 .lord-card h2 { font-size: 22px; margin: 0; }
 .lord-card .tag {
@@ -194,10 +208,14 @@ img { max-width: 100%; }
 .city .roof { stroke: rgba(255, 248, 236, 0.45); stroke-width: 0.7; stroke-linejoin: round; }
 .city .gate { fill: #2a1c12; }
 .city .shade { fill: rgba(36, 23, 15, 0.28); }
-.city .banner-flag line { stroke: #2a1c12; stroke-width: 0.9; }
-.city .cloth { transform-box: fill-box; transform-origin: left center; animation: cloth 2.2s ease-in-out infinite; }
-.city .ember { fill: #e07a3d; animation: flicker 1.15s ease-in-out infinite; }
-.city .threat-ring { fill: none; stroke: #8d2e2a; stroke-width: 1.25; transform-box: fill-box; transform-origin: center; animation: threaten 1.6s ease-out infinite; }
+.city .banner-flag line { stroke: #2a1c12; stroke-width: 1.05; }
+.city .cloth { transform-box: fill-box; transform-origin: 0% 50%; animation: cloth 0.85s ease-in-out infinite; }
+.city .ridge { stroke: rgba(255, 244, 220, 0.8); stroke-width: 0.7; stroke-linecap: round; }
+.city .slit { fill: #2a1c12; }
+.city .smoke { fill: none; stroke: rgba(74, 56, 40, 0.55); stroke-width: 1.25; stroke-linecap: round; transform-box: fill-box; transform-origin: center bottom; animation: rise-smoke 1.8s ease-in infinite; }
+.city .ember { fill: #e07a3d; animation: flicker 0.7s ease-in-out infinite; }
+.city .threat-ring { fill: none; stroke: #d23b32; stroke-width: 2.3; transform-box: fill-box; transform-origin: center; animation: threaten 1.15s ease-out infinite; }
+.city .threat-ring.late { animation-delay: -0.55s; }
 .city .emperor-glow { fill: #e6c56a; opacity: 0.34; animation: halo 2.6s ease-in-out infinite; }
 .city .job-mark { fill: none; stroke: #3a2a1c; stroke-width: 0.85; stroke-linecap: round; }
 .city .job-mark.coin, .city .job-mark.patrol, .city .job-mark.levy { fill: #a67c3d; stroke: #3a2a1c; }
@@ -206,11 +224,16 @@ img { max-width: 100%; }
 .season-wash { opacity: 0.16; pointer-events: none; }
 .season-winter .season-wash { opacity: 0.28; }
 .sky { pointer-events: none; }
-.cloud { fill: rgba(255, 252, 246, 0.55); }
+.cloud { fill: rgba(255, 252, 246, 0.82); stroke: rgba(255, 255, 255, 0.45); stroke-width: 0.6; }
 .flake { fill: #f7fbff; }
-.leaf { fill: #a85a28; opacity: 0.8; }
-.bird path { fill: none; stroke: #3a2a1c; stroke-width: 1.1; stroke-linecap: round; }
-.sun circle { fill: #f0c14a; stroke: #a67c3d; stroke-width: 1; }
+.leaf { fill: #c4622a; opacity: 0.9; }
+.bird path { fill: none; stroke: #2a1c12; stroke-width: 1.9; stroke-linecap: round; }
+.bird .wing { transform-box: fill-box; animation: flap 0.38s ease-in-out infinite; }
+.bird .wing.left { transform-origin: right center; }
+.bird .wing.right { transform-origin: left center; animation-direction: alternate; }
+.sun circle { fill: #f0c14a; stroke: #a67c3d; stroke-width: 1.2; }
+.sun .rays line { stroke: #e2b03a; stroke-width: 1.6; stroke-linecap: round; }
+.wave { fill: none; stroke: rgba(255, 255, 255, 0.72); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 7 9; animation: wave 1.6s linear infinite; }
 .mapwrap::after {
   content: "";
   position: absolute;
@@ -231,15 +254,15 @@ img { max-width: 100%; }
 .order-pip { fill: var(--cinnabar); stroke: #f6ead2; stroke-width: 0.8; }
 .river-flow {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.7);
-  stroke-width: 1.15;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 1.7;
   stroke-linecap: round;
-  stroke-dasharray: 7 16;
+  stroke-dasharray: 9 14;
   pointer-events: none;
-  animation: flow 7s linear infinite;
+  animation: flow 2.6s linear infinite;
 }
 .move-arrow { fill: none; stroke-width: 2.1; stroke-linecap: round; pointer-events: none; }
-.move-arrow.march { stroke: #8d2e2a; stroke-dasharray: 6 5; animation: march 0.7s linear infinite; }
+.move-arrow.march { stroke: #8d2e2a; stroke-dasharray: 6 5; animation: march 0.42s linear infinite; }
 .move-arrow.shift { stroke: #1c3d34; stroke-dasharray: 2 3.5; }
 .move-arrow.threat { stroke: #8d2e2a; stroke-width: 2.4; stroke-dasharray: 2 3.2; }
 .move-arrow.spied { stroke: #1d4578; stroke-dasharray: 3 3; }
@@ -595,7 +618,7 @@ img { max-width: 100%; }
 }
 @keyframes seal-breathe {
   0%, 100% { transform: rotate(-8deg) scale(1); }
-  50% { transform: rotate(-8deg) scale(1.06); }
+  50% { transform: rotate(-6deg) scale(1.12); }
 }
 @keyframes portrait-glow {
   0%, 100% { box-shadow: inset 0 0 0 3px rgba(20, 14, 11, 0.55), 0 0 0 0 rgba(230, 211, 161, 0.2); }
@@ -606,16 +629,16 @@ img { max-width: 100%; }
   50% { opacity: 1; }
 }
 @keyframes threaten {
-  0% { transform: scale(0.82); opacity: 0.85; }
-  100% { transform: scale(1.45); opacity: 0; }
+  0% { transform: scale(0.7); opacity: 0.95; }
+  100% { transform: scale(2.05); opacity: 0; }
 }
 @keyframes halo {
   0%, 100% { opacity: 0.22; }
   50% { opacity: 0.5; }
 }
 @keyframes sway {
-  0%, 100% { transform: rotate(-6deg); }
-  50% { transform: rotate(7deg); }
+  0%, 100% { transform: rotate(-16deg); }
+  50% { transform: rotate(18deg); }
 }
 @keyframes pace {
   0%, 100% { transform: translateX(-2px); }
@@ -630,12 +653,26 @@ img { max-width: 100%; }
   50% { transform: rotate(2deg); }
 }
 @keyframes cloth {
-  0%, 100% { transform: skewX(0deg) scaleX(1); }
-  50% { transform: skewX(10deg) scaleX(0.9); }
+  0%, 100% { transform: rotate(-28deg); }
+  50% { transform: rotate(26deg); }
 }
+@keyframes flap {
+  0%, 100% { transform: rotate(28deg); }
+  50% { transform: rotate(-36deg); }
+}
+@keyframes rise-smoke {
+  0% { transform: translateY(3px); opacity: 0; }
+  25% { opacity: 0.75; }
+  100% { transform: translateY(-14px); opacity: 0; }
+}
+@keyframes wave { to { stroke-dashoffset: -32; } }
 @keyframes stamp {
   from { transform: translate(-50%, -50%) scale(1.35) rotate(-14deg); opacity: 0; }
   to { transform: translate(-50%, -50%) scale(1) rotate(-8deg); opacity: 1; }
+}
+@keyframes sheen {
+  0%, 55% { transform: translateX(-130%); }
+  100% { transform: translateX(130%); }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
