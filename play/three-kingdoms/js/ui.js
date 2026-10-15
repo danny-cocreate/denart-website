@@ -1,47 +1,3 @@
-import { CITIES, FACTIONS, FEATURED, ITEMS, SAVE_KEY } from "./data.js";
-import {
-  GRAT_LABELS,
-  GRATICULE,
-  LAND,
-  LAKES,
-  MAP_H,
-  MAP_W,
-  NOTES,
-  PEAKS,
-  PLACES,
-  RIVERS,
-  WALL,
-} from "./mapgeo.js";
-import {
-  activeInCity,
-  advise,
-  answerEnvoy,
-  applyBattleResult,
-  autoplayBattle,
-  beginResolution,
-  clearCityOrder,
-  completeMonth,
-  createGame,
-  eff,
-  factionCities,
-  guestsIn,
-  isAllied,
-  isRuler,
-  issueOrder,
-  monthLabel,
-  orderLabel,
-  playerBattleSide,
-  recruitPrisoner,
-  relationOf,
-  releasePrisoner,
-  rulerOfficer,
-  setDiplomacy,
-  setPlot,
-  stepBattle,
-  totals,
-  EDGES,
-} from "./logic.js";
-
 const session = {
   state: null,
   busy: false,
@@ -113,7 +69,7 @@ function loadSave() {
   }
 }
 
-export function mount(app) {
+function mount(app) {
   app.innerHTML = `<div id="screen"></div><div id="modal"></div>`;
   screen = app.querySelector("#screen");
   modal = app.querySelector("#modal");

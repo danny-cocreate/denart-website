@@ -1,16 +1,4 @@
-import {
-  CITIES,
-  DUEL_LINES,
-  EDGES,
-  FACTIONS,
-  HEIRS,
-  ITEMS,
-  MONTHS,
-  OFFICERS,
-  VISIT_LINES,
-} from "./data.js";
-
-export function rngFrom(seed) {
+function rngFrom(seed) {
   let a = seed >>> 0;
   return function rng() {
     a |= 0;
@@ -21,15 +9,15 @@ export function rngFrom(seed) {
   };
 }
 
-export function clamp(n, lo, hi) {
+function clamp(n, lo, hi) {
   return Math.max(lo, Math.min(hi, n));
 }
 
-export function pairKey(a, b) {
+function pairKey(a, b) {
   return [a, b].sort().join("|");
 }
 
-export function eff(officer) {
+function eff(officer) {
   const out = { lea: officer.lea, war: officer.war, int: officer.int, chr: officer.chr };
   for (const id of officer.gear || []) {
     const item = ITEMS[id];
@@ -69,7 +57,7 @@ const RIVALRIES = {
   [pairKey("sunce", "liubiao")]: 34,
 };
 
-export function createGame(factionId, rng = Math.random) {
+function createGame(factionId, rng = Math.random) {
   if (!FACTIONS[factionId]) throw new Error(`Unknown lord: ${factionId}`);
   const officers = {};
   for (const src of OFFICERS) {
@@ -139,32 +127,32 @@ export function createGame(factionId, rng = Math.random) {
   };
 }
 
-export function monthLabel(state) {
+function monthLabel(state) {
   const [season, month] = MONTHS[state.month - 1];
   return `${season}, ${state.year} · ${month}`;
 }
 
-export function factionCities(state, faction) {
+function factionCities(state, faction) {
   return Object.values(state.cities).filter((c) => c.faction === faction);
 }
 
-export function rulerOfficer(state, faction) {
+function rulerOfficer(state, faction) {
   const id = state.rulers[faction];
   return id ? state.officers[id] : null;
 }
 
-export function isRuler(state, officer) {
+function isRuler(state, officer) {
   if (!officer) return false;
   return Object.values(state.rulers).includes(officer.id);
 }
 
-export function activeInCity(state, city) {
+function activeInCity(state, city) {
   return city.officerIds
     .map((id) => state.officers[id])
     .filter((o) => o && o.alive && o.status === "active");
 }
 
-export function totals(state, faction) {
+function totals(state, faction) {
   const cities = factionCities(state, faction);
   return cities.reduce(
     (acc, c) => {
@@ -178,12 +166,12 @@ export function totals(state, faction) {
   );
 }
 
-export function relationOf(state, a, b) {
+function relationOf(state, a, b) {
   if (a === b) return 100;
   return state.relations[pairKey(a, b)] ?? 40;
 }
 
-export function isAllied(state, a, b) {
+function isAllied(state, a, b) {
   if (a === b) return true;
   return state.alliances.includes(pairKey(a, b));
 }
@@ -272,7 +260,7 @@ function pushLog(state, text) {
   if (state.log.length > 80) state.log.length = 80;
 }
 
-export function orderLabel(state, order) {
+function orderLabel(state, order) {
   if (!order) return "Rest";
   const cityName = (id) => state.cities[id]?.name || "the road";
   switch (order.type) {
@@ -333,7 +321,7 @@ function validate(state, city, order) {
   }
 }
 
-export function issueOrder(state, cityId, order) {
+function issueOrder(state, cityId, order) {
   const city = state.cities[cityId];
   if (!city || city.faction !== state.player) return { ok: false, reason: "That city is not yours." };
   if (state.phase !== "planning") return { ok: false, reason: "The month is already turning." };
@@ -343,17 +331,17 @@ export function issueOrder(state, cityId, order) {
   return { ok: true };
 }
 
-export function clearCityOrder(state, cityId) {
+function clearCityOrder(state, cityId) {
   delete state.orders[cityId];
 }
 
-export function setDiplomacy(state, action) {
+function setDiplomacy(state, action) {
   if (state.phase !== "planning") return { ok: false, reason: "Too late for envoys." };
   state.diplomacy = action;
   return { ok: true };
 }
 
-export function setPlot(state, action) {
+function setPlot(state, action) {
   if (state.phase !== "planning") return { ok: false, reason: "Too late for plots." };
   state.plot = action;
   return { ok: true };
@@ -409,7 +397,7 @@ function chooseOrder(state, city, rng, aggressive) {
   return { type: "irrigate", faction: city.faction };
 }
 
-export function advise(state, rng = Math.random) {
+function advise(state, rng = Math.random) {
   if (state.phase !== "planning") return;
   for (const city of factionCities(state, state.player)) {
     if (state.orders[city.id]) continue;
@@ -770,7 +758,7 @@ function duelPairKey(a, b) {
   return [a, b].sort().join("|");
 }
 
-export function chooseAction(state, battle, side, rng) {
+function chooseAction(state, battle, side, rng) {
   const pack = battle[side];
   const enemy = side === "attacker" ? battle.defender : battle.attacker;
   const mine = livingUnits(pack.units);
@@ -931,7 +919,7 @@ function conclude(battle) {
   }
 }
 
-export function stepBattle(state, battle, playerSide, action, rng) {
+function stepBattle(state, battle, playerSide, action, rng) {
   if (battle.done) return battle;
   const enemySide = playerSide === "attacker" ? "defender" : "attacker";
   const enemyAction = action?.type === "withdraw" ? null : chooseAction(state, battle, enemySide, rng);
@@ -941,7 +929,7 @@ export function stepBattle(state, battle, playerSide, action, rng) {
   return battle;
 }
 
-export function autoplayBattle(state, battle, rng) {
+function autoplayBattle(state, battle, rng) {
   let guard = 0;
   while (!battle.done && guard < 16) {
     guard += 1;
@@ -1008,7 +996,7 @@ function autoAssignPrisoner(state, id, winnerFaction, cityId, logs) {
   logs.push(`${o.name} is set free and returns to ${refuge.name}.`);
 }
 
-export function applyBattleResult(state, battle) {
+function applyBattleResult(state, battle) {
   const logs = [];
   const from = state.cities[battle.fromId];
   const to = state.cities[battle.toId];
@@ -1115,7 +1103,7 @@ export function applyBattleResult(state, battle) {
   return logs;
 }
 
-export function prepareBattle(state, fromId, order) {
+function prepareBattle(state, fromId, order) {
   const from = state.cities[fromId];
   const to = state.cities[order.to];
   if (!from || !to) return null;
@@ -1193,7 +1181,7 @@ export function prepareBattle(state, fromId, order) {
   };
 }
 
-export function beginResolution(state, rng = Math.random) {
+function beginResolution(state, rng = Math.random) {
   if (state.phase !== "planning") return null;
   state.phase = "resolving";
   const logs = [];
@@ -1250,7 +1238,7 @@ export function beginResolution(state, rng = Math.random) {
   return { logs, battles, envoy };
 }
 
-export function answerEnvoy(state, envoy, accept) {
+function answerEnvoy(state, envoy, accept) {
   if (!envoy) return [];
   const logs = [];
   if (accept) {
@@ -1263,7 +1251,7 @@ export function answerEnvoy(state, envoy, accept) {
   return logs;
 }
 
-export function recruitPrisoner(state, id, cityId) {
+function recruitPrisoner(state, id, cityId) {
   const o = state.officers[id];
   const city = state.cities[cityId];
   if (!o || o.status !== "prisoner" || !city || city.faction !== state.player) return false;
@@ -1280,7 +1268,7 @@ export function recruitPrisoner(state, id, cityId) {
   return true;
 }
 
-export function releasePrisoner(state, id) {
+function releasePrisoner(state, id) {
   const o = state.officers[id];
   if (!o || o.status !== "prisoner") return null;
   const old = o.factionHold;
@@ -1298,7 +1286,7 @@ export function releasePrisoner(state, id) {
   return `${o.name} is released and leaves the map.`;
 }
 
-export function guestsIn(state, cityId) {
+function guestsIn(state, cityId) {
   return Object.values(state.officers).filter((o) => o.status === "guest" && o.cityId === cityId && o.alive);
 }
 
@@ -1311,7 +1299,7 @@ function checkOutcome(state) {
   return null;
 }
 
-export function completeMonth(state, rng = Math.random) {
+function completeMonth(state, rng = Math.random) {
   const logs = [];
   for (const city of Object.values(state.cities)) {
     const goldIn = Math.round(city.trade * 6 + city.people * 0.35);
@@ -1400,10 +1388,9 @@ export function completeMonth(state, rng = Math.random) {
   return { logs, outcome };
 }
 
-export function playerBattleSide(state, battle) {
+function playerBattleSide(state, battle) {
   if (battle.attackerFaction === state.player) return "attacker";
   if (battle.defenderFaction === state.player) return "defender";
   return null;
 }
 
-export { CITIES, EDGES, FACTIONS, ITEMS, OFFICERS };

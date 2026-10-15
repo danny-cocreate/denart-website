@@ -1,15 +1,15 @@
 /** Scenario data for Warlords of the Three Kingdoms. Stats are original characterizations. */
 
-export const SAVE_KEY = "warlords-tk-v1";
+const SAVE_KEY = "warlords-tk-v1";
 
-export const ITEMS = {
+const ITEMS = {
   greenDragon: { id: "greenDragon", name: "Green Dragon Blade", war: 7 },
   serpentSpear: { id: "serpentSpear", name: "Serpent Spear", war: 5 },
   redHare: { id: "redHare", name: "Red Hare", war: 8, lea: 4 },
   featherFan: { id: "featherFan", name: "Crane-Feather Fan", int: 6 },
 };
 
-export const FACTIONS = {
+const FACTIONS = {
   liubei: { name: "Liu Bei", color: "#2f6d48", tag: "Hard", blurb: "Four oath-brothers in a poor town. Donghai is soft. The lords around it are not." },
   caocao: { name: "Cao Cao", color: "#1d4578", tag: "Even", blurb: "Yan province, a full council, and enemies on every road." },
   sunce: { name: "Sun Ce", color: "#8e2c2c", tag: "Even", blurb: "The Little Conqueror holds the lower Yangtze, with room to run south and west." },
@@ -26,7 +26,7 @@ export const FACTIONS = {
   zangba: { name: "Zang Ba", color: "#5c6b32", tag: "Hard", blurb: "A local captain in Donghai. Survive the first year and you have already done the surprising thing." },
 };
 
-export const HEIRS = {
+const HEIRS = {
   liubei: "guanyu",
   caocao: "xiahoudun",
   sunce: "sunquan",
@@ -44,7 +44,7 @@ export const HEIRS = {
 };
 
 /** Road pairs. Neighbors are derived so the map cannot disagree with itself. */
-export const EDGES = [
+const EDGES = [
   ["beiping", "ye"],
   ["beiping", "beihai"],
   ["ye", "jinyang"],
@@ -82,7 +82,7 @@ export const EDGES = [
 
 const O = (p) => p;
 
-export const OFFICERS = [
+const OFFICERS = [
   O({ id: "liubei", name: "Liu Bei", courtesy: "Xuande", lea: 74, war: 71, int: 74, chr: 98, loyalty: 100, faction: "liubei", art: "liu-bei.jpg", bio: "A late Han kinsman of thin means who binds people to him by keeping faith." }),
   O({ id: "guanyu", name: "Guan Yu", courtesy: "Yunchang", lea: 93, war: 97, int: 74, chr: 88, loyalty: 100, faction: "liubei", art: "guan-yu.jpg", gear: ["greenDragon"], bio: "Immensely tall, ruddy as a dark jujube, with a beard that spills down his chest. He carries the Green Dragon Blade." }),
   O({ id: "zhangfei", name: "Zhang Fei", courtesy: "Yide", lea: 86, war: 96, int: 34, chr: 46, loyalty: 100, faction: "liubei", art: "zhang-fei.jpg", gear: ["serpentSpear"], bio: "A butcher of fierce round eyes and a bristling beard, fastest to anger and first into a breach." }),
@@ -143,7 +143,7 @@ export const OFFICERS = [
   O({ id: "ganning", name: "Gan Ning", courtesy: "Xingba", lea: 88, war: 91, int: 68, chr: 64, loyalty: 55, faction: null, status: "hidden", homeCity: "jiangling", difficulty: 72, visitsNeeded: 1, pride: 60, art: "gan-ning.jpg", bio: "A former river pirate who wears bells at his belt. He is still on Huang Zu's side of the Yangtze, and bored." }),
 ];
 
-export const CITIES = [
+const CITIES = [
   { id: "beiping", name: "Beiping", province: "You", x: 631.9, y: 101.5, faction: "gongsunzan", governor: "gongsunzan", officers: ["gongsunzan", "tiankai"], gold: 900, rice: 9000, land: 42, flood: 32, trade: 30, people: 54, walls: 46, soldiers: 5200, training: 68 },
   { id: "ye", name: "Ye", province: "Ji", x: 540.7, y: 298.1, faction: "yuanshao", governor: "yuanshao", officers: ["yuanshao", "tianfeng", "yanliang", "wenchou"], gold: 2600, rice: 22000, land: 72, flood: 50, trade: 68, people: 62, walls: 58, soldiers: 7800, training: 56 },
   { id: "jinyang", name: "Jinyang", province: "Bing", x: 457.5, y: 220.3, faction: "yuanshao", governor: "gaogan", officers: ["gaogan", "guoyuan"], gold: 700, rice: 8000, land: 46, flood: 34, trade: 28, people: 48, walls: 40, soldiers: 2800, training: 46 },
@@ -165,7 +165,7 @@ export const CITIES = [
   { id: "wu", name: "Wu", province: "Yang", x: 819.7, y: 567, faction: "sunce", governor: "chengpu", officers: ["chengpu", "sunquan", "handang"], gold: 700, rice: 8000, land: 46, flood: 50, trade: 40, people: 64, walls: 32, soldiers: 2600, training: 58 },
 ];
 
-export const VISIT_LINES = {
+const VISIT_LINES = {
   zhugeliang: [
     "The boy at the gate says Master Zhuge is walking the ridge. Tea is offered. Nothing else.",
     "Zhuge Liang speaks of rain, mulberry, and the price of salt. He will not speak of banners.",
@@ -177,7 +177,7 @@ export const VISIT_LINES = {
   ],
 };
 
-export const DUEL_LINES = {
+const DUEL_LINES = {
   "guanyu|lvbu": "The crescent blade and the halberd lock. Even the horses seem to wait.",
   "zhangfei|lvbu": "Zhang Fei roars, and Lü Bu answers with the halberd rather than words.",
   "zhaoyun|machao": "Two spears turn the dust between them into a bright wheel.",
@@ -185,7 +185,7 @@ export const DUEL_LINES = {
   "huangzhong|xiahoudun": "An old bowman and a one-eyed veteran measure each other and dislike the math.",
 };
 
-export const MONTHS = [
+const MONTHS = [
   ["Spring", "1st month"],
   ["Spring", "2nd month"],
   ["Spring", "3rd month"],
@@ -200,4 +200,4 @@ export const MONTHS = [
   ["Winter", "12th month"],
 ];
 
-export const FEATURED = ["liubei", "caocao", "sunce", "yuanshao", "lvbu", "liubiao", "mateng", "gongsunzan"];
+const FEATURED = ["liubei", "caocao", "sunce", "yuanshao", "lvbu", "liubiao", "mateng", "gongsunzan"];
