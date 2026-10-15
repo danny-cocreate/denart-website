@@ -206,6 +206,7 @@ function gameHtml(state) {
     <div class="mapwrap season-${seasonName(state.month)}">
       ${mapSvg(state)}
       <div class="legend" aria-hidden="true">
+        <span><i class="dot hold"></i>A lord's land</span>
         <span><i class="dot you"></i>Your walls</span>
         <span><i class="dot march"></i>Your order</span>
         <span><i class="dot threat"></i>Enemy on the road</span>
@@ -396,6 +397,104 @@ function seasonWash(month) {
   return "#7f9a55";
 }
 
+let realmCells = null;
+
+function realmFill(hex) {
+  const n = parseInt(String(hex).slice(1), 16);
+  const mix = (channel, paper) => Math.round(channel * 0.78 + paper * 0.22);
+  return `rgb(${mix((n >> 16) & 255, 246)},${mix((n >> 8) & 255, 236)},${mix(n & 255, 214)})`;
+}
+
+function clipSite(poly, site, other, tag) {
+  const dx = other.x - site.x;
+  const dy = other.y - site.y;
+  const mx = (site.x + other.x) / 2;
+  const my = (site.y + other.y) / 2;
+  const side = (p) => (p.x - mx) * dx + (p.y - my) * dy;
+  const inside = (p) => side(p) <= 1e-6;
+  const cut = (a, b) => {
+    const ad = side(a);
+    const bd = side(b);
+    const t = ad / (ad - bd);
+    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+  };
+  const out = [];
+  for (let i = 0; i < poly.length; i++) {
+    const start = poly[i];
+    const end = poly[(i + 1) % poly.length];
+    const startIn = inside(start);
+    const endIn = inside(end);
+    if (endIn) {
+      if (!startIn) {
+        const point = cut(start, end);
+        point.via = tag;
+        out.push(point);
+      }
+      out.push(end);
+    } else if (startIn) {
+      const point = cut(start, end);
+      point.via = end.via;
+      out.push(point);
+    }
+  }
+  return out;
+}
+
+function territoryCells() {
+  if (realmCells) return realmCells;
+  const ids = Object.keys(PLACES);
+  const pad = 160;
+  const box = [
+    { x: -pad, y: -pad },
+    { x: MAP_W + pad, y: -pad },
+    { x: MAP_W + pad, y: MAP_H + pad },
+    { x: -pad, y: MAP_H + pad },
+  ];
+  const cells = {};
+  for (const id of ids) {
+    let poly = box.map((point) => ({ x: point.x, y: point.y, via: null }));
+    const site = PLACES[id];
+    for (const other of ids) {
+      if (other === id) continue;
+      poly = clipSite(poly, site, PLACES[other], other);
+      if (poly.length < 3) break;
+    }
+    cells[id] = poly;
+  }
+  realmCells = cells;
+  return cells;
+}
+
+function polyPath(poly) {
+  return `${poly.map((point, index) => `${index ? "L" : "M"}${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join("")}Z`;
+}
+
+function territoryMarkup(state) {
+  const cells = territoryCells();
+  const fills = [];
+  const borders = [];
+  for (const [id, poly] of Object.entries(cells)) {
+    if (!poly || poly.length < 3) continue;
+    const city = state.cities[id];
+    const faction = city?.faction;
+    if (!faction || !FACTIONS[faction]) continue;
+    const color = realmFill(FACTIONS[faction].color);
+    const selected = state.selected === id ? " is-selected" : "";
+    const taken = session.changed?.has(id) ? " just-taken" : "";
+    fills.push(`<path class="realm${selected}${taken}" data-act="select" data-id="${id}" fill="${color}" stroke="${color}" d="${polyPath(poly)}"><title>${esc(city.name)} · ${esc(FACTIONS[faction].name)}</title></path>`);
+    for (let i = 0; i < poly.length; i++) {
+      const start = poly[i];
+      const end = poly[(i + 1) % poly.length];
+      const neighbor = end.via;
+      if (!neighbor || id >= neighbor) continue;
+      const otherFaction = state.cities[neighbor]?.faction;
+      if (!otherFaction || otherFaction === faction) continue;
+      borders.push(`<line class="realm-border" x1="${start.x.toFixed(1)}" y1="${start.y.toFixed(1)}" x2="${end.x.toFixed(1)}" y2="${end.y.toFixed(1)}"/>`);
+    }
+  }
+  return `<g class="realms" clip-path="url(#landClip)">${fills.join("")}${borders.join("")}</g>`;
+}
+
 
 function mapSvg(state) {
   for (const src of CITIES) {
@@ -437,6 +536,9 @@ function mapSvg(state) {
         <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4"/>
         <feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.3  0 0 0 0 0.14  0 0 0 0.22 0"/>
       </filter>
+      <clipPath id="landClip" clipPathUnits="userSpaceOnUse">
+        <path fill-rule="evenodd" d="${LAND}"/>
+      </clipPath>
       <marker id="arrow-march" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M0,0 L10,5 L0,10 z" fill="#8d2e2a"/>
       </marker>
@@ -452,6 +554,8 @@ function mapSvg(state) {
     <path class="land" fill="url(#landShade)" fill-rule="evenodd" d="${LAND}"/>
     <path class="season-wash" fill="${seasonWash(state.month)}" fill-rule="evenodd" d="${LAND}"/>
     <path class="grain" filter="url(#grain)" fill-rule="evenodd" d="${LAND}"/>
+    ${territoryMarkup(state)}
+    <path class="coast" fill="none" fill-rule="evenodd" d="${LAND}"/>
     <path class="lake" d="${LAKES}"/>
     ${PEAKS.map(([x, y, s]) => peakMark(x, y, s)).join("")}
     <path class="wall" d="${WALL}"/>
@@ -1027,7 +1131,7 @@ function helpModal() {
     <h3>The case</h3>
     <p>One intrigue a season. Some lords hear only a rumor. A named lead is rarer. A quiet order solves it: spy, reward, search, a visit, or the lord riding out himself. Marching on that city can burn the chance. Ignore it until the season turns and it is lost. A solved case waits until the next season before another begins.</p>
     <h3>What you can see</h3>
-    <p>Enemy marches aimed at you are on the map before the month resolves. Their other orders stay hidden unless you spied them last month. A weaker army moves first.</p>
+    <p>The land is dyed the color of the lord who holds it. Cities of the same house form one country, and the dark line is the frontier. Click the land to open that city. Enemy marches aimed at you are on the map before the month resolves. Their other orders stay hidden unless you spied them last month. A weaker army moves first.</p>
     <h3>The court</h3>
     <p>Advice is two or three officers speaking in character. Fund one. Zhang Fei asks for a road or a drill. Xun Yu asks for dikes and markets. Chen Gong doubts Lü Bu. Zhang Liao's loyalty is thin.</p>
     <h3>Battle</h3>
