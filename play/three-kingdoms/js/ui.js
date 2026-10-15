@@ -86,8 +86,7 @@ function loadSave() {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return null;
     const data = JSON.parse(raw);
-    if (!data || data.version !== 1 || !data.cities || !data.officers) return null;
-    return data;
+    return normalizeSave(data);
   } catch {
     return null;
   }
@@ -128,7 +127,7 @@ function titleHtml() {
       <div class="seal" aria-hidden="true"><span>漢</span></div>
       <div class="eyebrow">194 CE · a strategy of the late Han</div>
       <h1>Warlords of the Three Kingdoms</h1>
-      <p>Hold cities through the month. Open fields, keep the dikes, drill a camp, and march when the road is short. Charm holds a court together. A duel can break one.</p>
+      <p>Each city keeps a job until you change it. Once a month you may interrupt that work: a march, a search, a gift, a spy. The governor decides what the fields and markets actually pay.</p>
       <p class="note">Figures and places come from the histories and the public-domain novel. The portraits are original paintings. This is not a port of Koei’s game, and it is not affiliated with Koei Tecmo.</p>
     </header>
     <div class="title-actions">
@@ -170,24 +169,33 @@ function gameHtml(state) {
   const city = state.cities[state.selected] || factionCities(state, state.player)[0];
   if (city) state.selected = city.id;
   const held = factionCities(state, state.player);
-  const planned = held.filter((c) => state.orders[c.id]).length;
-  const idle = held.length - planned;
+  const oneOffs = held.filter((c) => state.orders[c.id] && state.orders[c.id].type !== "job").length;
+  const aim = aimStatus(state, state.player);
+  const food = realmFood(state, state.player);
+  const foodLabel = food.months == null ? "fed" : `${food.months.toFixed(1)} mo`;
+  const threats = state.threats || [];
+  const threatText = threats.map((threat) => {
+    const from = state.cities[threat.from];
+    const to = state.cities[threat.to];
+    return `${FACTIONS[threat.faction].name} is on the road from ${from?.name || "a city"} toward ${to?.name || "you"}.`;
+  }).join(" ");
   const tip = !state.dismissedTip && state.turn === 1
-    ? `<div class="tip"><b>First month.</b> ${esc(FACTIONS[state.player].blurb)} Pick one order for each of your cities, then end the month.<div><button data-act="dismiss-tip">Understood</button></div></div>`
+    ? `<div class="tip"><b>First month.</b> ${esc(FACTIONS[state.player].blurb)} Cities already have a job. Leave them, or spend the month on one interruption. A march that is already on the road is marked.<div><button data-act="dismiss-tip">Understood</button></div></div>`
     : "";
   return `<div class="game">
     <header class="topbar">
-      <div class="who">${face(ruler, "tiny")}<div><h1>${esc(ruler?.name || FACTIONS[state.player].name)}</h1><div class="when">${esc(monthLabel(state))}</div></div></div>
+      <div class="who">${face(ruler, "tiny")}<div><h1>${esc(ruler?.name || FACTIONS[state.player].name)}</h1><div class="when" title="${esc(aim?.text || "")}">${esc(monthLabel(state))}${aim ? ` · ${esc(aim.title)}` : ""}</div></div></div>
       <div class="resources">
         <div><span>Cities</span><b>${t.cities}</b></div>
         <div><span>Gold</span><b>${t.gold.toLocaleString()}</b></div>
         <div><span>Grain</span><b>${t.rice.toLocaleString()}</b></div>
+        <div title="How long the granaries feed the camps at this month's rations"><span>Food</span><b>${esc(foodLabel)}</b></div>
         <div><span>Troops</span><b>${t.soldiers.toLocaleString()}</b></div>
-        <div><span>Orders</span><b>${planned}/${held.length}</b></div>
+        <div><span>Orders</span><b>${oneOffs}</b></div>
       </div>
       <div class="top-actions">
-        <button data-act="advise" data-testid="advise" title="Fill every idle city with a suggested order">Advice</button>
-        <button class="primary ${idle ? "" : "ready"}" data-act="end-month" data-testid="end-month" title="${idle ? `${idle} of your cities still have no order` : "Every city has an order"}">End month</button>
+        <button data-act="advise" data-testid="advise" title="Two or three officers will each propose one plan. Fund one.">Advice</button>
+        <button class="primary ready" data-act="end-month" data-testid="end-month" title="Cities you leave alone repeat last month's job">End month</button>
         <button data-act="help" title="Rules for a month, the court, and battle">How to play</button>
         <button data-act="roster">Roster</button>
         <button data-act="save" title="Keep this campaign in the browser">Save</button>
@@ -198,17 +206,16 @@ function gameHtml(state) {
       ${mapSvg(state)}
       <div class="legend" aria-hidden="true">
         <span><i class="dot you"></i>Your walls</span>
-        <span><i class="dot idle"></i>Needs an order</span>
-        <span><i class="dot march"></i>March</span>
+        <span><i class="dot march"></i>Your order</span>
+        <span><i class="dot threat"></i>Enemy on the road</span>
       </div>
-      <p class="map-hint">${idle ? `${idle} ${idle === 1 ? "city needs" : "cities need"} an order` : "Every city has an order. End the month when you are ready."}</p>
+      ${threatText ? `<p class="threat-banner">${esc(threatText)}</p>` : ""}
+      <p class="map-hint">${oneOffs ? `${oneOffs} one-off ${oneOffs === 1 ? "order" : "orders"}. Other cities keep their jobs.` : "No one-off orders. Every city keeps its job."}</p>
     </div>
     <aside class="side">${tip}${city ? cityPanel(state, city) : ""}</aside>
     <section class="chronicle" aria-label="Chronicle"><h2>Chronicle</h2><div class="lines">${state.log.slice(0, 12).map((l, i) => `<p class="${l.mine ? "mine" : ""} ${i === 0 ? "fresh" : ""}">${esc(l.text)}</p>`).join("")}</div></section>
   </div>`;
 }
-
-const PASSES = new Set(["changan|hanzhong", "hanzhong|tianshui", "chengdu|hanzhong"]);
 
 const LABEL_AT = {
   ye: [-10, -36],
@@ -243,7 +250,7 @@ function townMark(state, city) {
   const selected = city.id === state.selected;
   const ally = !mine && isAllied(state, state.player, city.faction);
   const ordered = !!state.orders[city.id];
-  const idle = mine && !ordered;
+  const idle = false;
   const nudge = LABEL_AT[city.id] || [0, 16];
   const w = Math.max(48, Math.ceil(city.name.length * 7.2 + 14));
   const y = nudge[1];
@@ -265,6 +272,7 @@ function townMark(state, city) {
       <path d="M12,-19 h11 l-2.4,3.4 2.4,3.4 h-11 z" fill="${color}"/>
     </g>
     <text class="garrison" y="20">${men}</text>
+    ${state.emperorAt === city.id ? `<text class="emperor-mark" y="-24">帝</text>` : ""}
     ${ordered ? `<circle class="order-pip" cx="-15" cy="-15" r="3.6"/>` : ""}
     <g class="placard" transform="translate(${nudge[0]} 0)">
       <rect x="${-w / 2}" y="${y}" width="${w}" height="16" rx="1.5"/>
@@ -273,22 +281,35 @@ function townMark(state, city) {
   </g>`;
 }
 
+function arrowLine(A, B, kind) {
+  if (!A || !B) return "";
+  const dx = B.x - A.x;
+  const dy = B.y - A.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const x1 = A.x + (dx / len) * 16;
+  const y1 = A.y + (dy / len) * 16;
+  const x2 = B.x - (dx / len) * 20;
+  const y2 = B.y - (dy / len) * 20;
+  const marker = kind === "shift" ? "shift" : "march";
+  return `<line class="move-arrow ${kind}" x1="${rnd(x1)}" y1="${rnd(y1)}" x2="${rnd(x2)}" y2="${rnd(y2)}" marker-end="url(#arrow-${marker})"/>`;
+}
+
 function movementArrows(state) {
-  return Object.entries(state.orders).map(([fromId, order]) => {
-    if (!order?.to || !["march", "transfer", "move"].includes(order.type)) return "";
-    const A = state.cities[fromId];
-    const B = state.cities[order.to];
-    if (!A || !B) return "";
-    const dx = B.x - A.x;
-    const dy = B.y - A.y;
-    const len = Math.hypot(dx, dy) || 1;
+  const own = Object.entries(state.orders).map(([fromId, order]) => {
+    if (!order?.to || !["march", "transfer", "move", "escort"].includes(order.type)) return "";
     const kind = order.type === "march" ? "march" : "shift";
-    const x1 = A.x + (dx / len) * 16;
-    const y1 = A.y + (dy / len) * 16;
-    const x2 = B.x - (dx / len) * 20;
-    const y2 = B.y - (dy / len) * 20;
-    return `<line class="move-arrow ${kind}" x1="${rnd(x1)}" y1="${rnd(y1)}" x2="${rnd(x2)}" y2="${rnd(y2)}" marker-end="url(#arrow-${kind})"/>`;
+    return arrowLine(state.cities[fromId], state.cities[order.to], kind);
   }).join("");
+  const threats = (state.threats || []).map((threat) => arrowLine(state.cities[threat.from], state.cities[threat.to], "threat")).join("");
+  let spied = "";
+  if (state.revealed) {
+    spied = Object.entries(state.shadowOrders || {}).map(([fromId, order]) => {
+      if (order?.type !== "march" || state.cities[fromId]?.faction !== state.revealed) return "";
+      if ((state.threats || []).some((threat) => threat.from === fromId)) return "";
+      return arrowLine(state.cities[fromId], state.cities[order.to], "spied");
+    }).join("");
+  }
+  return own + threats + spied;
 }
 
 function mapSvg(state) {
@@ -303,7 +324,7 @@ function mapSvg(state) {
   const roads = EDGES.map(([a, b]) => {
     const A = state.cities[a];
     const B = state.cities[b];
-    const pass = PASSES.has(edgeKey(a, b)) ? " pass" : "";
+    const pass = PASS_ROADS.has(edgeKey(a, b)) ? " pass" : "";
     return `<path class="road${pass}" d="M ${A.x} ${A.y} L ${B.x} ${B.y}"/>`;
   }).join("");
   const rivers = RIVERS.map((r) => {
@@ -369,33 +390,54 @@ function cityPanel(state, city) {
   const officers = activeInCity(state, city);
   const guests = guestsIn(state, city);
   const order = state.orders[city.id];
-  const rel = mine ? "" : `<p>Standing with ${esc(FACTIONS[city.faction].name)}: <b>${relationOf(state, state.player, city.faction)}</b>${isAllied(state, state.player, city.faction) ? " · allied" : ""}</p>`;
+  const shownJob = order?.type === "job" ? order.job : city.job;
+  const pay = projectedIncome(state, city);
+  const food = foodOutlook(state, city);
+  const foodText = food.months == null ? "no mouths to feed" : `${food.months.toFixed(1)} months of food`;
+  const seasonWord = pay.season.charAt(0).toUpperCase() + pay.season.slice(1);
+  const govLine = pay.governor
+    ? `${pay.governor} governs. Gold ×${pay.goldMult.toFixed(2)}, grain ×${pay.grainMult.toFixed(2)}.`
+    : "The governor is away. This month pays the base yield.";
+  const rel = mine ? "" : `<p>Standing with ${esc(FACTIONS[city.faction].name)}: <b>${relationOf(state, state.player, city.faction)}</b>${isAllied(state, state.player, city.faction) ? " · allied this year" : ""}</p>`;
   const chips = officers.map((o) => `<button class="officer-chip" data-act="dossier" data-id="${o.id}">
     ${face(o, "tiny")}<span><b>${esc(o.name)}</b><small>${isRuler(state, o) ? "Ruler" : city.governor === o.id ? "Governor" : "Officer"} · loyalty ${o.loyalty}</small></span>
   </button>`).join("");
   const guestHtml = guests.map((o) => `<button class="guest-chip" data-act="dossier" data-id="${o.id}">
     ${face(o, "tiny")}<span><b>${esc(o.name)}</b><small>Guest · visit ${o.visits}/${o.visitsNeeded || 1}</small></span>
   </button>`).join("");
-  const current = order?.type || "";
-  const cmds = mine ? `<div class="commands">
-    ${cmd("cultivate", "Cultivate", "Raise farmland. More fields, more grain.", current)}
-    ${cmd("irrigate", "Dikes", "Spend gold to improve flood control.", current)}
-    ${cmd("trade", "Markets", "Spend gold to improve commerce.", current)}
-    ${cmd("recruit", "Levy", "Enlist troops. Lowers training.", current)}
-    ${cmd("train", "Drill", "Raise training in the camp.", current)}
-    ${cmd("patrol", "Patrol", "Quiet the wards and raise public order.", current)}
-    ${cmd("fortify", "Walls", "Spend gold to raise the walls.", current)}
-    ${cmd("search", "Search", "Look for a recluse, or a cache of gold and grain.", current)}
-    <button data-act="reward" data-city="${city.id}" title="Spend 100 gold to raise a retainer's loyalty">Reward</button>
-    <button data-act="shift" data-city="${city.id}" title="Send men or an officer to a neighboring city of yours">Shift men</button>
-    <button class="${current === "march" ? "is-current" : ""}" data-act="march" data-city="${city.id}" data-type="march" data-testid="cmd-march" title="Attack a neighboring enemy city">March</button>
-    ${guests.length ? `<button data-act="employ" data-city="${city.id}" title="Visit a guest. Some require more than one call">Call on a guest</button>` : ""}
-  </div>` : foreignActions(state, city);
-  return `<div class="province">${esc(city.province)} province</div>
+  const emperorHere = state.emperorAt === city.id;
+  const jobButtons = Object.values(JOBS).map((job) => {
+    const on = shownJob === job.id && (!order || order.type === "job");
+    return `<button class="${on ? "is-current" : ""}" title="${esc(job.hint)} Costs ${job.cost} gold." aria-pressed="${on}" data-act="set-job" data-job="${job.id}" data-testid="job-${job.id}">${job.label}</button>`;
+  }).join("");
+  const oneOff = order && order.type !== "job";
+  const cmds = mine ? `<h3>Standing job</h3>
+    <div class="commands jobs">${jobButtons}</div>
+    <h3>One-off order</h3>
+    <div class="commands">
+      <button data-act="search-order" data-city="${city.id}" class="${order?.type === "search" ? "is-current" : ""}" title="Look for a recluse, or a cache. The job waits.">Search</button>
+      <button data-act="reward" data-city="${city.id}" class="${order?.type === "reward" ? "is-current" : ""}" title="Spend 100 gold to raise a retainer's loyalty">Reward</button>
+      <button data-act="shift" data-city="${city.id}" title="Send men or an officer to a neighboring city of yours">Shift men</button>
+      <button class="${order?.type === "march" ? "is-current" : ""}" data-act="march" data-city="${city.id}" data-type="march" data-testid="cmd-march" title="Attack a neighboring enemy city. The governor, if he goes, does not raise this month's yield.">March</button>
+      <button data-act="spy" data-city="${city.id}" class="${order?.type === "spy" ? "is-current" : ""}" title="Spend 60 gold. Next month you see that lord's orders, not only the marches aimed at you.">Spy</button>
+      ${guests.length ? `<button data-act="employ" data-city="${city.id}" title="Visit a guest. Some require more than one call">Call on a guest</button>` : ""}
+      ${emperorHere ? `<button data-act="escort" data-city="${city.id}" data-testid="cmd-escort" title="Move the emperor to a city you hold and claim the mandate. Neighbors will resent it.">Escort the emperor</button>` : ""}
+    </div>` : foreignActions(state, city);
+  const workLine = oneOff
+    ? `This month is spent on a one-off. The ${JOBS[city.job]?.label || "job"} waits.`
+    : `Left alone, ${city.name} keeps working the ${JOBS[shownJob]?.label || "job"}.`;
+  return `<div class="province">${esc(city.province)} province${emperorHere ? " · the emperor is here" : ""}</div>
     <h2>${esc(city.name)}</h2>
     <div class="ownerline">${esc(FACTIONS[city.faction].name)}${ruler ? ` · ${esc(ruler.name)}` : ""}</div>
     ${rel}
     <div class="pair"><div><span>Gold</span><b>${city.gold.toLocaleString()}</b></div><div><span>Grain</span><b>${city.rice.toLocaleString()}</b></div><div><span>Troops</span><b>${city.soldiers.toLocaleString()}</b></div></div>
+    <p class="yield" data-testid="yield">${esc(seasonWord)}. About ${pay.gold.toLocaleString()} gold and ${pay.rice.toLocaleString()} grain, against ${pay.upkeep.toLocaleString()} rations. ${esc(foodText)}. ${esc(govLine)}</p>
+    <p class="yield-job">${esc(workLine)}</p>
+    ${order ? `<div class="order-flag">This month: ${esc(orderLabel(state, order))} <button data-act="clear-order" data-city="${city.id}">Clear</button></div>` : ""}
+    ${cmds}
+    <div class="officer-row">${chips || "<p>No officers in the city.</p>"}</div>
+    ${mine && officers.length > 1 ? `<div class="choice-grid">${officers.map((o) => `<button data-act="appoint" data-city="${city.id}" data-id="${o.id}" title="The governor's intellect and leadership change this city's gold and grain">${city.governor === o.id ? "Governor" : "Appoint"} ${esc(o.name)}</button>`).join("")}</div>` : ""}
+    ${guestHtml ? `<h3>Guests</h3><div class="officer-row">${guestHtml}</div>` : ""}
     <div class="meters">
       ${meter("Farmland", city.land)}
       ${meter("Dikes", city.flood)}
@@ -404,12 +446,7 @@ function cityPanel(state, city) {
       ${meter("Walls", city.walls)}
       ${meter("Training", city.training, "war")}
     </div>
-    <div class="officer-row">${chips || "<p>No officers in the city.</p>"}</div>
-    ${guestHtml ? `<h3>Guests</h3><div class="officer-row">${guestHtml}</div>` : ""}
-    ${order ? `<div class="order-flag">This month: ${esc(orderLabel(state, order))} <button data-act="clear-order" data-city="${city.id}">Clear</button></div>` : (mine ? `<p class="nudge">Choose one order for ${esc(city.name)}.</p>` : "")}
     ${orderSummary(state)}
-    ${mine && officers.length > 1 ? `<div class="choice-grid">${officers.map((o) => `<button data-act="appoint" data-city="${city.id}" data-id="${o.id}">${city.governor === o.id ? "Governor" : "Appoint"} ${esc(o.name)}</button>`).join("")}</div>` : ""}
-    ${cmds}
     ${planNote(state)}`;
 }
 
@@ -433,6 +470,14 @@ function planNote(state) {
   if (state.diplomacy?.type === "break") bits.push(`Alliance with ${FACTIONS[state.diplomacy.faction].name} will break`);
   if (state.diplomacy?.type === "demand") bits.push(`Surrender demanded of ${FACTIONS[state.diplomacy.faction].name}`);
   if (state.plot?.cityId) bits.push(`Rumors aimed at ${state.cities[state.plot.cityId].name}`);
+  if (state.revealed && FACTIONS[state.revealed]) {
+    const known = Object.entries(state.shadowOrders || [])
+      .filter(([cityId]) => state.cities[cityId]?.faction === state.revealed)
+      .map(([cityId, order]) => `${state.cities[cityId].name}: ${orderLabel(state, order)}`);
+    bits.push(known.length
+      ? `You know ${FACTIONS[state.revealed].name}'s plans. ${known.join(". ")}`
+      : `${FACTIONS[state.revealed].name} is leaving every city at its job`);
+  }
   return bits.length ? `<p>${esc(bits.join(". "))}.</p>` : "";
 }
 
@@ -444,12 +489,20 @@ function cmd(type, label, hint, current) {
 function foreignActions(state, city) {
   const borders = factionCities(state, state.player).filter((c) => c.neighbors.includes(city.id));
   const march = borders.map((c) => `<button data-act="march" data-city="${c.id}" data-to="${city.id}">March from ${esc(c.name)}</button>`).join("");
+  const price = alliancePrice(state, city.faction);
+  const allied = isAllied(state, state.player, city.faction);
+  const pact = allied
+    ? `<p>Allied until the oath runs out.</p><button data-act="break" data-faction="${city.faction}">Break alliance</button>`
+    : price.blocked
+      ? `<p>They will not hear a gift or an oath while you are marching on them.</p>`
+      : `<button data-act="gift" data-faction="${city.faction}">Send gold</button>
+         <button data-act="alliance" data-faction="${city.faction}" data-testid="alliance">Alliance · ${price.gold.toLocaleString()} gold for a year</button>`;
+  const mandate = state.mandate === state.player ? " The court speaks in your name, which makes a demand heavier." : "";
   return `<div class="stack">
     ${march || "<p>No army of yours stands on a road into this city.</p>"}
-    <button data-act="gift" data-faction="${city.faction}">Send gold</button>
-    <button data-act="alliance" data-faction="${city.faction}">Propose alliance</button>
-    ${isAllied(state, state.player, city.faction) ? `<button data-act="break" data-faction="${city.faction}">Break alliance</button>` : ""}
+    ${pact}
     <button data-act="demand" data-faction="${city.faction}">Demand surrender</button>
+    <p class="fine">A demand lands only on a lord with one city, and only if you have more than twice the troops.${esc(mandate)}</p>
     <button data-act="plot" data-city="${city.id}">Sow discord</button>
   </div>`;
 }
@@ -520,6 +573,30 @@ function onClick(e) {
     return;
   }
   if (act === "clear-order") { clearCityOrder(state, el.dataset.city); render(); return; }
+  if (act === "set-job") {
+    const city = state.cities[state.selected];
+    if (!city) return;
+    const job = el.dataset.job;
+    if (city.job === job && (!state.orders[city.id] || state.orders[city.id].type === "job")) {
+      clearCityOrder(state, city.id);
+      render();
+      return;
+    }
+    const res = issueOrder(state, city.id, { type: "job", job });
+    if (!res.ok) toast(res.reason);
+    else note(state, `${city.name}: ${orderLabel(state, state.orders[city.id])}.`, true);
+    render();
+    return;
+  }
+  if (act === "search-order") {
+    const city = state.cities[el.dataset.city];
+    if (!city) return;
+    const res = issueOrder(state, city.id, { type: "search" });
+    if (!res.ok) toast(res.reason);
+    else note(state, `${city.name}: search the countryside. The job waits.`, true);
+    render();
+    return;
+  }
   if (act === "order") {
     const city = state.cities[state.selected];
     if (!city) return;
@@ -534,16 +611,55 @@ function onClick(e) {
     }
     return;
   }
-  if (act === "advise") { advise(state); render(); return; }
+  if (act === "advise") { courtModal(state); return; }
+  if (act === "fund-plan") {
+    const plan = session.proposals?.[Number(el.dataset.index)];
+    const res = plan ? fundPlan(state, plan) : { ok: false, reason: "That plan has gone." };
+    if (!res.ok) toast(res.reason);
+    else note(state, `${state.officers[plan.speakerId]?.name || "An officer"} is funded. ${state.cities[plan.cityId].name}: ${orderLabel(state, plan.order)}.`, true);
+    closeModal();
+    render();
+    return;
+  }
   if (act === "end-month") { endMonth(); return; }
   if (act === "reward") { rewardModal(state, el.dataset.city); return; }
   if (act === "shift") { shiftModal(state, el.dataset.city); return; }
   if (act === "march") { marchModal(state, el.dataset.city, el.dataset.to || null); return; }
   if (act === "employ") { employModal(state, el.dataset.city); return; }
-  if (act === "gift") { giftModal(state, el.dataset.faction); return; }
+  if (act === "spy") { spyModal(state, el.dataset.city); return; }
+  if (act === "escort") { escortModal(state, el.dataset.city); return; }
+  if (act === "pick-spy") {
+    const res = issueOrder(state, session.draft.cityId, { type: "spy", faction: el.dataset.faction });
+    if (!res.ok) toast(res.reason);
+    else note(state, `Agents will watch ${FACTIONS[el.dataset.faction].name}.`, true);
+    closeModal();
+    render();
+    return;
+  }
+  if (act === "pick-escort") {
+    const res = issueOrder(state, session.draft.cityId, { type: "escort", to: el.dataset.id });
+    if (!res.ok) toast(res.reason);
+    else note(state, `The emperor will be escorted to ${state.cities[el.dataset.id].name}.`, true);
+    closeModal();
+    render();
+    return;
+  }
+  if (act === "gift") {
+    if (playerMarchingOn(state, el.dataset.faction)) {
+      toast("A gift is worthless while you are marching on them.");
+      return;
+    }
+    giftModal(state, el.dataset.faction);
+    return;
+  }
   if (act === "alliance") {
+    const price = alliancePrice(state, el.dataset.faction);
+    if (price.blocked) {
+      toast("They will not swear while your army is on their road.");
+      return;
+    }
     const res = setDiplomacy(state, { type: "alliance", faction: el.dataset.faction });
-    note(state, res.ok ? `An envoy will offer alliance to ${FACTIONS[el.dataset.faction].name}.` : res.reason);
+    note(state, res.ok ? `An envoy will offer ${FACTIONS[el.dataset.faction].name} a year-long oath for ${price.gold.toLocaleString()} gold.` : res.reason);
     render();
     return;
   }
@@ -717,7 +833,7 @@ function marchModal(state, fromId, preset) {
   const d = session.draft;
   const officers = activeInCity(state, city);
   openModal(`<h2>March from ${esc(city.name)}</h2>
-    <p>${city.soldiers.toLocaleString()} soldiers are in camp. Leave a garrison.</p>
+    <p>${city.soldiers.toLocaleString()} soldiers are in camp. Leave a garrison. If the governor goes with them, this city pays the base yield.</p>
     <h3>Road</h3>
     <div class="choice-grid">${foes.map((c) => `<button class="pick ${d.to === c.id ? "on" : ""}" data-act="dest" data-id="${c.id}">${esc(c.name)} · ${c.soldiers.toLocaleString()} · walls ${c.walls}</button>`).join("") || "<p>No enemy road leaves this city.</p>"}</div>
     <h3>Officers (up to three)</h3>
@@ -768,6 +884,7 @@ function dossierModal(state, id) {
         ${meter("Loyalty", o.loyalty)}
       </div>
       <p>${gear.length ? `Carries ${esc(gear.join(", "))}.` : "No named weapon."} Status: ${esc(o.status)}${o.alive ? "" : " · dead"}.</p>
+      ${bondBlurb(o.id) ? `<p>${esc(bondBlurb(o.id))}</p>` : ""}
       <button data-act="close">Close</button>
     </div>
   </div>`);
@@ -787,15 +904,58 @@ function rosterModal(state) {
 function helpModal() {
   openModal(`<div class="help">
     <h2>How a month works</h2>
-    <p>Each city you hold may take one order: cultivate farmland, repair dikes, open markets, levy troops, drill, patrol, raise walls, search, reward a retainer, shift men, or march. Then end the month. Grain and gold arrive afterward. Floods strike cities that neglected their dikes.</p>
+    <p>Every city has a standing job: fields, dikes, markets, drill, patrol, walls, or a levy. Leave it alone and the job repeats. Gold and grain arrive at the end of the month, and the governor changes the amount. A clever, steady governor pays more than a fighter in the same chair. Pull that governor onto a march and the city pays the base yield.</p>
+    <p>Spring is lean, summer floods a low dike, autumn is the real harvest, and winter eats more and tires a march. The food number is how many months the granary covers at this season's rations.</p>
+    <h3>One-off orders</h3>
+    <p>Search, reward, shift, march, spy, or call on a guest spends the month. The job waits. You also get one diplomatic offer. The oath has a price, lasts a year, and is refused if you are already marching on that lord.</p>
+    <h3>What you can see</h3>
+    <p>Enemy marches aimed at you are on the map before the month resolves. Their other orders stay hidden unless you spied them last month. A weaker army moves first.</p>
     <h3>The court</h3>
-    <p>Leadership drills a camp and steadies a line. War wins duels. Intellect finds recluses, runs markets, and lands a stratagem. Charm keeps loyalty from rotting and makes prisoners consider service. Liu Bei's court rises on its own. Lü Bu's does not.</p>
+    <p>Advice is two or three officers speaking in character. Fund one. Zhang Fei asks for a road or a drill. Xun Yu asks for dikes and markets. Chen Gong doubts Lü Bu. Zhang Liao's loyalty is thin.</p>
     <h3>Battle</h3>
-    <p>A march fights the neighboring city. Attack, duel a chosen officer, attempt a stratagem, rally, or retreat. The defender's walls soak a charge. Take twelve cities, or be the last lord standing.</p>
+    <p>You take the field when a ruler, an oath-brother, or a named rival is there. Other fights resolve themselves. A pass or a river crossing arrives short of men and spirit. A duel names both fighters, and the winner takes the weapon. Retreating while an oath-brother is down costs loyalty.</p>
+    <p>When a house loses its last city, a loyal captain may burn the granary. Lü Bu's men scatter. Twelve cities, or the last banner, wins. Each lord also has an aim. Liu Bei and Cao Cao must escort the emperor out of Chang'an.</p>
     <h3>Guests</h3>
     <p>Search can turn a recluse into a guest. Calling on Zhuge Liang takes three visits, as in the novel. He waits near Xiangyang. The year is 194: the novel gathers him early; the histories made him wait.</p>
     <p><button data-act="close">Close</button></p>
   </div>`);
+}
+
+function courtModal(state) {
+  const plans = courtProposals(state);
+  session.proposals = plans;
+  const cards = plans.map((plan, index) => {
+    const speaker = state.officers[plan.speakerId];
+    const cost = plan.cost ? `${plan.cost} gold when the month turns` : "No gold";
+    return `<button class="court-card" data-act="fund-plan" data-index="${index}" data-testid="plan-${index}">
+      ${face(speaker, "tiny")}
+      <span><b>${esc(speaker?.name || "Officer")}</b><small>${esc(cost)}</small><span class="plan-line">${esc(plan.line)}</span></span>
+    </button>`;
+  }).join("");
+  openModal(`<h2>The court</h2>
+    <p>Fund one plan. The others keep their peace, and every city you do not touch repeats its job.</p>
+    <div class="stack">${cards || "<p>No one in the camp has a proposal.</p>"}</div>
+    <p><button data-act="close">Close</button></p>`);
+}
+
+function spyModal(state, cityId) {
+  const city = state.cities[cityId];
+  session.draft = { cityId };
+  const factions = [...new Set(city.neighbors.map((id) => state.cities[id].faction).filter((id) => id && id !== city.faction))];
+  openModal(`<h2>Spy from ${esc(city.name)}</h2>
+    <p>Costs 60 gold. Next month you see that lord's orders. Marches aimed at you are already visible.</p>
+    <div class="choice-grid">${factions.map((id) => `<button data-act="pick-spy" data-faction="${id}">${esc(FACTIONS[id].name)}</button>`).join("") || "<p>No neighboring lord to watch.</p>"}</div>
+    <p><button data-act="close">Close</button></p>`);
+}
+
+function escortModal(state, cityId) {
+  const city = state.cities[cityId];
+  session.draft = { cityId };
+  const homes = factionCities(state, state.player);
+  openModal(`<h2>Escort the emperor</h2>
+    <p>He is in ${esc(city.name)}. Move the court to a city you hold. Neighbors treat it as theft, and a later demand carries more weight.</p>
+    <div class="choice-grid">${homes.map((home) => `<button data-act="pick-escort" data-id="${home.id}">${esc(home.name)}</button>`).join("")}</div>
+    <p><button data-act="close">Close</button></p>`);
 }
 
 async function endMonth() {
@@ -827,11 +987,13 @@ async function endMonth() {
     }
     for (const battle of battles) {
       const side = playerBattleSide(state, battle);
-      if (!side) {
+      const personal = battleIsPersonal(state, battle);
+      if (!side || !personal) {
         autoplayBattle(state, battle, rng);
         const lines = applyBattleResult(state, battle);
         const city = state.cities[battle.toId];
-        note(state, `${FACTIONS[battle.attackerFaction].name} marches on ${city.name}. ${battle.winner === "attacker" ? `${city.name} falls.` : "The attack fails."}`);
+        const settled = side && !personal ? `The fight at ${city.name} is settled without you. No ruler, oath-brother, or rival was on the field.` : "";
+        note(state, `${FACTIONS[battle.attackerFaction].name} marches on ${city.name}. ${battle.winner === "attacker" ? `${city.name} falls.` : "The attack fails."}${settled ? ` ${settled}` : ""}`);
         for (const line of lines) note(state, line);
       } else {
         await playerBattle(state, battle, side, rng);
