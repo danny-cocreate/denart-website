@@ -181,7 +181,7 @@ function gameHtml(state) {
     return `${FACTIONS[threat.faction].name} is on the road from ${from?.name || "a city"} toward ${to?.name || "you"}.`;
   }).join(" ");
   const tip = !state.dismissedTip && state.turn === 1
-    ? `<div class="tip"><b>First month.</b> ${esc(FACTIONS[state.player].blurb)} Cities already have a job. Leave them, or spend the month on one interruption. A march that is already on the road is marked.<div><button data-act="dismiss-tip">Understood</button></div></div>`
+    ? `<div class="tip"><b>First month.</b> ${esc(FACTIONS[state.player].blurb)} Cities already have a job. Leave them, or spend the month on one interruption. Your march waits at the gate. An enemy already coming sits partway along the road.<div><button data-act="dismiss-tip">Understood</button></div></div>`
     : "";
   return `<div class="game">
     <header class="topbar">
@@ -268,15 +268,12 @@ function townMark(state, city) {
   const nudge = LABEL_AT[city.id] || [0, 16];
   const w = Math.max(48, Math.ceil(city.name.length * 7.2 + 14));
   const y = nudge[1];
-  const pulse = selected && motionOk()
-    ? `<animate attributeName="r" values="18;22;18" dur="2.4s" repeatCount="indefinite"/>`
-    : "";
   const men = city.soldiers >= 1000 ? `${Math.round(city.soldiers / 100) / 10}k` : String(city.soldiers);
   const job = mine ? jobGlyph(city.job) : "";
   return `<g class="city ${mine ? "is-mine" : ""} ${selected ? "is-selected" : ""} ${ally ? "is-ally" : ""} ${threatened ? "is-threatened" : ""} ${emperor ? "is-emperor" : ""} ${changed ? "just-changed" : ""}" data-act="select" data-id="${city.id}" data-testid="city-${city.id}" transform="translate(${city.x} ${city.y})">
     <title>${esc(city.name)} · ${esc(FACTIONS[city.faction].name)} · ${city.soldiers.toLocaleString()} troops</title>
     <circle class="hit" r="22"/>
-    ${selected ? `<circle class="ring" r="20">${pulse}</circle>` : ""}
+    ${selected ? `<circle class="ring" r="20"/>` : ""}
     ${threatened ? `<circle class="threat-ring" r="18"/>` : ""}
     ${changed ? `<circle class="taken-flash" r="16"/>` : ""}
     ${ally ? `<circle class="ally-mark" r="22"/>` : ""}
@@ -328,6 +325,13 @@ function columnBody(kind, color) {
   return `<circle r="6.4" fill="${color}" stroke="#24170f" stroke-width="0.9"/><path d="M3.2,-2.4 h10.5 l-2.2,3.2 2.2,3.2 h-10.5 z" fill="${color}" stroke="#24170f" stroke-width="0.55"/>`;
 }
 
+function along(span, t) {
+  return {
+    x: span.x1 + (span.x2 - span.x1) * t,
+    y: span.y1 + (span.y2 - span.y1) * t,
+  };
+}
+
 function columnMark(A, B, kind) {
   const span = roadSpan(A, B);
   if (!span) return "";
@@ -336,17 +340,17 @@ function columnMark(A, B, kind) {
   const label = kind === "threat" ? "Enemy column" : kind === "spied" ? "Reported march" : kind === "shift" ? "Men shifting" : "Your column";
   const ang = Math.atan2(span.y2 - span.y1, span.x2 - span.x1) * 180 / Math.PI;
   const face = `<g class="column-face" transform="rotate(${rnd(ang)})"><title>${label}</title>${body}</g>`;
-  const from = `${rnd(span.x1)} ${rnd(span.y1)}`;
+  const restT = kind === "threat" ? 0.7 : kind === "spied" ? 0.4 : 0;
+  const rest = along(span, restT);
+  const from = `${rnd(rest.x)} ${rnd(rest.y)}`;
   const to = `${rnd(span.x2)} ${rnd(span.y2)}`;
   if (!motionOk()) {
-    const mx = (span.x1 + span.x2) / 2;
-    const my = (span.y1 + span.y2) / 2;
-    return `<g class="column ${kind}" transform="translate(${rnd(mx)} ${rnd(my)})">${face}</g>`;
+    return `<g class="column ${kind}" transform="translate(${from})">${face}</g>`;
   }
-  const travel = Math.hypot(span.x2 - span.x1, span.y2 - span.y1);
-  const dur = Math.max(1.8, Math.min(4.2, travel / 36)).toFixed(2);
-  return `<g class="column ${kind}">
-    <animateTransform attributeName="transform" type="translate" data-from="${from}" data-to="${to}" values="${from}; ${to}; ${from}" dur="${dur}s" repeatCount="indefinite"/>
+  const remain = Math.hypot(span.x2 - rest.x, span.y2 - rest.y);
+  const dur = Math.max(0.55, Math.min(0.95, remain / 220)).toFixed(2);
+  return `<g class="column ${kind}" transform="translate(${from})">
+    <animateTransform attributeName="transform" type="translate" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.16 0.84 0.2 1" data-from="${from}" data-to="${to}" values="${from}; ${to}" dur="${dur}s"/>
     ${face}
   </g>`;
 }
@@ -1082,19 +1086,16 @@ async function endMonth() {
     for (const city of Object.values(state.cities)) before[city.id] = city.faction;
     if (motionOk()) {
       const columns = [...document.querySelectorAll(".column animateTransform")];
-      if (columns.length) {
-        for (const node of columns) {
-          node.setAttribute("values", `${node.dataset.from}; ${node.dataset.to}`);
-          node.setAttribute("repeatCount", "1");
-          node.setAttribute("fill", "freeze");
-          node.setAttribute("dur", "0.85s");
-          try { node.beginElement(); } catch (err) { /* the column is already on the road */ }
-        }
-        await wait(900);
-      }
       screen.classList.add("turning");
-      await wait(420);
-      screen.classList.remove("turning");
+      if (columns.length) screen.classList.add("arriving");
+      let waitMs = columns.length ? 0 : 380;
+      for (const node of columns) {
+        const dur = Math.round(parseFloat(node.getAttribute("dur")) * 1000) || 700;
+        waitMs = Math.max(waitMs, dur);
+        try { node.beginElement(); } catch (err) { /* the column is waiting at its mark */ }
+      }
+      await wait(waitMs + 60);
+      screen.classList.remove("turning", "arriving");
     }
     const rng = Math.random;
     const result = beginResolution(state, rng);
