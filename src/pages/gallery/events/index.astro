@@ -11,12 +11,12 @@ const sortedEvents = events.sort((a, b) => {
   return dateB.getTime() - dateA.getTime();
 });
 
-// Use JPG as default (best compatibility), no fallback needed
+// Use the image as-is (avif). Rewriting to .jpg 404s when no JPG was deployed.
 const eventData = sortedEvents.map(event => ({
   slug: event.slug,
   title: event.data.title,
   date: event.data.date,
-  src: event.data.images?.[0]?.src?.replace('.avif', '.jpg')?.replace('.webp', '.jpg') || '',
+  src: event.data.images?.[0]?.src || '',
   alt: event.data.images?.[0]?.alt || event.data.title,
   count: event.data.images?.length || 0
 }));
