@@ -157,28 +157,25 @@ img { max-width: 100%; }
 .top-actions button { color: var(--paper-2); border-color: rgba(230, 211, 161, 0.35); padding: 6px 10px; }
 .top-actions button.primary { background: var(--cinnabar); color: #f6efe4; border-color: transparent; }
 
-.mapwrap { position: relative; min-height: 0; background: #8eaaa6; }
+.mapwrap { position: relative; min-height: 0; background: #a7c4ce; }
 .mapwrap svg { width: 100%; height: 100%; display: block; }
-.sea, .land, .lake, .peak, .wall, .river, .watername, .region, .seaname, .waves, .compass-rose, .road { pointer-events: none; }
-.sea { fill: url(#seaGrad); }
-.land { fill: url(#landGrad); stroke: #5c4734; stroke-width: 1.7; stroke-linejoin: round; }
-.lake { fill: #6d92a0; stroke: #4d7280; stroke-width: 0.7; }
-.peak { fill: #c6a56e; stroke: #6e5438; stroke-width: 0.7; stroke-linejoin: round; }
-.wall { fill: none; stroke: #7a6248; stroke-width: 2.4; stroke-dasharray: 5 3; opacity: 0.7; }
-.river { fill: none; stroke: #4f7d8e; stroke-width: 4.2; stroke-linecap: round; stroke-linejoin: round; }
-.river.bank { stroke: #cbb892; stroke-width: 8; }
-.river.thin { stroke-width: 2.2; }
-.river.thin.bank { stroke-width: 4.6; }
-.road { fill: none; stroke: rgba(92, 62, 36, 0.62); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.road.pass { stroke-dasharray: 1.2 4; stroke-width: 1.7; }
-.watername { fill: rgba(36, 72, 86, 0.72); font-size: 11px; letter-spacing: 0.2em; font-family: inherit; }
-.region { fill: rgba(74, 56, 40, 0.38); font-size: 11px; letter-spacing: 0.18em; font-family: inherit; }
-.seaname { fill: rgba(36, 68, 74, 0.55); font-size: 11px; letter-spacing: 0.16em; font-family: inherit; }
-.waves { fill: none; stroke: rgba(255, 252, 245, 0.45); stroke-width: 1.1; stroke-linecap: round; }
-.compass-rose { fill: rgba(28, 48, 46, 0.62); }
-.compass-rose circle { fill: rgba(244, 236, 220, 0.35); stroke: currentColor; stroke-width: 0.8; }
-.compass-rose .south { opacity: 0.35; }
-.compass-rose text { font-size: 11px; text-anchor: middle; font-family: inherit; }
+.sea, .land, .lake, .peak, .wall, .river, .watername, .seaname, .grat, .grat-label, .road { pointer-events: none; }
+.sea { fill: #a7c4ce; }
+.land { fill: #e3d0aa; stroke: #5a4634; stroke-width: 1.15; stroke-linejoin: round; }
+.lake { fill: #6d92a0; stroke: #4d7280; stroke-width: 0.6; }
+.peak { fill: #c6a56e; stroke: #6e5438; stroke-width: 0.6; stroke-linejoin: round; opacity: 0.85; }
+.wall { fill: none; stroke: #6d5842; stroke-width: 1.6; stroke-dasharray: 2 1.6; opacity: 0.55; }
+.grat { fill: none; stroke: rgba(255, 255, 255, 0.35); stroke-width: 0.7; }
+.grat-label { fill: rgba(36, 58, 66, 0.42); font-size: 10px; font-family: inherit; letter-spacing: 0.04em; }
+.river { fill: none; stroke: #3e6e80; stroke-linecap: round; stroke-linejoin: round; }
+.river.major { stroke-width: 2.15; }
+.river.medium { stroke-width: 1.35; }
+.river.minor { stroke-width: 0.95; }
+.river.bank { stroke: #d5c7a4; stroke-width: 4.2; }
+.road { fill: none; stroke: rgba(74, 48, 28, 0.55); stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }
+.road.pass { stroke-dasharray: 1.4 3.2; stroke-width: 1.25; }
+.watername { fill: rgba(28, 64, 78, 0.72); font-size: 11px; letter-spacing: 0.16em; font-family: inherit; }
+.seaname { fill: rgba(28, 62, 74, 0.55); font-size: 11px; letter-spacing: 0.18em; font-family: inherit; }
 .city { cursor: pointer; }
 .city .hit { fill: transparent; }
 .city .ring { fill: none; stroke: var(--cinnabar); stroke-width: 2; }

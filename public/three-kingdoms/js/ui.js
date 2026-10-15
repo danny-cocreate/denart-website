@@ -1,5 +1,18 @@
 import { CITIES, FACTIONS, FEATURED, ITEMS, SAVE_KEY } from "./data.js";
 import {
+  GRAT_LABELS,
+  GRATICULE,
+  LAND,
+  LAKES,
+  MAP_H,
+  MAP_W,
+  NOTES,
+  PEAKS,
+  PLACES,
+  RIVERS,
+  WALL,
+} from "./mapgeo.js";
+import {
   activeInCity,
   advise,
   answerEnvoy,
@@ -200,62 +213,22 @@ function gameHtml(state) {
   </div>`;
 }
 
-const COAST = [
-  [150, 650], [250, 668], [380, 658], [520, 648], [660, 662], [790, 652], [880, 668],
-  [950, 640], [975, 590], [945, 545], [985, 510], [960, 470], [990, 410], [975, 350],
-  [955, 305], [910, 260], [860, 242], [815, 255], [845, 220], [910, 200], [955, 168],
-  [935, 125], [875, 108], [815, 128], [770, 158], [735, 185], [700, 150], [725, 95],
-  [680, 58], [560, 48], [430, 55], [310, 48], [200, 68], [145, 105], [100, 155],
-  [78, 215], [108, 265], [72, 325], [100, 385], [68, 450], [95, 515], [70, 575], [105, 625],
-];
-
-const RIVERS = {
-  yellow: "M 80,200 C 140,215 200,225 270,228 C 340,220 390,205 450,218 C 500,240 530,285 575,305 C 630,290 680,230 730,175 C 760,145 790,115 820,95",
-  yangtze: "M 55,600 C 130,590 200,605 280,592 C 360,578 450,555 540,535 C 630,512 710,488 790,478 C 860,472 930,495 990,515",
-  han: "M 250,420 C 320,435 390,452 450,472 C 500,495 530,520 555,548",
-  huai: "M 500,400 C 570,430 650,455 740,448 C 830,440 920,420 990,400",
-  wei: "M 145,312 C 210,306 260,300 330,252",
-};
-
-const ROAD_MIDS = {
-  "beihai|beiping": [[705, 188], [778, 228], [835, 214]],
-  "beihai|ye": [[730, 222]],
-  "beihai|puyang": [[760, 250]],
-  "jiangling|jianye": [[520, 565], [660, 535]],
-  "jiangling|wu": [[500, 568], [680, 508], [820, 500], [870, 555]],
-  "hanzhong|jiangling": [[290, 495]],
-  "jianye|xiangyang": [[560, 455], [680, 490]],
-  "donghai|xiaopei": [[770, 315]],
-  "changan|hanzhong": [[250, 355]],
-  "hanzhong|tianshui": [[175, 355]],
-  "chengdu|hanzhong": [[175, 480]],
-  "chenliu|shouchun": [[545, 425]],
-  "shouchun|xiangyang": [[530, 465]],
-  "jianye|wu": [[860, 548]],
-  "jianye|xiapi": [[780, 465]],
-  "jianye|shouchun": [[710, 515]],
-};
-
 const PASSES = new Set(["changan|hanzhong", "hanzhong|tianshui", "chengdu|hanzhong"]);
 
-const LABEL_ABOVE = new Set(["beihai"]);
-
-const PEAKS = [
-  [168, 352, 8], [198, 336, 11], [230, 356, 8], [262, 338, 10], [296, 360, 7], [328, 346, 8],
-  [448, 118, 8], [466, 148, 10], [450, 180, 7], [472, 208, 6],
-  [122, 205, 9], [140, 242, 7], [118, 325, 8], [142, 385, 6], [128, 465, 8], [150, 500, 6],
-  [205, 468, 7], [238, 486, 6], [268, 470, 8], [155, 590, 6],
-];
-
-const REGIONS = [
-  ["YOU", 500, 74],
-  ["BING", 292, 122],
-  ["QING", 918, 152],
-  ["YAN", 512, 308],
-  ["XU", 708, 328],
-  ["YANG", 705, 618],
-  ["YI", 248, 638],
-];
+const LABEL_AT = {
+  ye: [-10, -36],
+  puyang: [-8, 18],
+  xiaopei: [6, -38],
+  xiapi: [10, 18],
+  donghai: [8, -36],
+  chengdu: [20, 18],
+  tianshui: [0, -36],
+  shouchun: [0, -36],
+  xiangyang: [-8, -36],
+  jinyang: [-26, 18],
+  jianye: [0, 18],
+  wu: [14, 18],
+};
 
 function edgeKey(a, b) {
   return [a, b].sort().join("|");
@@ -263,52 +236,6 @@ function edgeKey(a, b) {
 
 function rnd(n) {
   return Math.round(n * 10) / 10;
-}
-
-function smoothClosed(pts) {
-  const n = pts.length;
-  let d = `M ${pts[0][0]} ${pts[0][1]}`;
-  for (let i = 0; i < n; i++) {
-    const p0 = pts[(i - 1 + n) % n];
-    const p1 = pts[i];
-    const p2 = pts[(i + 1) % n];
-    const p3 = pts[(i + 2) % n];
-    const c1x = p1[0] + (p2[0] - p0[0]) / 6;
-    const c1y = p1[1] + (p2[1] - p0[1]) / 6;
-    const c2x = p2[0] - (p3[0] - p1[0]) / 6;
-    const c2y = p2[1] - (p3[1] - p1[1]) / 6;
-    d += ` C ${rnd(c1x)} ${rnd(c1y)} ${rnd(c2x)} ${rnd(c2y)} ${p2[0]} ${p2[1]}`;
-  }
-  return `${d} Z`;
-}
-
-function smoothOpen(pts) {
-  let d = `M ${pts[0][0]} ${pts[0][1]}`;
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[Math.max(0, i - 1)];
-    const p1 = pts[i];
-    const p2 = pts[i + 1];
-    const p3 = pts[Math.min(pts.length - 1, i + 2)];
-    const c1x = p1[0] + (p2[0] - p0[0]) / 6;
-    const c1y = p1[1] + (p2[1] - p0[1]) / 6;
-    const c2x = p2[0] - (p3[0] - p1[0]) / 6;
-    const c2y = p2[1] - (p3[1] - p1[1]) / 6;
-    d += ` C ${rnd(c1x)} ${rnd(c1y)} ${rnd(c2x)} ${rnd(c2y)} ${p2[0]} ${p2[1]}`;
-  }
-  return d;
-}
-
-function roadPath(a, b) {
-  const key = edgeKey(a.id, b.id);
-  const mids = ROAD_MIDS[key];
-  if (mids) return smoothOpen([[a.x, a.y], ...mids, [b.x, b.y]]);
-  const mx = (a.x + b.x) / 2;
-  const my = (a.y + b.y) / 2;
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const len = Math.hypot(dx, dy) || 1;
-  const mag = Math.min(16, len * 0.07);
-  return `M ${a.x} ${a.y} Q ${rnd(mx + (-dy / len) * mag)} ${rnd(my + (dx / len) * mag)} ${b.x} ${b.y}`;
 }
 
 function peakMark(x, y, s) {
@@ -321,9 +248,9 @@ function townMark(state, city) {
   const selected = city.id === state.selected;
   const ally = !mine && isAllied(state, state.player, city.faction);
   const ordered = !!state.orders[city.id];
-  const above = LABEL_ABOVE.has(city.id);
+  const nudge = LABEL_AT[city.id] || [0, 16];
   const w = Math.max(48, Math.ceil(city.name.length * 7.2 + 14));
-  const y = above ? -40 : 16;
+  const y = nudge[1];
   return `<g class="city ${mine ? "is-mine" : ""} ${selected ? "is-selected" : ""}" data-act="select" data-id="${city.id}" data-testid="city-${city.id}" transform="translate(${city.x} ${city.y})">
     <title>${esc(city.name)} · ${esc(FACTIONS[city.faction].name)} · ${city.soldiers.toLocaleString()} troops</title>
     <circle class="hit" r="20"/>
@@ -333,7 +260,7 @@ function townMark(state, city) {
     <rect class="walls" x="-10" y="-3" width="20" height="13"/>
     <rect class="gate" x="-2.2" y="4" width="4.4" height="6"/>
     ${ordered ? `<circle class="order-pip" cx="14" cy="-14" r="3.4"/>` : ""}
-    <g class="placard">
+    <g class="placard" transform="translate(${nudge[0]} 0)">
       <rect x="${-w / 2}" y="${y}" width="${w}" height="16" rx="1.5"/>
       <text y="${y + 12}">${esc(city.name)}</text>
     </g>
@@ -343,63 +270,37 @@ function townMark(state, city) {
 function mapSvg(state) {
   for (const src of CITIES) {
     const city = state.cities[src.id];
-    if (city) {
-      city.x = src.x;
-      city.y = src.y;
+    const place = PLACES[src.id];
+    if (city && place) {
+      city.x = place.x;
+      city.y = place.y;
     }
   }
-  const land = smoothClosed(COAST);
   const roads = EDGES.map(([a, b]) => {
     const A = state.cities[a];
     const B = state.cities[b];
     const pass = PASSES.has(edgeKey(a, b)) ? " pass" : "";
-    return `<path class="road${pass}" d="${roadPath(A, B)}"/>`;
+    return `<path class="road${pass}" d="M ${A.x} ${A.y} L ${B.x} ${B.y}"/>`;
   }).join("");
-  const river = (id, d, thin = false) => {
-    const cls = thin ? "river thin" : "river";
-    return `<path id="${id}" class="${cls} bank" d="${d}"/><path class="${cls}" d="${d}"/>`;
-  };
+  const rivers = RIVERS.map((r) => {
+    const bank = r.rank === "major" ? `<path class="river bank ${r.rank}" d="${r.d}"/>` : "";
+    return `${bank}<path class="river ${r.rank}" d="${r.d}"/>`;
+  }).join("");
+  const notes = NOTES.map((n) => {
+    const sea = n.t === "BOHAI" || n.t.endsWith("SEA");
+    return `<text class="${sea ? "seaname" : "watername"}" x="${n.x}" y="${n.y}" text-anchor="middle">${n.t}</text>`;
+  }).join("");
   const nodes = Object.values(state.cities).map((c) => townMark(state, c)).join("");
-  return `<svg viewBox="0 0 1040 700" role="img" aria-label="Map of the late Han">
-    <defs>
-      <linearGradient id="seaGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#d7e4e0"/>
-        <stop offset="1" stop-color="#8eaaa6"/>
-      </linearGradient>
-      <linearGradient id="landGrad" x1="0" y1="0" x2="0.15" y2="1">
-        <stop offset="0" stop-color="#f0e2c6"/>
-        <stop offset="0.5" stop-color="#e6d2ad"/>
-        <stop offset="1" stop-color="#d4c198"/>
-      </linearGradient>
-    </defs>
-    <rect class="sea" width="1040" height="700"/>
-    <path class="land" d="${land}"/>
-    <ellipse class="lake" cx="448" cy="618" rx="30" ry="13"/>
-    <ellipse class="lake" cx="812" cy="648" rx="18" ry="9"/>
+  return `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="Map of the late Han, traced from the real coast and rivers">
+    <rect class="sea" width="${MAP_W}" height="${MAP_H}"/>
+    <path class="grat" d="${GRATICULE}"/>
+    <path class="land" fill-rule="evenodd" d="${LAND}"/>
+    <path class="lake" d="${LAKES}"/>
     ${PEAKS.map(([x, y, s]) => peakMark(x, y, s)).join("")}
-    <path class="wall" d="M 155,108 C 230,86 310,98 400,78 C 470,92 545,74 610,90"/>
-    ${river("yellow", RIVERS.yellow)}
-    ${river("yangtze", RIVERS.yangtze)}
-    ${river("han", RIVERS.han, true)}
-    ${river("huai", RIVERS.huai, true)}
-    ${river("wei", RIVERS.wei, true)}
-    <text class="watername" x="168" y="196">YELLOW RIVER</text>
-    <text class="watername" x="548" y="592">YANGTZE</text>
-    <text class="watername" x="812" y="428">HUAI</text>
-    ${REGIONS.map(([name, x, y]) => `<text class="region" x="${x}" y="${y}">${name}</text>`).join("")}
-    <text class="seaname" x="760" y="118">BOHAI</text>
-    <g class="waves">
-      <path d="M992,175 q16,8 0,16 t0,16"/>
-      <path d="M1012,205 q16,8 0,16 t0,16"/>
-      <path d="M998,430 q18,8 0,16 t0,16"/>
-      <path d="M1016,462 q18,8 0,16 t0,16"/>
-    </g>
-    <g class="compass-rose" transform="translate(1000,640)">
-      <circle r="15"/>
-      <path d="M0,-20 L4.5,-2 L0,7 L-4.5,-2 Z"/>
-      <path class="south" d="M0,18 L3.2,3 L0,7 L-3.2,3 Z"/>
-      <text y="-24">N</text>
-    </g>
+    <path class="wall" d="${WALL}"/>
+    ${rivers}
+    ${notes}
+    ${GRAT_LABELS.map((g) => `<text class="grat-label" text-anchor="${g.anchor}" x="${g.x}" y="${g.y}">${g.t}</text>`).join("")}
     ${roads}
     ${nodes}
   </svg>`;
