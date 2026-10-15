@@ -201,3 +201,51 @@ const MONTHS = [
 ];
 
 const FEATURED = ["liubei", "caocao", "sunce", "yuanshao", "lvbu", "liubiao", "mateng", "gongsunzan"];
+
+/** Standing work a city repeats until an order changes it. */
+const JOBS = {
+  fields: { id: "fields", label: "Fields", cost: 40, hint: "Opens farmland. Autumn grain depends on it, and on the governor." },
+  dikes: { id: "dikes", label: "Dikes", cost: 50, hint: "Raises flood control. Summer is cruel to a low dike." },
+  markets: { id: "markets", label: "Markets", cost: 55, hint: "Raises commerce. A clever governor draws more gold from the same market." },
+  drill: { id: "drill", label: "Drill", cost: 25, hint: "Raises training. Leadership decides how fast the camp learns." },
+  patrol: { id: "patrol", label: "Patrol", cost: 30, hint: "Raises public order. Charm keeps the wards quiet." },
+  walls: { id: "walls", label: "Walls", cost: 80, hint: "Raises the defense that soaks a charge." },
+  levy: { id: "levy", label: "Levy", cost: 40, hint: "Enlists troops and lowers training. Order limits how many will come." },
+};
+
+/** Mountain roads. Armies arrive tired. */
+const PASS_ROADS = new Set(["changan|hanzhong", "hanzhong|tianshui", "chengdu|hanzhong"]);
+
+/** River crossings. The same fatigue as a pass. */
+const RIVER_ROADS = new Set(["jiangling|jianye", "jiangling|wu", "xiangyang|jianye", "xiapi|jianye", "shouchun|jianye"]);
+
+/** Peach Garden, and Cao Cao with Xiahou Dun. */
+const OATHS = [
+  ["liubei", "guanyu", "zhangfei"],
+  ["caocao", "xiahoudun"],
+];
+
+const RIVAL_PAIRS = [["yuanshao", "gongsunzan"]];
+
+/** Chen Gong serves Lü Bu and does not trust him. */
+const DOUBTS = [["chengong", "lvbu"]];
+
+/** Loyalty is a habit, not a vow. */
+const THIN_LOYALTY = ["zhangliao"];
+
+const AIMS = {
+  liubei: { title: "Restore the Han", text: "Escort the emperor out of Chang'an and keep him in a city you hold." },
+  caocao: { title: "Hold the court", text: "Take the emperor and keep him in a city you rule." },
+  sunce: { title: "Secure the river", text: "Hold Jianye, Wu, and Jiangling." },
+  yuanshao: { title: "Master the north", text: "Hold Ye, Jinyang, and Beiping." },
+  lvbu: { title: "The strongest arm", text: "Win a duel against a ruling lord." },
+  liubiao: { title: "Keep Jing", text: "Hold Xiangyang and Jiangling." },
+  liuzhang: { title: "Shut the basin", text: "Hold Chengdu and Hanzhong." },
+  mateng: { title: "The western gate", text: "Hold Tianshui and Chang'an." },
+  gongsunzan: { title: "Break Yuan Shao", text: "Take Ye." },
+  yuanshu: { title: "A title of his own", text: "Hold Shouchun and Jianye." },
+  zhanglu: { title: "The passes", text: "Hold Hanzhong and Chengdu." },
+  lijue: { title: "Keep the hostage", text: "Hold Chang'an while the emperor is still there." },
+  kongrong: { title: "A scholar's coast", text: "Hold Beihai and one city besides." },
+  zangba: { title: "Outlast the year", text: "Still hold Donghai when the year turns." },
+};

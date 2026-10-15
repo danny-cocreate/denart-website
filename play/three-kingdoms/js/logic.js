@@ -75,6 +75,7 @@ function createGame(factionId, rng = Math.random) {
     const c = structuredClone(src);
     c.neighbors = neighborsOf(src.id);
     c.officerIds = [...src.officers];
+    c.job = defaultJob(c);
     delete c.officers;
     cities[c.id] = c;
     for (const id of c.officerIds) {
@@ -99,8 +100,8 @@ function createGame(factionId, rng = Math.random) {
   }
   const home = Object.values(cities).find((c) => c.faction === factionId && c.governor === factionId)
     || Object.values(cities).find((c) => c.faction === factionId);
-  return {
-    version: 1,
+  const state = {
+    version: 2,
     year: 194,
     month: 1,
     turn: 1,
@@ -115,6 +116,14 @@ function createGame(factionId, rng = Math.random) {
     orders: {},
     diplomacy: null,
     plot: null,
+    emperorAt: "changan",
+    mandate: null,
+    revealed: null,
+    shadowOrders: {},
+    threats: [],
+    lastActs: {},
+    aimsMet: {},
+    duelWins: {},
     log: [
       {
         text: "Spring, 194. The Han court is a shadow in Chang'an. Warlords tax the passes, and oaths last as long as the grain.",
@@ -125,6 +134,8 @@ function createGame(factionId, rng = Math.random) {
     outcome: null,
     rngNote: typeof rng === "function" ? "external" : "",
   };
+  planShadow(state, rng);
+  return state;
 }
 
 function monthLabel(state) {
@@ -171,9 +182,18 @@ function relationOf(state, a, b) {
   return state.relations[pairKey(a, b)] ?? 40;
 }
 
+function allianceKeyOf(row) {
+  return typeof row === "string" ? row : row?.key;
+}
+
 function isAllied(state, a, b) {
+  if (!a || !b) return false;
   if (a === b) return true;
-  return state.alliances.includes(pairKey(a, b));
+  const key = pairKey(a, b);
+  const row = (state.alliances || []).find((item) => allianceKeyOf(item) === key);
+  if (!row) return false;
+  if (typeof row === "string") return true;
+  return state.turn < row.untilTurn;
 }
 
 function addRelation(state, a, b, delta) {
@@ -184,13 +204,14 @@ function addRelation(state, a, b, delta) {
 
 function formAlliance(state, a, b) {
   const key = pairKey(a, b);
-  if (!state.alliances.includes(key)) state.alliances.push(key);
+  state.alliances = (state.alliances || []).filter((item) => allianceKeyOf(item) !== key);
+  state.alliances.push({ key, untilTurn: state.turn + 12 });
   state.relations[key] = Math.max(state.relations[key] ?? 40, 66);
 }
 
 function breakAlliance(state, a, b) {
   const key = pairKey(a, b);
-  state.alliances = state.alliances.filter((k) => k !== key);
+  state.alliances = (state.alliances || []).filter((item) => allianceKeyOf(item) !== key);
   addRelation(state, a, b, -28);
 }
 
@@ -260,10 +281,21 @@ function pushLog(state, text) {
   if (state.log.length > 80) state.log.length = 80;
 }
 
+const JOB_TYPE = {
+  fields: "cultivate",
+  dikes: "irrigate",
+  markets: "trade",
+  drill: "train",
+  patrol: "patrol",
+  walls: "fortify",
+  levy: "recruit",
+};
+
 function orderLabel(state, order) {
-  if (!order) return "Rest";
+  if (!order) return "Keeps its job";
   const cityName = (id) => state.cities[id]?.name || "the road";
   switch (order.type) {
+    case "job": return `Set the job to ${JOBS[order.job]?.label || "work"}`;
     case "cultivate": return "Cultivate fields";
     case "irrigate": return "Repair dikes";
     case "trade": return "Open markets";
@@ -277,7 +309,9 @@ function orderLabel(state, order) {
     case "transfer": return `Shift men to ${cityName(order.to)}`;
     case "march": return `March on ${cityName(order.to)}`;
     case "employ": return `Call on ${state.officers[order.officerId]?.name || "a guest"}`;
-    default: return "Rest";
+    case "spy": return `Spy on ${FACTIONS[order.faction]?.name || "a lord"}`;
+    case "escort": return `Escort the emperor to ${cityName(order.to)}`;
+    default: return "Keeps its job";
   }
 }
 
@@ -288,6 +322,20 @@ function validate(state, city, order) {
   const friends = city.neighbors.filter((id) => state.cities[id].faction === city.faction);
   const foes = city.neighbors.filter((id) => state.cities[id].faction !== city.faction);
   switch (order.type) {
+    case "job":
+      if (!JOBS[order.job]) return "That is not a job a city can keep.";
+      return null;
+    case "spy": {
+      const near = city.neighbors.some((id) => state.cities[id].faction === order.faction);
+      if (!near || order.faction === city.faction) return "Spy a lord on a neighboring road.";
+      return null;
+    }
+    case "escort": {
+      if (state.emperorAt !== city.id) return "The emperor is not in this city.";
+      const dest = state.cities[order.to];
+      if (!dest || dest.faction !== city.faction) return "Escort him to a city you hold.";
+      return null;
+    }
     case "reward": {
       const o = state.officers[order.officerId];
       if (!o || o.cityId !== city.id || isRuler(state, o)) return "Choose a retainer in this city.";
@@ -347,63 +395,10 @@ function setPlot(state, action) {
   return { ok: true };
 }
 
-function chooseOrder(state, city, rng, aggressive) {
-  const officers = activeInCity(state, city);
-  if (!officers.length) return null;
-  const gov = state.officers[city.governor] || officers[0];
-  const st = eff(gov);
-  const foes = city.neighbors
-    .map((id) => state.cities[id])
-    .filter((c) => c.faction !== city.faction && !isAllied(state, city.faction, c.faction));
-  const weakest = foes.slice().sort((a, b) => a.soldiers * (1 + a.walls / 120) - b.soldiers * (1 + b.walls / 120))[0];
-  if (
-    aggressive
-    && weakest
-    && city.soldiers > 1800
-    && city.soldiers > weakest.soldiers * (1.55 + weakest.walls / 200)
-    && city.training >= 40
-    && rng() < 0.72
-  ) {
-    const leaders = officers
-      .slice()
-      .sort((a, b) => eff(b).war - eff(a).war)
-      .slice(0, Math.min(3, officers.length))
-      .map((o) => o.id);
-    const garrison = Math.max(200, Math.round(city.soldiers * 0.28));
-    return {
-      type: "march",
-      to: weakest.id,
-      officers: leaders,
-      soldiers: city.soldiers - garrison,
-      faction: city.faction,
-    };
-  }
-  const low = officers.filter((o) => !isRuler(state, o) && o.loyalty < 48);
-  if (low.length && city.gold > 180 && rng() < 0.45) {
-    return { type: "reward", officerId: low[0].id, faction: city.faction };
-  }
-  const hidden = Object.values(state.officers).some((o) => o.status === "hidden" && o.homeCity === city.id);
-  if (hidden && city.gold > 80 && st.int > 70 && rng() < 0.4) {
-    return { type: "search", faction: city.faction };
-  }
-  if (city.rice < city.soldiers * 0.25 && city.land < 85) return { type: "cultivate", faction: city.faction };
-  if (city.people < 42) return { type: "patrol", faction: city.faction };
-  if (city.flood < 36) return { type: "irrigate", faction: city.faction };
-  if (city.soldiers < 2200 && city.gold > 220 && city.people > 38) return { type: "recruit", faction: city.faction };
-  if (city.training < 52 && city.soldiers > 900) return { type: "train", faction: city.faction };
-  if (city.walls < 36 && city.gold > 240 && rng() < 0.4) return { type: "fortify", faction: city.faction };
-  if (city.trade <= city.land && city.trade < 75) return { type: "trade", faction: city.faction };
-  if (city.land <= city.flood) return { type: "cultivate", faction: city.faction };
-  return { type: "irrigate", faction: city.faction };
-}
-
-function advise(state, rng = Math.random) {
-  if (state.phase !== "planning") return;
-  for (const city of factionCities(state, state.player)) {
-    if (state.orders[city.id]) continue;
-    const order = chooseOrder(state, city, rng, state.turn >= 2);
-    if (order) state.orders[city.id] = order;
-  }
+function advise(state) {
+  const plans = courtProposals(state);
+  if (!plans.length) return { ok: false, reason: "The court is silent." };
+  return fundPlan(state, plans[0]);
 }
 
 function spend(city, n) {
@@ -564,6 +559,28 @@ function applyDomestic(state, city, order, rng, logs) {
       logs.push(done);
       break;
     }
+    case "spy": {
+      if (!spend(city, 60)) { logs.push(`${city.name} cannot pay the agents.`); return; }
+      state._spy = order.faction;
+      logs.push(`Agents from ${city.name} watch ${FACTIONS[order.faction].name}. Next month their plans will be known.`);
+      break;
+    }
+    case "escort": {
+      if (state.emperorAt !== city.id) { logs.push("The emperor is not in this city."); return; }
+      const dest = state.cities[order.to] || city;
+      if (dest.faction !== city.faction) { logs.push("There is no city of yours to receive the court."); return; }
+      const fromName = city.name;
+      state.emperorAt = dest.id;
+      state.mandate = city.faction;
+      const neighbors = new Set(city.neighbors.map((id) => state.cities[id].faction).filter((f) => f && f !== city.faction));
+      for (const id of dest.neighbors) {
+        const f = state.cities[id].faction;
+        if (f && f !== city.faction) neighbors.add(f);
+      }
+      for (const f of neighbors) addRelation(state, city.faction, f, -8);
+      logs.push(`${FACTIONS[city.faction].name} escorts the emperor from ${fromName} to ${dest.name}. The neighboring lords call it a theft of the court.`);
+      break;
+    }
     default:
       break;
   }
@@ -580,6 +597,10 @@ function applyDiplomacy(state, rng, logs) {
   if (!treasury) return;
   if (d.type === "gift") {
     const gold = d.gold;
+    if (playerMarchingOn(state, d.faction)) {
+      logs.push(`A gift cannot buy ${FACTIONS[d.faction].name} while your banners are already on their road.`);
+      return;
+    }
     if (treasury.gold < gold) { logs.push("The gift cannot be paid."); return; }
     treasury.gold -= gold;
     addRelation(state, state.player, d.faction, Math.round(gold / 38));
@@ -588,17 +609,19 @@ function applyDiplomacy(state, rng, logs) {
   }
   if (d.type === "alliance") {
     if (isAllied(state, state.player, d.faction)) { logs.push("You are already allied."); return; }
-    const rel = relationOf(state, state.player, d.faction);
-    const them = totals(state, d.faction).soldiers;
-    const us = totals(state, state.player).soldiers;
-    const accept = rel >= 56 || (rel >= 38 && them <= us * 1.15) || (rel >= 28 && them < us * 0.65);
-    if (accept) {
-      formAlliance(state, state.player, d.faction);
-      logs.push(`${FACTIONS[d.faction].name} accepts the alliance.`);
-    } else {
-      addRelation(state, state.player, d.faction, -4);
-      logs.push(`${FACTIONS[d.faction].name} refuses the oath.`);
+    const price = alliancePrice(state, d.faction);
+    if (price.blocked) {
+      addRelation(state, state.player, d.faction, -6);
+      logs.push(`${FACTIONS[d.faction].name} will not hear an oath while your army is marching on them.`);
+      return;
     }
+    if (treasury.gold < price.gold) {
+      logs.push(`The oath costs ${price.gold.toLocaleString()} gold, and the treasury is short.`);
+      return;
+    }
+    treasury.gold -= price.gold;
+    formAlliance(state, state.player, d.faction);
+    logs.push(`${FACTIONS[d.faction].name} accepts the oath for ${price.gold.toLocaleString()} gold. It lasts a year.`);
     return;
   }
   if (d.type === "break") {
@@ -618,7 +641,8 @@ function applyDiplomacy(state, rng, logs) {
     }
     const ourR = rulerOfficer(state, state.player);
     const theirR = rulerOfficer(state, d.faction);
-    const chance = clamp(((ourR ? eff(ourR).chr : 50) - (theirR ? eff(theirR).chr : 50) + 25) / 120, 0.1, 0.75);
+    let chance = clamp(((ourR ? eff(ourR).chr : 50) - (theirR ? eff(theirR).chr : 50) + 25) / 120, 0.1, 0.75);
+    if (state.mandate === state.player) chance = clamp(chance + 0.2, 0.1, 0.9);
     if (rng() < chance) {
       const city = theirs[0];
       logs.push(`${FACTIONS[d.faction].name} yields ${city.name} rather than fight.`);
@@ -647,6 +671,7 @@ function applyDiplomacy(state, rng, logs) {
       ensureGovernor(state, city);
       state.pendingPrisoners = (state.pendingPrisoners || []).concat(prisoners);
       ensureRuler(state, d.faction, logs);
+      lastAct(state, d.faction, city, logs);
     } else {
       addRelation(state, state.player, d.faction, -16);
       logs.push(`${FACTIONS[d.faction].name} rejects the demand and calls the banners.`);
@@ -792,6 +817,7 @@ function resolveActions(state, battle, attackerAction, defenderAction, rng) {
     battle.done = true;
     battle.winner = "defender";
     logs.push("The attacker sounds the retreat.");
+    logs.push(...oathRetreat(state, battle.attacker));
     battle.log.push(...logs);
     return;
   }
@@ -799,6 +825,7 @@ function resolveActions(state, battle, attackerAction, defenderAction, rng) {
     battle.done = true;
     battle.winner = "attacker";
     logs.push("The defenders abandon the walls.");
+    logs.push(...oathRetreat(state, battle.defender));
     battle.log.push(...logs);
     return;
   }
@@ -855,8 +882,17 @@ function resolveActions(state, battle, attackerAction, defenderAction, rng) {
     const wn = unitStats(state, winner).name;
     const ln = unitStats(state, loser).name;
     logs.push(flavor || `${wn} prevails over ${ln} in single combat.`);
+    const winnerFaction = battle.attacker.units.includes(winner) ? battle.attackerFaction : battle.defenderFaction;
+    const loserOfficer = loser.officerId ? state.officers[loser.officerId] : null;
+    if (loserOfficer && isRuler(state, loserOfficer)) {
+      state.duelWins = state.duelWins || {};
+      state.duelWins[winnerFaction] = loserOfficer.id;
+    }
     maybeSlay(state, loser, rng);
-    if (loser.slain) logs.push(`${ln} does not leave the field.`);
+    if (loser.slain) {
+      logs.push(`${ln} does not leave the field.`);
+      if (winner.officerId && loser.officerId) logs.push(...giveGear(state, loser.officerId, winner.officerId));
+    }
   }
   const strikes = [];
   for (const [, action, mine, enemy] of packs) {
@@ -1059,7 +1095,12 @@ function applyBattleResult(state, battle) {
     ensureGovernor(state, from);
     ensureRuler(state, oldFaction, logs);
     ensureRuler(state, battle.attackerFaction, logs);
+    if (state.emperorAt === to.id) {
+      if (state.mandate && state.mandate !== battle.attackerFaction) state.mandate = null;
+      logs.push(`The emperor is now in ${FACTIONS[battle.attackerFaction].name}'s hands at ${to.name}.`);
+    }
     logs.push(`${to.name} falls to ${FACTIONS[battle.attackerFaction].name}.`);
+    lastAct(state, oldFaction, to, logs);
     if (battle.attackerFaction === state.player) {
       battle.captured = captured;
     } else {
@@ -1116,13 +1157,35 @@ function prepareBattle(state, fromId, order) {
   const minKeep = from.soldiers > 600 ? 100 : 0;
   let soldiers = Math.min(order.soldiers || 0, from.soldiers - minKeep);
   if (soldiers < 300) return null;
-  from.soldiers -= soldiers;
+  const departed = soldiers;
+  const roadNotes = [];
+  let fatigue = 0;
+  let morale = clamp(from.training, 15, 100);
+  if (seasonName(state.month) === "winter") {
+    fatigue += 0.1;
+    morale -= 12;
+    roadNotes.push("winter tires the march");
+  }
+  if (passRoad(from.id, to.id)) {
+    fatigue += 0.15;
+    morale -= 12;
+    roadNotes.push("the pass is steep");
+  }
+  if (riverRoad(from.id, to.id)) {
+    fatigue += 0.15;
+    morale -= 12;
+    roadNotes.push("the river crossing is slow");
+  }
+  const lost = Math.round(departed * Math.min(0.45, fatigue));
+  soldiers = Math.max(1, departed - lost);
+  morale = clamp(morale, 8, 100);
+  from.soldiers -= departed;
   const leaders = ids.map((id) => state.officers[id]);
   const leaSum = leaders.reduce((s, o) => s + eff(o).lea, 0) || 1;
   const units = leaders.map((o) => ({
     officerId: o.id,
     soldiers: Math.max(1, Math.round(soldiers * (eff(o).lea / leaSum))),
-    morale: clamp(from.training, 15, 100),
+    morale,
     routed: false,
     slain: false,
   }));
@@ -1174,7 +1237,7 @@ function prepareBattle(state, fromId, order) {
     defender: { units: dUnits, walls: to.walls },
     round: 1,
     maxRounds: 8,
-    log: [`${from.name} marches on ${to.name}.`],
+    log: [`${from.name} marches on ${to.name}${roadNotes.length ? `. ${roadNotes[0].charAt(0).toUpperCase()}${roadNotes[0].slice(1)}${roadNotes.length > 1 ? `, and ${roadNotes.slice(1).join(", ")}` : ""}` : ""}.`],
     done: false,
     winner: null,
     captured: [],
@@ -1185,11 +1248,11 @@ function beginResolution(state, rng = Math.random) {
   if (state.phase !== "planning") return null;
   state.phase = "resolving";
   const logs = [];
-  for (const city of Object.values(state.cities)) {
-    if (city.faction === state.player) continue;
-    if (!factionCities(state, city.faction).length) continue;
-    const order = chooseOrder(state, city, rng, state.turn >= 3);
-    if (order) state.orders[city.id] = order;
+  for (const city of Object.values(state.cities)) city._payGovernor = city.governor;
+  for (const [cid, order] of Object.entries(state.shadowOrders || {})) {
+    const city = state.cities[cid];
+    if (!city || city.faction === state.player || !order) continue;
+    if (!state.orders[cid]) state.orders[cid] = order;
   }
   const entries = Object.entries(state.orders);
   for (const [cid, order] of entries) {
@@ -1198,11 +1261,24 @@ function beginResolution(state, rng = Math.random) {
     if (!city || city.faction !== order.faction) continue;
     applyMovement(state, city, order, logs);
   }
-  for (const [cid, order] of entries) {
-    if (!order || order.type === "move" || order.type === "transfer" || order.type === "march") continue;
-    const city = state.cities[cid];
-    if (!city || city.faction !== order.faction) continue;
-    applyDomestic(state, city, order, rng, logs);
+  for (const city of Object.values(state.cities)) {
+    const order = state.orders[city.id];
+    if (order && city.faction !== order.faction) continue;
+    if (order && (order.type === "move" || order.type === "transfer" || order.type === "march")) continue;
+    if (!order) {
+      applyStanding(state, city, city.job || "fields", rng, logs);
+      continue;
+    }
+    if (order.type === "job") {
+      if (JOBS[order.job]) city.job = order.job;
+      applyStanding(state, city, city.job || "fields", rng, logs);
+      continue;
+    }
+    const local = [];
+    applyDomestic(state, city, order, rng, local);
+    if (city.faction === state.player || order.type === "search" || order.type === "employ" || order.type === "escort" || order.type === "spy") {
+      logs.push(...local);
+    }
   }
   applyDiplomacy(state, rng, logs);
   applyPlot(state, rng, logs);
@@ -1211,11 +1287,7 @@ function beginResolution(state, rng = Math.random) {
   const marchIds = entries
     .filter(([, order]) => order?.type === "march")
     .map(([cid]) => cid)
-    .sort((a, b) => {
-      const pa = state.cities[a].faction === state.player ? 0 : 1;
-      const pb = state.cities[b].faction === state.player ? 0 : 1;
-      return pa - pb;
-    });
+    .sort((a, b) => totals(state, state.cities[a].faction).soldiers - totals(state, state.cities[b].faction).soldiers);
   for (const cid of marchIds) {
     const order = state.orders[cid];
     const city = state.cities[cid];
@@ -1231,7 +1303,11 @@ function beginResolution(state, rng = Math.random) {
     if (battle) battles.push(battle);
     else logs.push(`${city.name} cannot muster that march.`);
   }
+  state.revealed = state._spy || null;
+  delete state._spy;
   state.orders = {};
+  state.shadowOrders = {};
+  state.threats = [];
   state.diplomacy = null;
   state.plot = null;
   state.pendingPrisoners = state.pendingPrisoners || [];
@@ -1301,10 +1377,12 @@ function checkOutcome(state) {
 
 function completeMonth(state, rng = Math.random) {
   const logs = [];
+  const season = seasonName(state.month);
   for (const city of Object.values(state.cities)) {
-    const goldIn = Math.round(city.trade * 6 + city.people * 0.35);
-    const riceIn = Math.round(city.land * (16 + city.flood * 0.18));
-    const upkeep = Math.round(city.soldiers * 0.16);
+    const pay = projectedIncome(state, city);
+    const goldIn = pay.gold;
+    const riceIn = pay.rice;
+    const upkeep = pay.upkeep;
     city.gold += goldIn;
     city.rice += riceIn - upkeep;
     if (city.rice < 0) {
@@ -1318,16 +1396,13 @@ function completeMonth(state, rng = Math.random) {
         if (o && !isRuler(state, o)) o.loyalty = clamp(o.loyalty - 4, 0, 100);
       }
     }
-    const floodChance = city.flood < 30 ? 0.1 : city.flood < 48 ? 0.04 : 0.01;
+    let floodChance = city.flood < 30 ? 0.1 : city.flood < 48 ? 0.04 : 0.01;
+    if (season === "summer" && city.flood < 50) floodChance += 0.14;
     if (rng() < floodChance) {
       city.land = clamp(city.land - 8, 5, 100);
       city.rice = Math.round(city.rice * 0.72);
       city.people = clamp(city.people - 6, 0, 100);
       logs.push(`Floodwater tears through ${city.name}. Fields and granaries suffer.`);
-    } else if (city.land > 68 && city.flood > 55 && rng() < 0.06) {
-      const bonus = city.land * 12;
-      city.rice += bonus;
-      logs.push(`${city.name} brings in a heavy harvest (+${bonus.toLocaleString()} grain).`);
     }
   }
 
@@ -1339,13 +1414,17 @@ function completeMonth(state, rng = Math.random) {
       for (const id of city.officerIds) {
         const o = state.officers[id];
         if (!o || isRuler(state, o) || !o.alive) continue;
-        o.loyalty = clamp(o.loyalty + pull, 0, 100);
+        let drift = pull;
+        if (THIN_LOYALTY.includes(o.id)) drift -= 1;
+        if (o.id === "chengong" && o.faction === "lvbu") drift -= 1;
+        o.loyalty = clamp(o.loyalty + drift, 0, 100);
       }
     }
   }
 
   for (const o of Object.values(state.officers)) {
-    if (!o.alive || o.status !== "active" || isRuler(state, o) || o.loyalty >= 30) continue;
+    const uneasy = THIN_LOYALTY.includes(o.id) || (o.id === "chengong" && o.faction === "lvbu");
+    if (!o.alive || o.status !== "active" || isRuler(state, o) || o.loyalty >= (uneasy ? 42 : 30)) continue;
     if (rng() > 0.45) continue;
     const city = state.cities[o.cityId];
     if (!city) continue;
@@ -1383,8 +1462,31 @@ function completeMonth(state, rng = Math.random) {
   if (state.year === 200 && state.month === 1) {
     logs.push("The new century opens on the same broken map.");
   }
+  if (state.month === 4) logs.push("Summer. The rivers rise, and a low dike will not hold.");
+  if (state.month === 7) logs.push("Autumn. The fields pay what the governor has earned.");
+  if (state.month === 10) logs.push("Winter. The camps eat more, and a march arrives tired.");
   state.turn += 1;
+  const kept = [];
+  for (const row of state.alliances || []) {
+    if (typeof row === "string") {
+      kept.push({ key: row, untilTurn: state.turn + 11 });
+      continue;
+    }
+    if (state.turn >= row.untilTurn) {
+      const [a, b] = row.key.split("|");
+      logs.push(`The oath between ${FACTIONS[a]?.name || a} and ${FACTIONS[b]?.name || b} runs out.`);
+      if (a && b) addRelation(state, a, b, -4);
+    } else kept.push(row);
+  }
+  state.alliances = kept;
+  const aim = aimStatus(state, state.player);
+  if (aim?.met && !state.aimsMet[state.player]) {
+    state.aimsMet[state.player] = true;
+    logs.push(`Aim met: ${aim.title}. ${aim.text}`);
+  }
   state.phase = "planning";
+  for (const city of Object.values(state.cities)) delete city._payGovernor;
+  planShadow(state, rng);
   return { logs, outcome };
 }
 
@@ -1392,5 +1494,429 @@ function playerBattleSide(state, battle) {
   if (battle.attackerFaction === state.player) return "attacker";
   if (battle.defenderFaction === state.player) return "defender";
   return null;
+}
+
+function defaultJob(city) {
+  if (city.flood < 38) return "dikes";
+  if (city.people < 45) return "patrol";
+  if (city.land < 48) return "fields";
+  if (city.training < 55 && city.soldiers > 1000) return "drill";
+  if (city.walls < 36) return "walls";
+  if (city.trade < 50) return "markets";
+  if (city.soldiers < 2200 && city.people > 40) return "levy";
+  return "fields";
+}
+
+function seasonName(month) {
+  if (month <= 3) return "spring";
+  if (month <= 6) return "summer";
+  if (month <= 9) return "autumn";
+  return "winter";
+}
+
+const SEASON_RICE = { spring: 0.35, summer: 0.45, autumn: 1.6, winter: 0.15 };
+
+function upkeepOf(city, month) {
+  const winter = seasonName(month) === "winter" ? 1.6 : 1;
+  return Math.max(0, Math.round(city.soldiers * 0.16 * winter));
+}
+
+function governorPresent(state, city) {
+  const id = city._payGovernor || city.governor;
+  const gov = id ? state.officers[id] : null;
+  if (!gov || !gov.alive || gov.field || gov.cityId !== city.id) return null;
+  if (city._payGovernor) return gov;
+  const order = state.orders?.[city.id];
+  if (!order) return gov;
+  if (order.type === "march" && (order.officers || []).includes(gov.id)) return null;
+  if (order.type === "move" && order.officerId === gov.id) return null;
+  if (order.type === "transfer" && (order.officers || []).includes(gov.id)) return null;
+  return gov;
+}
+
+function yieldMult(state, city) {
+  const gov = governorPresent(state, city);
+  if (!gov) return { gold: 1, grain: 1, name: null };
+  const st = eff(gov);
+  return {
+    gold: 1 + st.int / 250,
+    grain: 1 + (st.int + st.lea) / 400,
+    name: gov.name,
+  };
+}
+
+function projectedIncome(state, city) {
+  const season = seasonName(state.month);
+  const mult = yieldMult(state, city);
+  const gold = Math.round((city.trade * 6 + city.people * 0.35) * mult.gold);
+  const rice = Math.round(city.land * (16 + city.flood * 0.18) * SEASON_RICE[season] * mult.grain);
+  const upkeep = upkeepOf(city, state.month);
+  return {
+    gold,
+    rice,
+    upkeep,
+    netRice: rice - upkeep,
+    governor: mult.name,
+    grainMult: mult.grain,
+    goldMult: mult.gold,
+    season,
+  };
+}
+
+function foodOutlook(state, city) {
+  const upkeep = upkeepOf(city, state.month);
+  return {
+    upkeep,
+    months: upkeep > 0 ? city.rice / upkeep : null,
+    season: seasonName(state.month),
+  };
+}
+
+function realmFood(state, faction) {
+  const cities = factionCities(state, faction);
+  const rice = cities.reduce((sum, city) => sum + city.rice, 0);
+  const upkeep = cities.reduce((sum, city) => sum + upkeepOf(city, state.month), 0);
+  return { rice, upkeep, months: upkeep > 0 ? rice / upkeep : null };
+}
+
+function applyStanding(state, city, job, rng, logs) {
+  const type = JOB_TYPE[job] || "cultivate";
+  const local = [];
+  applyDomestic(state, city, { type, faction: city.faction }, rng, local);
+  if (city.faction === state.player) logs.push(...local);
+}
+
+function passRoad(a, b) {
+  return PASS_ROADS.has(pairKey(a, b));
+}
+
+function riverRoad(a, b) {
+  return RIVER_ROADS.has(pairKey(a, b));
+}
+
+function playerMarchingOn(state, faction) {
+  return Object.entries(state.orders || {}).some(([cityId, order]) => {
+    if (order?.type !== "march") return false;
+    const from = state.cities[cityId];
+    if (!from || from.faction !== state.player) return false;
+    return state.cities[order.to]?.faction === faction;
+  });
+}
+
+function alliancePrice(state, faction) {
+  const rel = relationOf(state, state.player, faction);
+  const rivals = RIVAL_PAIRS.some((pair) => pair.includes(state.player) && pair.includes(faction));
+  const gold = Math.max(0, 56 - rel) * 40 + (rivals ? 800 : 0);
+  return { gold, blocked: playerMarchingOn(state, faction), rel, rivals };
+}
+
+function lordTemper(faction) {
+  if (faction === "lvbu") return "duelist";
+  if (faction === "yuanshao") return "proud";
+  if (faction === "liubiao") return "cautious";
+  return "steady";
+}
+
+function chooseAiOrder(state, city, rng) {
+  const officers = activeInCity(state, city);
+  if (!officers.length) return null;
+  const temper = lordTemper(city.faction);
+  const foes = city.neighbors
+    .map((id) => state.cities[id])
+    .filter((other) => other.faction !== city.faction && !isAllied(state, city.faction, other.faction));
+  const ranked = foes.slice().sort((a, b) => a.soldiers * (1 + a.walls / 120) - b.soldiers * (1 + b.walls / 120));
+  const weakest = ranked[0];
+  const atYou = ranked.find((other) => other.faction === state.player);
+  const target = atYou && rng() < (temper === "duelist" ? 0.72 : 0.48) ? atYou : weakest;
+  const duelLooksGood = temper === "duelist" && target && officers.some((o) => eff(o).war >= 90);
+  let marchChance = temper === "duelist" ? 0.62 : temper === "cautious" ? 0.16 : 0.42;
+  let needRatio = temper === "duelist" ? 1.15 : temper === "cautious" ? 2.4 : 1.55;
+  const aimsAtYou = target && target.faction === state.player;
+  if (state.turn < 2) marchChance = aimsAtYou ? (temper === "duelist" ? 0.55 : 0.34) : marchChance * 0.2;
+  if (target && riverRoad(city.id, target.id)) {
+    needRatio += temper === "cautious" ? 1.4 : 0.7;
+    if (temper === "cautious") marchChance = Math.min(marchChance, 0.08);
+  }
+  if (duelLooksGood) marchChance = Math.max(marchChance, state.turn < 2 ? (aimsAtYou ? 0.55 : 0.2) : 0.78);
+  if (
+    target
+    && city.soldiers > 1600
+    && city.soldiers > target.soldiers * needRatio
+    && city.training >= 36
+    && rng() < marchChance
+  ) {
+    const leaders = officers
+      .slice()
+      .sort((a, b) => eff(b).war - eff(a).war)
+      .slice(0, Math.min(3, officers.length))
+      .map((o) => o.id);
+    const garrison = Math.max(200, Math.round(city.soldiers * 0.28));
+    return {
+      type: "march",
+      to: target.id,
+      officers: leaders,
+      soldiers: city.soldiers - garrison,
+      faction: city.faction,
+    };
+  }
+  if (temper === "proud" && rng() < 0.55) return null;
+  const low = officers.filter((o) => !isRuler(state, o) && o.loyalty < 46);
+  if (low.length && city.gold > 180 && rng() < 0.4) {
+    return { type: "reward", officerId: low[0].id, faction: city.faction };
+  }
+  const gov = state.officers[city.governor] || officers[0];
+  const hidden = Object.values(state.officers).some((o) => o.status === "hidden" && o.homeCity === city.id);
+  if (hidden && city.gold > 80 && eff(gov).int > 70 && rng() < 0.35) {
+    return { type: "search", faction: city.faction };
+  }
+  if (city.rice < upkeepOf(city, state.month) * 3 && city.job !== "fields") {
+    return { type: "job", job: "fields", faction: city.faction };
+  }
+  if (seasonName(state.month) === "summer" && city.flood < 42 && city.job !== "dikes") {
+    return { type: "job", job: "dikes", faction: city.faction };
+  }
+  if (city.people < 36 && city.job !== "patrol") return { type: "job", job: "patrol", faction: city.faction };
+  return null;
+}
+
+function planShadow(state, rng = Math.random) {
+  state.shadowOrders = {};
+  state.threats = [];
+  for (const city of Object.values(state.cities)) {
+    if (!city.faction || city.faction === state.player) continue;
+    const order = chooseAiOrder(state, city, rng);
+    if (!order) continue;
+    state.shadowOrders[city.id] = order;
+    if (order.type === "march" && state.cities[order.to]?.faction === state.player) {
+      state.threats.push({ from: city.id, to: order.to, faction: city.faction });
+    }
+  }
+}
+
+function fundPlan(state, plan) {
+  if (!plan || state.phase !== "planning") return { ok: false, reason: "The month is already turning." };
+  const res = issueOrder(state, plan.cityId, plan.order);
+  if (!res.ok) return res;
+  return { ok: true, plan };
+}
+
+function courtProposals(state) {
+  const ideas = [];
+  for (const city of factionCities(state, state.player)) {
+    for (const officer of activeInCity(state, city)) {
+      const idea = ideaFor(state, officer, city);
+      if (idea) ideas.push(idea);
+    }
+  }
+  const preferred = ["zhangfei", "guanyu", "zhaoyun", "xunyu", "guojia", "chengong", "zhangliao", "tianfeng", "zhouyu", "xiahoudun"];
+  ideas.sort((a, b) => {
+    const ap = preferred.indexOf(a.speakerId);
+    const bp = preferred.indexOf(b.speakerId);
+    return (ap < 0 ? 40 : ap) - (bp < 0 ? 40 : bp);
+  });
+  const picked = [];
+  const seen = new Set();
+  for (const idea of ideas) {
+    const key = `${idea.cityId}:${idea.order.type}:${idea.order.job || ""}:${idea.order.to || ""}:${idea.order.officerId || ""}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    picked.push(idea);
+    if (picked.length >= 3) break;
+  }
+  return picked;
+}
+
+function ideaFor(state, officer, city) {
+  const st = eff(officer);
+  const jobOrder = (job, line) => ({
+    speakerId: officer.id,
+    cityId: city.id,
+    line,
+    cost: JOBS[job]?.cost || 0,
+    order: { type: "job", job },
+  });
+  if (officer.id === "chengong") {
+    const job = city.flood < 60 ? "dikes" : "patrol";
+    return jobOrder(job, `${officer.name} doubts another fight. He wants ${city.name} kept, not wagered.`);
+  }
+  if (officer.id === "zhangliao" && officer.loyalty < 75) {
+    return {
+      speakerId: officer.id,
+      cityId: city.id,
+      line: `${officer.name}'s loyalty is thin. A purse would hold him longer than a speech.`,
+      cost: 100,
+      order: { type: "reward", officerId: officer.id },
+    };
+  }
+  const foes = city.neighbors
+    .map((id) => state.cities[id])
+    .filter((other) => other.faction !== city.faction && !isAllied(state, city.faction, other.faction));
+  const weakest = foes.slice().sort((a, b) => a.soldiers - b.soldiers)[0];
+  if (st.war >= 88 && st.int < 55 && weakest && city.soldiers >= 800 && city.soldiers > weakest.soldiers * 1.15) {
+    const leaders = activeInCity(state, city).slice().sort((a, b) => eff(b).war - eff(a).war).slice(0, 3).map((o) => o.id);
+    const soldiers = Math.max(400, city.soldiers - Math.max(200, Math.round(city.soldiers * 0.28)));
+    return {
+      speakerId: officer.id,
+      cityId: city.id,
+      line: `${officer.name} wants the road to ${weakest.name}. The job can wait a month.`,
+      cost: 0,
+      order: { type: "march", to: weakest.id, officers: leaders, soldiers },
+    };
+  }
+  if (st.war >= 88 && st.int < 55) {
+    return jobOrder("drill", `${officer.name} would rather drill ${city.name} than sit in council.`);
+  }
+  const hidden = Object.values(state.officers).some((o) => o.status === "hidden" && o.homeCity === city.id);
+  if (st.int >= 86 && hidden) {
+    return {
+      speakerId: officer.id,
+      cityId: city.id,
+      line: `${officer.name} has heard of a recluse near ${city.name}.`,
+      cost: 35,
+      order: { type: "search" },
+    };
+  }
+  if (st.int >= 80 && city.flood < 62) {
+    return jobOrder("dikes", `${officer.name} wants the dikes at ${city.name} raised before the rivers do.`);
+  }
+  if (st.int >= 80) {
+    return jobOrder("markets", `${officer.name} would set ${city.name} to the markets, and let the governor's mind raise the gold.`);
+  }
+  const low = activeInCity(state, city).find((o) => !isRuler(state, o) && o.loyalty < 66);
+  if (st.chr >= 82 && low) {
+    return {
+      speakerId: officer.id,
+      cityId: city.id,
+      line: `${officer.name} asks a gift for ${low.name}. Loyalty there is ${low.loyalty}.`,
+      cost: 100,
+      order: { type: "reward", officerId: low.id },
+    };
+  }
+  if (st.chr >= 78 && city.people < 78) {
+    return jobOrder("patrol", `${officer.name} wants the wards of ${city.name} walked.`);
+  }
+  if (city.job !== "fields" && city.land < 70) {
+    return jobOrder("fields", `${officer.name} would put ${city.name} back on the fields.`);
+  }
+  return null;
+}
+
+function oathGroup(id) {
+  return OATHS.find((group) => group.includes(id)) || null;
+}
+
+function oathRetreat(state, pack) {
+  const notes = [];
+  const down = new Set(pack.units.filter((unit) => unit.slain || unit.routed).map((unit) => unit.officerId));
+  const livingIds = livingUnits(pack.units).map((unit) => unit.officerId).filter(Boolean);
+  for (const id of livingIds) {
+    const group = oathGroup(id);
+    if (!group) continue;
+    const left = group.find((other) => other !== id && down.has(other));
+    if (!left) continue;
+    const officer = state.officers[id];
+    const other = state.officers[left];
+    if (officer) officer.loyalty = clamp(officer.loyalty - 12, 0, 100);
+    notes.push(`${officer?.name || "An oath-brother"} retreats while ${other?.name || "the other"} is still in the dust.`);
+  }
+  return notes;
+}
+
+function battleIsPersonal(state, battle) {
+  const ids = [...battle.attacker.units, ...battle.defender.units].map((unit) => unit.officerId).filter(Boolean);
+  for (const id of ids) {
+    const officer = state.officers[id];
+    if (!officer) continue;
+    if (isRuler(state, officer)) return true;
+    if (oathGroup(id)) return true;
+  }
+  const att = new Set(battle.attacker.units.map((unit) => unit.officerId));
+  const def = new Set(battle.defender.units.map((unit) => unit.officerId));
+  return RIVAL_PAIRS.some(([a, b]) => (att.has(a) && def.has(b)) || (att.has(b) && def.has(a)));
+}
+
+function lastAct(state, faction, city, logs) {
+  if (!faction || factionCities(state, faction).length) return;
+  state.lastActs = state.lastActs || {};
+  if (state.lastActs[faction]) return;
+  state.lastActs[faction] = true;
+  if (faction === "lvbu") {
+    for (const officer of Object.values(state.officers)) {
+      if (!officer.alive || (officer.faction !== "lvbu" && officer.factionHold !== "lvbu")) continue;
+      officer.loyalty = Math.min(officer.loyalty, officer.status === "prisoner" ? 22 : 30);
+    }
+    logs.push("Lü Bu's company scatters. No captain holds them.");
+    return;
+  }
+  const men = Object.values(state.officers).filter((officer) => (
+    officer.alive
+    && officer.status === "prisoner"
+    && officer.factionHold === faction
+    && !isRuler(state, officer)
+  ));
+  const loyal = men.slice().sort((a, b) => b.loyalty - a.loyalty)[0];
+  if (loyal && loyal.loyalty >= 70 && city) {
+    const burned = Math.round(city.rice * 0.4);
+    city.rice = Math.max(0, city.rice - burned);
+    logs.push(`${loyal.name} sets fire to the granary at ${city.name} before the seal changes hands (${burned.toLocaleString()} grain).`);
+    return;
+  }
+  if (loyal) logs.push(`${loyal.name} does not die with the house. The seal is for sale.`);
+  else logs.push(`The house of ${FACTIONS[faction]?.name || faction} is gone.`);
+}
+
+function aimStatus(state, faction) {
+  const aim = AIMS[faction];
+  if (!aim) return null;
+  const held = new Set(factionCities(state, faction).map((city) => city.id));
+  let met = false;
+  if (faction === "liubei" || faction === "caocao") {
+    met = state.mandate === faction && !!state.emperorAt && state.cities[state.emperorAt]?.faction === faction;
+  } else if (faction === "sunce") met = ["jianye", "wu", "jiangling"].every((id) => held.has(id));
+  else if (faction === "yuanshao") met = ["ye", "jinyang", "beiping"].every((id) => held.has(id));
+  else if (faction === "lvbu") met = !!state.duelWins?.[faction];
+  else if (faction === "liubiao") met = held.has("xiangyang") && held.has("jiangling");
+  else if (faction === "liuzhang") met = held.has("chengdu") && held.has("hanzhong");
+  else if (faction === "mateng") met = held.has("tianshui") && held.has("changan");
+  else if (faction === "gongsunzan") met = held.has("ye");
+  else if (faction === "yuanshu") met = held.has("shouchun") && held.has("jianye");
+  else if (faction === "zhanglu") met = held.has("hanzhong") && held.has("chengdu");
+  else if (faction === "lijue") met = held.has("changan") && state.emperorAt === "changan";
+  else if (faction === "kongrong") met = held.has("beihai") && held.size >= 2;
+  else if (faction === "zangba") met = held.has("donghai") && state.year > 194;
+  return { ...aim, met };
+}
+
+function bondBlurb(id) {
+  if (OATHS.some((group) => group.includes(id))) return "Bound by oath. Retreating while the other is down will be remembered.";
+  if (THIN_LOYALTY.includes(id)) return "His loyalty is thin, and it thins further every month.";
+  if (DOUBTS.some((pair) => pair.includes(id))) return "He doubts the lord he serves.";
+  if (RIVAL_PAIRS.some((pair) => pair.includes(id))) return "A named rival keeps this feud personal.";
+  return "";
+}
+
+function normalizeSave(data) {
+  if (!data || !data.cities || !data.officers) return null;
+  if (data.version !== 1 && data.version !== 2) return null;
+  data.version = 2;
+  data.alliances = (data.alliances || []).map((row) => (
+    typeof row === "string" ? { key: row, untilTurn: (data.turn || 1) + 12 } : row
+  ));
+  for (const city of Object.values(data.cities)) {
+    if (!city.job) city.job = defaultJob(city);
+  }
+  data.emperorAt = data.emperorAt || "changan";
+  data.mandate = data.mandate ?? null;
+  data.revealed = data.revealed ?? null;
+  data.shadowOrders = data.shadowOrders || {};
+  data.threats = data.threats || [];
+  data.lastActs = data.lastActs || {};
+  data.aimsMet = data.aimsMet || {};
+  data.duelWins = data.duelWins || {};
+  data.orders = data.orders || {};
+  if (data.phase === "planning" && !data.threats.length && !Object.keys(data.shadowOrders).length) {
+    planShadow(data, Math.random);
+  }
+  return data;
 }
 

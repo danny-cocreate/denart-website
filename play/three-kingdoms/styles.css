@@ -208,6 +208,9 @@ img { max-width: 100%; }
 .move-arrow { fill: none; stroke-width: 2.1; stroke-linecap: round; pointer-events: none; }
 .move-arrow.march { stroke: #8d2e2a; stroke-dasharray: 6 5; animation: march 0.7s linear infinite; }
 .move-arrow.shift { stroke: #1c3d34; stroke-dasharray: 2 3.5; }
+.move-arrow.threat { stroke: #8d2e2a; stroke-width: 2.4; stroke-dasharray: 2 3.2; }
+.move-arrow.spied { stroke: #1d4578; stroke-dasharray: 3 3; }
+.emperor-mark { font-size: 13px; fill: #8d2e2a; font-weight: 700; }
 .compass circle { fill: rgba(246, 236, 214, 0.88); stroke: #3a2a1c; stroke-width: 0.8; }
 .compass .north { fill: #8d2e2a; }
 .compass .south { fill: #3a2a1c; }
@@ -399,7 +402,19 @@ img { max-width: 100%; }
 .legend span { display: flex; align-items: center; gap: 6px; }
 .dot { width: 12px; height: 10px; display: inline-block; }
 .dot.you { background: #f6ead2; border: 1.5px solid var(--cinnabar); }
-.dot.idle { border-radius: 50%; background: transparent; border: 1.5px dashed var(--cinnabar); }
+.dot.threat { border-radius: 50%; background: transparent; border: 1.5px dashed var(--cinnabar); }
+.threat-banner {
+  position: absolute;
+  z-index: 2;
+  top: 46px;
+  left: 12px;
+  max-width: min(460px, calc(100% - 24px));
+  margin: 0;
+  padding: 6px 10px;
+  background: rgba(90, 22, 18, 0.92);
+  color: #f6ead2;
+  font-size: 13px;
+}
 .dot.march { height: 0; border-top: 3px solid var(--cinnabar); margin-top: 4px; }
 .map-hint {
   bottom: 10px;
@@ -410,6 +425,19 @@ img { max-width: 100%; }
   font-size: 13px;
 }
 .nudge { margin: 8px 0; color: var(--cinnabar); }
+.side h3 { margin: 10px 0 4px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; }
+.yield, .yield-job { margin: 6px 0; font-size: 14px; }
+.yield-job { color: var(--ink-soft); }
+.fine { font-size: 13px; color: var(--ink-soft); }
+.court-card {
+  display: flex;
+  gap: 8px;
+  text-align: left;
+  padding: 8px;
+  background: rgba(255, 248, 236, 0.7);
+}
+.court-card small, .plan-line { display: block; }
+.plan-line { margin-top: 4px; }
 .commands button.is-current, .commands button[aria-pressed="true"] {
   background: #f0d2cc;
   border-color: var(--cinnabar);
@@ -518,4 +546,5 @@ img { max-width: 100%; }
   .dossier, .battle-cols { grid-template-columns: 1fr; }
   .chronicle { flex-direction: column; gap: 4px; }
   .legend { flex-wrap: wrap; max-width: calc(100% - 24px); }
+  .threat-banner { top: 78px; }
 }
