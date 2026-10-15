@@ -20,6 +20,30 @@ function esc(s) {
   }[c]));
 }
 
+function motionOk() {
+  return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function toast(text) {
+  let el = document.querySelector("#toast");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "toast";
+    el.setAttribute("role", "status");
+    document.body.appendChild(el);
+  }
+  el.textContent = text;
+  el.classList.remove("show");
+  void el.offsetWidth;
+  el.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
 function note(state, text, mine = false) {
   state.log.unshift({ text, mine });
   if (state.log.length > 80) state.log.length = 80;
@@ -92,14 +116,16 @@ function titleHtml() {
   const card = (id) => {
     const f = FACTIONS[id];
     const art = portraitOfficer(id);
+    const easy = f.tag === "Open" ? `<em class="ribbon">Easiest</em>` : "";
     return `<button class="lord-card" data-act="play" data-faction="${id}" data-testid="play-${id}">
-      ${face(art, "")}
+      ${easy}${face(art, "")}
       <span><span class="tag">${esc(f.tag)}</span><h2>${esc(f.name)}</h2><p>${esc(f.blurb)}</p></span>
     </button>`;
   };
   const rest = Object.keys(FACTIONS).filter((id) => !FEATURED.includes(id));
   return `<div class="screen-title">
     <header class="mast">
+      <div class="seal" aria-hidden="true"><span>漢</span></div>
       <div class="eyebrow">194 CE · a strategy of the late Han</div>
       <h1>Warlords of the Three Kingdoms</h1>
       <p>Hold cities through the month. Open fields, keep the dikes, drill a camp, and march when the road is short. Charm holds a court together. A duel can break one.</p>
@@ -109,6 +135,7 @@ function titleHtml() {
       ${saved ? `<button class="primary" data-act="continue" data-testid="continue">Continue campaign</button>` : ""}
       <button class="ghost" data-act="help">How to play</button>
     </div>
+    <p class="pick-hint">Choose a seal. Yuan Shao is the most forgiving start.</p>
     <div class="lord-grid">${FEATURED.map(card).join("")}</div>
     <details class="more-lords">
       <summary>Every other seal</summary>
@@ -142,8 +169,11 @@ function gameHtml(state) {
   const t = totals(state, state.player);
   const city = state.cities[state.selected] || factionCities(state, state.player)[0];
   if (city) state.selected = city.id;
+  const held = factionCities(state, state.player);
+  const planned = held.filter((c) => state.orders[c.id]).length;
+  const idle = held.length - planned;
   const tip = !state.dismissedTip && state.turn === 1
-    ? `<div class="tip"><b>First month.</b> ${esc(FACTIONS[state.player].blurb)} <div><button data-act="dismiss-tip">Understood</button></div></div>`
+    ? `<div class="tip"><b>First month.</b> ${esc(FACTIONS[state.player].blurb)} Pick one order for each of your cities, then end the month.<div><button data-act="dismiss-tip">Understood</button></div></div>`
     : "";
   return `<div class="game">
     <header class="topbar">
@@ -153,19 +183,28 @@ function gameHtml(state) {
         <div><span>Gold</span><b>${t.gold.toLocaleString()}</b></div>
         <div><span>Grain</span><b>${t.rice.toLocaleString()}</b></div>
         <div><span>Troops</span><b>${t.soldiers.toLocaleString()}</b></div>
+        <div><span>Orders</span><b>${planned}/${held.length}</b></div>
       </div>
       <div class="top-actions">
-        <button data-act="advise" data-testid="advise">Steward</button>
-        <button class="primary" data-act="end-month" data-testid="end-month">End month</button>
-        <button data-act="help">Aid</button>
+        <button data-act="advise" data-testid="advise" title="Fill every idle city with a suggested order">Advice</button>
+        <button class="primary ${idle ? "" : "ready"}" data-act="end-month" data-testid="end-month" title="${idle ? `${idle} of your cities still have no order` : "Every city has an order"}">End month</button>
+        <button data-act="help" title="Rules for a month, the court, and battle">How to play</button>
         <button data-act="roster">Roster</button>
-        <button data-act="save">Save</button>
-        <button data-act="title">Seal</button>
+        <button data-act="save" title="Keep this campaign in the browser">Save</button>
+        <button data-act="title" title="Return to the list of lords">Menu</button>
       </div>
     </header>
-    <div class="mapwrap">${mapSvg(state)}</div>
+    <div class="mapwrap">
+      ${mapSvg(state)}
+      <div class="legend" aria-hidden="true">
+        <span><i class="dot you"></i>Your walls</span>
+        <span><i class="dot idle"></i>Needs an order</span>
+        <span><i class="dot march"></i>March</span>
+      </div>
+      <p class="map-hint">${idle ? `${idle} ${idle === 1 ? "city needs" : "cities need"} an order` : "Every city has an order. End the month when you are ready."}</p>
+    </div>
     <aside class="side">${tip}${city ? cityPanel(state, city) : ""}</aside>
-    <section class="chronicle">${state.log.slice(0, 16).map((l) => `<p class="${l.mine ? "mine" : ""}">${esc(l.text)}</p>`).join("")}</section>
+    <section class="chronicle" aria-label="Chronicle"><h2>Chronicle</h2><div class="lines">${state.log.slice(0, 12).map((l, i) => `<p class="${l.mine ? "mine" : ""} ${i === 0 ? "fresh" : ""}">${esc(l.text)}</p>`).join("")}</div></section>
   </div>`;
 }
 
@@ -204,23 +243,52 @@ function townMark(state, city) {
   const selected = city.id === state.selected;
   const ally = !mine && isAllied(state, state.player, city.faction);
   const ordered = !!state.orders[city.id];
+  const idle = mine && !ordered;
   const nudge = LABEL_AT[city.id] || [0, 16];
   const w = Math.max(48, Math.ceil(city.name.length * 7.2 + 14));
   const y = nudge[1];
-  return `<g class="city ${mine ? "is-mine" : ""} ${selected ? "is-selected" : ""}" data-act="select" data-id="${city.id}" data-testid="city-${city.id}" transform="translate(${city.x} ${city.y})">
+  const pulse = selected && motionOk()
+    ? `<animate attributeName="r" values="16;26;16" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.95;0.25;0.95" dur="1.8s" repeatCount="indefinite"/>`
+    : "";
+  const men = city.soldiers >= 1000 ? `${Math.round(city.soldiers / 100) / 10}k` : String(city.soldiers);
+  return `<g class="city ${mine ? "is-mine" : ""} ${selected ? "is-selected" : ""} ${idle ? "is-idle" : ""} ${ally ? "is-ally" : ""}" data-act="select" data-id="${city.id}" data-testid="city-${city.id}" transform="translate(${city.x} ${city.y})">
     <title>${esc(city.name)} · ${esc(FACTIONS[city.faction].name)} · ${city.soldiers.toLocaleString()} troops</title>
-    <circle class="hit" r="20"/>
-    ${selected ? `<circle class="ring" r="24"/>` : ""}
+    <circle class="hit" r="22"/>
+    ${idle ? `<circle class="idle-ring" r="18"/>` : ""}
+    ${selected ? `<circle class="ring" r="20">${pulse}</circle>` : ""}
     ${ally ? `<circle class="ally-mark" r="22"/>` : ""}
     <polygon class="roof" points="-13,-3 0,-16 13,-3" fill="${color}"/>
     <rect class="walls" x="-10" y="-3" width="20" height="13"/>
     <rect class="gate" x="-2.2" y="4" width="4.4" height="6"/>
-    ${ordered ? `<circle class="order-pip" cx="14" cy="-14" r="3.4"/>` : ""}
+    <g class="banner-flag">
+      <line x1="12" y1="-1" x2="12" y2="-19"/>
+      <path d="M12,-19 h11 l-2.4,3.4 2.4,3.4 h-11 z" fill="${color}"/>
+    </g>
+    <text class="garrison" y="20">${men}</text>
+    ${ordered ? `<circle class="order-pip" cx="-15" cy="-15" r="3.6"/>` : ""}
     <g class="placard" transform="translate(${nudge[0]} 0)">
       <rect x="${-w / 2}" y="${y}" width="${w}" height="16" rx="1.5"/>
       <text y="${y + 12}">${esc(city.name)}</text>
     </g>
   </g>`;
+}
+
+function movementArrows(state) {
+  return Object.entries(state.orders).map(([fromId, order]) => {
+    if (!order?.to || !["march", "transfer", "move"].includes(order.type)) return "";
+    const A = state.cities[fromId];
+    const B = state.cities[order.to];
+    if (!A || !B) return "";
+    const dx = B.x - A.x;
+    const dy = B.y - A.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const kind = order.type === "march" ? "march" : "shift";
+    const x1 = A.x + (dx / len) * 16;
+    const y1 = A.y + (dy / len) * 16;
+    const x2 = B.x - (dx / len) * 20;
+    const y2 = B.y - (dy / len) * 20;
+    return `<line class="move-arrow ${kind}" x1="${rnd(x1)}" y1="${rnd(y1)}" x2="${rnd(x2)}" y2="${rnd(y2)}" marker-end="url(#arrow-${kind})"/>`;
+  }).join("");
 }
 
 function mapSvg(state) {
@@ -247,17 +315,50 @@ function mapSvg(state) {
     return `<text class="${sea ? "seaname" : "watername"}" x="${n.x}" y="${n.y}" text-anchor="middle">${n.t}</text>`;
   }).join("");
   const nodes = Object.values(state.cities).map((c) => townMark(state, c)).join("");
+  const flow = motionOk()
+    ? RIVERS.filter((r) => r.rank === "major").map((r) => `<path class="river-flow" d="${r.d}"/>`).join("")
+    : "";
   return `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="Map of the late Han, traced from the real coast and rivers">
+    <defs>
+      <linearGradient id="seaShade" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#d5ebf0"/>
+        <stop offset="0.55" stop-color="#9ec2cd"/>
+        <stop offset="1" stop-color="#6f97a6"/>
+      </linearGradient>
+      <linearGradient id="landShade" x1="0" y1="0" x2="0.2" y2="1">
+        <stop offset="0" stop-color="#f0e2c4"/>
+        <stop offset="1" stop-color="#c9b084"/>
+      </linearGradient>
+      <filter id="grain" x="-2%" y="-2%" width="104%" height="104%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4"/>
+        <feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.3  0 0 0 0 0.14  0 0 0 0.22 0"/>
+      </filter>
+      <marker id="arrow-march" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#8d2e2a"/>
+      </marker>
+      <marker id="arrow-shift" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#1c3d34"/>
+      </marker>
+    </defs>
     <rect class="sea" width="${MAP_W}" height="${MAP_H}"/>
     <path class="grat" d="${GRATICULE}"/>
-    <path class="land" fill-rule="evenodd" d="${LAND}"/>
+    <path class="land" fill="url(#landShade)" fill-rule="evenodd" d="${LAND}"/>
+    <path class="grain" filter="url(#grain)" fill-rule="evenodd" d="${LAND}"/>
     <path class="lake" d="${LAKES}"/>
     ${PEAKS.map(([x, y, s]) => peakMark(x, y, s)).join("")}
     <path class="wall" d="${WALL}"/>
     ${rivers}
+    ${flow}
     ${notes}
     ${GRAT_LABELS.map((g) => `<text class="grat-label" text-anchor="${g.anchor}" x="${g.x}" y="${g.y}">${g.t}</text>`).join("")}
     ${roads}
+    ${movementArrows(state)}
+    <g class="compass" transform="translate(868 688)" aria-hidden="true">
+      <circle r="18" />
+      <polygon class="north" points="0,-14 3.2,1 0,4 -3.2,1"/>
+      <polygon class="south" points="0,14 3.2,-1 0,-4 -3.2,-1"/>
+      <text y="-20">N</text>
+    </g>
     ${nodes}
   </svg>`;
 }
@@ -275,19 +376,20 @@ function cityPanel(state, city) {
   const guestHtml = guests.map((o) => `<button class="guest-chip" data-act="dossier" data-id="${o.id}">
     ${face(o, "tiny")}<span><b>${esc(o.name)}</b><small>Guest · visit ${o.visits}/${o.visitsNeeded || 1}</small></span>
   </button>`).join("");
+  const current = order?.type || "";
   const cmds = mine ? `<div class="commands">
-    ${cmd("cultivate", "Cultivate")}
-    ${cmd("irrigate", "Dikes")}
-    ${cmd("trade", "Markets")}
-    ${cmd("recruit", "Levy")}
-    ${cmd("train", "Drill")}
-    ${cmd("patrol", "Patrol")}
-    ${cmd("fortify", "Walls")}
-    ${cmd("search", "Search")}
-    <button data-act="reward" data-city="${city.id}">Reward</button>
-    <button data-act="shift" data-city="${city.id}">Shift men</button>
-    <button data-act="march" data-city="${city.id}" data-type="march" data-testid="cmd-march">March</button>
-    ${guests.length ? `<button data-act="employ" data-city="${city.id}">Call on a guest</button>` : ""}
+    ${cmd("cultivate", "Cultivate", "Raise farmland. More fields, more grain.", current)}
+    ${cmd("irrigate", "Dikes", "Spend gold to improve flood control.", current)}
+    ${cmd("trade", "Markets", "Spend gold to improve commerce.", current)}
+    ${cmd("recruit", "Levy", "Enlist troops. Lowers training.", current)}
+    ${cmd("train", "Drill", "Raise training in the camp.", current)}
+    ${cmd("patrol", "Patrol", "Quiet the wards and raise public order.", current)}
+    ${cmd("fortify", "Walls", "Spend gold to raise the walls.", current)}
+    ${cmd("search", "Search", "Look for a recluse, or a cache of gold and grain.", current)}
+    <button data-act="reward" data-city="${city.id}" title="Spend 100 gold to raise a retainer's loyalty">Reward</button>
+    <button data-act="shift" data-city="${city.id}" title="Send men or an officer to a neighboring city of yours">Shift men</button>
+    <button class="${current === "march" ? "is-current" : ""}" data-act="march" data-city="${city.id}" data-type="march" data-testid="cmd-march" title="Attack a neighboring enemy city">March</button>
+    ${guests.length ? `<button data-act="employ" data-city="${city.id}" title="Visit a guest. Some require more than one call">Call on a guest</button>` : ""}
   </div>` : foreignActions(state, city);
   return `<div class="province">${esc(city.province)} province</div>
     <h2>${esc(city.name)}</h2>
@@ -304,7 +406,7 @@ function cityPanel(state, city) {
     </div>
     <div class="officer-row">${chips || "<p>No officers in the city.</p>"}</div>
     ${guestHtml ? `<h3>Guests</h3><div class="officer-row">${guestHtml}</div>` : ""}
-    ${order ? `<div class="order-flag">This month: ${esc(orderLabel(state, order))} <button data-act="clear-order" data-city="${city.id}">Clear</button></div>` : ""}
+    ${order ? `<div class="order-flag">This month: ${esc(orderLabel(state, order))} <button data-act="clear-order" data-city="${city.id}">Clear</button></div>` : (mine ? `<p class="nudge">Choose one order for ${esc(city.name)}.</p>` : "")}
     ${orderSummary(state)}
     ${mine && officers.length > 1 ? `<div class="choice-grid">${officers.map((o) => `<button data-act="appoint" data-city="${city.id}" data-id="${o.id}">${city.governor === o.id ? "Governor" : "Appoint"} ${esc(o.name)}</button>`).join("")}</div>` : ""}
     ${cmds}
@@ -334,8 +436,9 @@ function planNote(state) {
   return bits.length ? `<p>${esc(bits.join(". "))}.</p>` : "";
 }
 
-function cmd(type, label) {
-  return `<button data-act="order" data-type="${type}">${label}</button>`;
+function cmd(type, label, hint, current) {
+  const on = current === type;
+  return `<button class="${on ? "is-current" : ""}" title="${esc(hint)}" aria-pressed="${on}" data-act="order" data-type="${type}">${label}</button>`;
 }
 
 function foreignActions(state, city) {
@@ -393,10 +496,18 @@ function onClick(e) {
   if (act === "select") {
     state.selected = el.dataset.id;
     render();
+    const side = document.querySelector(".side");
+    if (side) side.scrollTo({ top: 0, behavior: motionOk() ? "smooth" : "auto" });
     return;
   }
   if (act === "dismiss-tip") { state.dismissedTip = true; render(); return; }
-  if (act === "save") { save(state); note(state, "The campaign is sealed in this browser."); render(); return; }
+  if (act === "save") {
+    save(state);
+    note(state, "The campaign is sealed in this browser.");
+    render();
+    toast("Saved in this browser.");
+    return;
+  }
   if (act === "roster") { rosterModal(state); return; }
   if (act === "dossier") { dossierModal(state, el.dataset.id); return; }
   if (act === "appoint") {
@@ -413,9 +524,14 @@ function onClick(e) {
     const city = state.cities[state.selected];
     if (!city) return;
     const res = issueOrder(state, city.id, { type: el.dataset.type });
-    if (!res.ok) note(state, res.reason);
-    else note(state, `${city.name}: ${orderLabel(state, state.orders[city.id])}.`, true);
-    render();
+    if (!res.ok) {
+      note(state, res.reason);
+      render();
+      toast(res.reason);
+    } else {
+      note(state, `${city.name}: ${orderLabel(state, state.orders[city.id])}.`, true);
+      render();
+    }
     return;
   }
   if (act === "advise") { advise(state); render(); return; }
@@ -688,6 +804,11 @@ async function endMonth() {
   session.busy = true;
   closeModal();
   try {
+    if (motionOk()) {
+      screen.classList.add("turning");
+      await wait(680);
+      screen.classList.remove("turning");
+    }
     const rng = Math.random;
     const result = beginResolution(state, rng);
     if (!result) return;
@@ -808,13 +929,23 @@ function paintBattle() {
     const o = u.officerId ? state.officers[u.officerId] : null;
     const name = o ? o.name : "City militia";
     const on = selected && u.officerId === selected;
-    return `<button class="unit ${on ? "on" : ""}" data-act="${pickAct}" data-id="${u.officerId || ""}">
+    const fallen = u.slain || u.routed;
+    return `<button class="unit ${on ? "on" : ""} ${u.slain ? "slain" : ""} ${u.routed ? "routed" : ""} ${fallen ? "fallen" : ""}" data-act="${pickAct}" data-id="${u.officerId || ""}">
       ${face(o, "sm")}
       <span><b>${esc(name)}</b><span class="meta">${u.slain ? "Fallen" : u.routed ? "Routed" : `${u.soldiers.toLocaleString()} soldiers · spirit ${Math.round(u.morale)}`}</span></span>
     </button>`;
   }).join("");
   const withdrawLabel = side === "attacker" ? "Retreat" : "Abandon the city";
-  openModal(`<div class="battle-head">
+  const atkColor = FACTIONS[battle.attackerFaction]?.color || "#8d2e2a";
+  const defColor = FACTIONS[battle.defenderFaction]?.color || "#1c3d34";
+  const latest = battle.log[battle.log.length - 1] || "";
+  const clashKind = /duel/i.test(latest) ? "duel" : /stratagem|scheme/i.test(latest) ? "scheme" : "strike";
+  openModal(`<div class="clash ${clashKind}" aria-hidden="true">
+      <span class="banner" style="background:${atkColor}">${esc(FACTIONS[battle.attackerFaction].name)}</span>
+      <span class="vs">${esc(state.cities[battle.toId].name)}</span>
+      <span class="banner" style="background:${defColor}">${esc(FACTIONS[battle.defenderFaction].name)}</span>
+    </div>
+    <div class="battle-head">
       <h2>${esc(state.cities[battle.toId].name)}</h2>
       <div>Round ${battle.round} · walls ${battle.defender.walls}</div>
     </div>
@@ -822,7 +953,7 @@ function paintBattle() {
       <div><h3>${side === "attacker" ? "Your march" : "Your defense"}</h3>${unitHtml(battle[side], "pick-actor", session.actorId)}</div>
       <div><h3>Enemy</h3>${unitHtml(battle[foe], "pick-target", session.targetId)}</div>
     </div>
-    <div class="battle-log">${battle.log.slice(-8).map((l) => `<p>${esc(l)}</p>`).join("")}</div>
+    <div class="battle-log">${battle.log.slice(-8).map((l, i, arr) => `<p class="${i === arr.length - 1 ? "fresh" : ""}">${esc(l)}</p>`).join("")}</div>
     <div class="actions">
       <button class="primary" data-act="battle-attack" data-testid="battle-attack">Attack</button>
       <button data-act="battle-duel" data-testid="battle-duel">Duel</button>
