@@ -212,7 +212,7 @@ function gameHtml(state) {
       ${threatText ? `<p class="threat-banner">${esc(threatText)}</p>` : ""}
       <p class="map-hint">${oneOffs ? `${oneOffs} one-off ${oneOffs === 1 ? "order" : "orders"}. Other cities keep their jobs.` : "No one-off orders. Every city keeps its job."}</p>
     </div>
-    <aside class="side">${tip}${city ? cityPanel(state, city) : ""}</aside>
+    <aside class="side">${tip}${intrigueCard(state)}${city ? cityPanel(state, city) : ""}</aside>
     <section class="chronicle" aria-label="Chronicle"><h2>Chronicle</h2><div class="lines">${state.log.slice(0, 12).map((l, i) => `<p class="${l.mine ? "mine" : ""} ${i === 0 ? "fresh" : ""}">${esc(l.text)}</p>`).join("")}</div></section>
   </div>`;
 }
@@ -463,6 +463,24 @@ function orderSummary(state) {
   return `<div class="order-flag">${rows.map((row) => esc(row)).join("<br>")}</div>`;
 }
 
+function intrigueCard(state) {
+  const view = caseView(state);
+  if (!view) return "";
+  const followed = intrigueFollowed(state);
+  const button = view.canAct
+    ? `<button data-act="follow-intrigue" data-testid="follow-intrigue">${esc(view.action)}</button>`
+    : followed
+      ? `<p class="fine">The order follows the case.</p>`
+      : "";
+  return `<div class="intrigue" data-testid="intrigue">
+    <h3>The case</h3>
+    <p>${esc(view.rumor)}</p>
+    ${view.detail ? `<p>${esc(view.detail)}</p>` : ""}
+    <p class="fine">It will not keep past this season.</p>
+    ${button}
+  </div>`;
+}
+
 function planNote(state) {
   const bits = [];
   if (state.diplomacy?.type === "gift") bits.push(`Gift of ${state.diplomacy.gold} gold set aside`);
@@ -554,6 +572,17 @@ function onClick(e) {
     return;
   }
   if (act === "dismiss-tip") { state.dismissedTip = true; render(); return; }
+  if (act === "follow-intrigue") {
+    const res = followIntrigue(state);
+    if (!res.ok) toast(res.reason || "That order cannot be given.");
+    else if (state.intrigue?.solve?.fromCityId) {
+      const city = state.cities[state.intrigue.solve.fromCityId];
+      const order = city && state.orders[city.id];
+      if (city && order) note(state, `${city.name}: ${orderLabel(state, order)}.`, true);
+    }
+    render();
+    return;
+  }
   if (act === "save") {
     save(state);
     note(state, "The campaign is sealed in this browser.");
@@ -908,6 +937,8 @@ function helpModal() {
     <p>Spring is lean, summer floods a low dike, autumn is the real harvest, and winter eats more and tires a march. The food number is how many months the granary covers at this season's rations.</p>
     <h3>One-off orders</h3>
     <p>Search, reward, shift, march, spy, or call on a guest spends the month. The job waits. You also get one diplomatic offer. The oath has a price, lasts a year, and is refused if you are already marching on that lord.</p>
+    <h3>The case</h3>
+    <p>One intrigue a season. Some lords hear only a rumor. A named lead is rarer. A quiet order solves it: spy, reward, search, a visit, or the lord riding out himself. Marching on that city can burn the chance. Ignore it until the season turns and it is lost. A solved case waits until the next season before another begins.</p>
     <h3>What you can see</h3>
     <p>Enemy marches aimed at you are on the map before the month resolves. Their other orders stay hidden unless you spied them last month. A weaker army moves first.</p>
     <h3>The court</h3>

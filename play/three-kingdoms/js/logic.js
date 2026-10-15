@@ -132,9 +132,15 @@ function createGame(factionId, rng = Math.random) {
     selected: home ? home.id : Object.keys(cities)[0],
     dismissedTip: false,
     outcome: null,
+    intrigue: null,
+    intrigueQuietUntil: null,
+    intrigueLastId: null,
+    pendingRescue: null,
     rngNote: typeof rng === "function" ? "external" : "",
   };
   planShadow(state, rng);
+  openIntrigue(state);
+  for (const line of intrigueBlurb(state)) pushLog(state, line);
   return state;
 }
 
@@ -148,12 +154,12 @@ function factionCities(state, faction) {
 }
 
 function rulerOfficer(state, faction) {
-  const id = state.rulers[faction];
+  const id = state.rulers?.[faction];
   return id ? state.officers[id] : null;
 }
 
 function isRuler(state, officer) {
-  if (!officer) return false;
+  if (!officer || !state.rulers) return false;
   return Object.values(state.rulers).includes(officer.id);
 }
 
@@ -236,6 +242,8 @@ function place(state, id, cityId) {
   o.status = "active";
   o.alive = true;
   o.field = false;
+  delete o.heldBy;
+  delete o.heldAt;
   if (!city.officerIds.includes(id)) city.officerIds.push(id);
   if (!city.governor) city.governor = id;
 }
@@ -309,7 +317,7 @@ function orderLabel(state, order) {
     case "transfer": return `Shift men to ${cityName(order.to)}`;
     case "march": return `March on ${cityName(order.to)}`;
     case "employ": return `Call on ${state.officers[order.officerId]?.name || "a guest"}`;
-    case "spy": return `Spy on ${FACTIONS[order.faction]?.name || "a lord"}`;
+    case "spy": return `Spy on ${FACTIONS[order.watch || order.faction]?.name || "a lord"}`;
     case "escort": return `Escort the emperor to ${cityName(order.to)}`;
     default: return "Keeps its job";
   }
@@ -375,7 +383,9 @@ function issueOrder(state, cityId, order) {
   if (state.phase !== "planning") return { ok: false, reason: "The month is already turning." };
   const err = validate(state, city, order);
   if (err) return { ok: false, reason: err };
-  state.orders[cityId] = { ...order, faction: city.faction };
+  const stored = { ...order, faction: city.faction };
+  if (order.type === "spy") stored.watch = order.faction;
+  state.orders[cityId] = stored;
   return { ok: true };
 }
 
@@ -498,6 +508,25 @@ function applyDomestic(state, city, order, rng, logs) {
     }
     case "search": {
       if (!spend(city, 35)) { logs.push(`${city.name} cannot spare searchers.`); return; }
+      const intrigue = state.intrigue;
+      if (intrigue?.kind === "letter" && intrigue.solve?.type === "search" && intrigue.solve.cityId === city.id) {
+        order.landed = true;
+        logs.push(`Searchers in ${city.name} take a letter from the archive.`);
+        return;
+      }
+      if (intrigue?.kind === "search" && intrigue.solve?.type === "search" && intrigue.solve.cityId === city.id) {
+        order.landed = true;
+        const target = state.officers[intrigue.solve.officerId];
+        if (target && target.status === "hidden") {
+          target.status = "guest";
+          target.cityId = city.id;
+          order.found = target.id;
+          logs.push(`Searchers in ${city.name} find ${target.name} (${target.courtesy || "no courtesy name"}). He will hear an offer, not yet take a seal.`);
+        } else if (target) {
+          logs.push(`${target.name} is already known in ${city.name}.`);
+        }
+        return;
+      }
       const seeker = bestBy(officers, (o) => eff(o).int);
       const hidden = Object.values(state.officers)
         .filter((o) => o.status === "hidden" && o.homeCity === city.id)
@@ -529,6 +558,7 @@ function applyDomestic(state, city, order, rng, logs) {
       const o = state.officers[order.officerId];
       if (!o || o.cityId !== city.id) return;
       if (!spend(city, 100)) { logs.push(`${city.name} cannot afford a gift.`); return; }
+      order.landed = true;
       o.loyalty = clamp(o.loyalty + 8 + Math.round(st.chr / 20), 0, 100);
       logs.push(`${o.name} accepts a gift. Loyalty is ${o.loyalty}.`);
       break;
@@ -537,6 +567,7 @@ function applyDomestic(state, city, order, rng, logs) {
       const g = state.officers[order.officerId];
       if (!g || g.status !== "guest" || g.cityId !== city.id) return;
       if (!spend(city, 40)) { logs.push(`There is no gift to carry to ${g.name}.`); return; }
+      order.landed = true;
       g.visits += 1;
       const lines = VISIT_LINES[g.id];
       if (g.visits < (g.visitsNeeded || 1)) {
@@ -561,8 +592,10 @@ function applyDomestic(state, city, order, rng, logs) {
     }
     case "spy": {
       if (!spend(city, 60)) { logs.push(`${city.name} cannot pay the agents.`); return; }
-      state._spy = order.faction;
-      logs.push(`Agents from ${city.name} watch ${FACTIONS[order.faction].name}. Next month their plans will be known.`);
+      order.landed = true;
+      const watched = order.watch || order.faction;
+      state._spy = watched;
+      logs.push(`Agents from ${city.name} watch ${FACTIONS[watched].name}. Next month their plans will be known.`);
       break;
     }
     case "escort": {
@@ -657,12 +690,16 @@ function applyDiplomacy(state, rng, logs) {
             unplace(state, id);
             o.status = "prisoner";
             o.factionHold = d.faction;
+            o.heldBy = state.player;
+            o.heldAt = city.id;
             prisoners.push(id);
           }
         } else {
           unplace(state, id);
           o.status = "prisoner";
           o.factionHold = d.faction;
+          o.heldBy = state.player;
+          o.heldAt = city.id;
           prisoners.push(id);
         }
       }
@@ -1076,6 +1113,8 @@ function applyBattleResult(state, battle) {
       unplace(state, id);
       o.status = "prisoner";
       o.factionHold = oldFaction;
+      o.heldBy = battle.attackerFaction;
+      o.heldAt = to.id;
       captured.push(id);
     };
     for (const id of battle.defenderIds) handleDefender(id);
@@ -1141,6 +1180,7 @@ function applyBattleResult(state, battle) {
       if (taker) logs.push(...giveGear(state, unit.officerId, taker.officerId));
     }
   }
+  logs.push(...settleRescue(state, battle, attWon));
   return logs;
 }
 
@@ -1303,8 +1343,10 @@ function beginResolution(state, rng = Math.random) {
     if (battle) battles.push(battle);
     else logs.push(`${city.name} cannot muster that march.`);
   }
-  state.revealed = state._spy || null;
+  judgeIntrigue(state, logs, battles);
+  state.revealed = state._spy || state._intrigueReveal || null;
   delete state._spy;
+  delete state._intrigueReveal;
   state.orders = {};
   state.shadowOrders = {};
   state.threats = [];
@@ -1359,6 +1401,8 @@ function releasePrisoner(state, id) {
   }
   o.status = "gone";
   o.cityId = null;
+  delete o.heldBy;
+  delete o.heldAt;
   return `${o.name} is released and leaves the map.`;
 }
 
@@ -1486,6 +1530,11 @@ function completeMonth(state, rng = Math.random) {
   }
   state.phase = "planning";
   for (const city of Object.values(state.cities)) delete city._payGovernor;
+  if (state.pendingRescue) {
+    logs.push("You did not bring him out.");
+    state.pendingRescue = null;
+  }
+  logs.push(...tickIntrigue(state));
   planShadow(state, rng);
   return { logs, outcome };
 }
@@ -1895,6 +1944,533 @@ function bondBlurb(id) {
   return "";
 }
 
+const GIFT_MEN = {
+  chengong: {
+    rank: 2,
+    failFaction: "caocao",
+    hint: "A gift may keep the man who writes at night.",
+    lead: (name, lord) => `Reward ${name} before the season turns. If it turns first, he writes to ${lord}.`,
+    fail: (name, lord) => `${name} writes to ${lord} and leaves.`,
+  },
+  zhangliao: {
+    rank: 0,
+    failFaction: null,
+    hint: "A purse would hold him longer than a speech.",
+    lead: (name) => `Reward ${name} before the season turns.`,
+    fail: (name) => `${name} slips away in the night.`,
+  },
+  jiaxu: {
+    rank: 0,
+    failFaction: null,
+    hint: "Pay him before he prices a different lord.",
+    lead: (name) => `Reward ${name} before the season turns.`,
+    fail: (name) => `${name} finds a colder lord to advise.`,
+  },
+  tianfeng: {
+    rank: 0,
+    failFaction: null,
+    hint: "The harsh counselor is cheaper to keep than to replace.",
+    lead: (name) => `Reward ${name} before the season turns.`,
+    fail: (name) => `${name} takes his counsel to another camp.`,
+  },
+};
+
+function nextSeasonStart(state) {
+  const month = state.month;
+  if (month < 4) return { year: state.year, month: 4 };
+  if (month < 7) return { year: state.year, month: 7 };
+  if (month < 10) return { year: state.year, month: 10 };
+  return { year: state.year + 1, month: 1 };
+}
+
+function seasonReached(state, mark) {
+  if (!mark) return false;
+  if (state.year > mark.year) return true;
+  if (state.year < mark.year) return false;
+  return state.month >= mark.month;
+}
+
+function clueLevel(state) {
+  const tag = FACTIONS[state.player]?.tag;
+  if (tag === "Open") return "named";
+  if (tag === "Hard") return "rumor";
+  return "hint";
+}
+
+function caseView(state) {
+  const intrigue = state?.intrigue;
+  if (!intrigue) return null;
+  const level = clueLevel(state);
+  const detail = level === "named" ? (intrigue.lead || "") : level === "hint" ? (intrigue.hint || "") : "";
+  return {
+    level,
+    rumor: intrigue.rumor || "",
+    detail,
+    canAct: level !== "rumor" && !!intrigue.actionLabel && !intrigueFollowed(state),
+    action: intrigue.actionLabel || "",
+    id: intrigue.id,
+  };
+}
+
+function intrigueBlurb(state) {
+  const view = caseView(state);
+  if (!view) return [];
+  return [view.detail ? `${view.rumor} ${view.detail}` : view.rumor];
+}
+
+function spyCity(state, faction) {
+  if (!faction) return null;
+  for (const city of factionCities(state, state.player)) {
+    if (!city.neighbors) continue;
+    if (city.neighbors.some((id) => state.cities[id]?.faction === faction)) return city.id;
+  }
+  return null;
+}
+
+function rescueCases(state) {
+  const ruler = rulerOfficer(state, state.player);
+  if (!ruler?.alive || ruler.status !== "active" || !ruler.cityId) return [];
+  const home = state.cities[ruler.cityId];
+  if (!home || home.faction !== state.player || !home.neighbors) return [];
+  const wanted = new Set();
+  const group = OATHS.find((row) => row.includes(ruler.id));
+  if (group) for (const id of group) if (id !== ruler.id) wanted.add(id);
+  const heir = state.heirs?.[state.player];
+  if (heir && heir !== ruler.id) wanted.add(heir);
+  const out = [];
+  for (const id of wanted) {
+    const officer = state.officers[id];
+    if (!officer?.alive || officer.status !== "prisoner" || !officer.heldBy) continue;
+    let prison = officer.heldAt;
+    if (!state.cities[prison] || state.cities[prison].faction !== officer.heldBy) {
+      prison = factionCities(state, officer.heldBy)[0]?.id;
+    }
+    if (!prison || !home.neighbors.includes(prison)) continue;
+    if (state.cities[prison].faction === state.player) continue;
+    const city = state.cities[prison];
+    const holder = FACTIONS[officer.heldBy]?.name || "the enemy";
+    out.push({
+      id: `rescue-${officer.id}`,
+      kind: "rescue",
+      score: 100,
+      rumor: "One of your own is held behind enemy walls.",
+      hint: "Only the lord's own ride brings him out.",
+      lead: `Ride to ${city.name} yourself and bring ${officer.name} out.`,
+      actionLabel: `Ride to ${city.name}`,
+      solve: { type: "march", officerId: officer.id, cityId: prison, fromCityId: home.id, to: prison },
+      spoil: null,
+      failText: `${holder} presses ${officer.name} into service.`,
+      solveText: `${ruler.name} rides himself. The battle decides.`,
+      spoilText: "",
+      failFaction: officer.heldBy,
+      until: nextSeasonStart(state),
+    });
+  }
+  return out;
+}
+
+function giftCases(state) {
+  const out = [];
+  for (const [id, meta] of Object.entries(GIFT_MEN)) {
+    const officer = state.officers[id];
+    if (!officer?.alive || officer.status !== "active" || officer.faction !== state.player) continue;
+    if (isRuler(state, officer)) continue;
+    const city = state.cities[officer.cityId];
+    if (!city || city.faction !== state.player) continue;
+    const lord = meta.failFaction ? (FACTIONS[meta.failFaction]?.name || "another lord") : "another lord";
+    out.push({
+      id: `gift-${officer.id}`,
+      kind: "gift",
+      score: 80 + (meta.rank || 0),
+      rumor: "Someone in your camp is writing letters at night.",
+      hint: meta.hint,
+      lead: meta.lead(officer.name, lord),
+      actionLabel: `Reward ${officer.name}`,
+      solve: { type: "reward", officerId: officer.id, cityId: city.id, fromCityId: city.id },
+      spoil: null,
+      failText: meta.fail(officer.name, lord),
+      solveText: `${officer.name} takes the gift and stays.`,
+      spoilText: "",
+      failFaction: meta.failFaction || null,
+      until: nextSeasonStart(state),
+    });
+  }
+  return out;
+}
+
+function audienceCases(state) {
+  const ruler = rulerOfficer(state, state.player);
+  if (!ruler?.alive || ruler.status !== "active" || !ruler.cityId) return [];
+  const city = state.cities[ruler.cityId];
+  if (!city || city.faction !== state.player) return [];
+  const out = [];
+  for (const officer of Object.values(state.officers)) {
+    if (!officer?.alive || officer.status !== "guest" || officer.cityId !== city.id) continue;
+    out.push({
+      id: `audience-${officer.id}`,
+      kind: "audience",
+      score: 70,
+      rumor: "A guest will hear the lord, and no captain in his place.",
+      hint: `Call on the guest in ${city.name} yourself.`,
+      lead: `Call on ${officer.name} while you remain in ${city.name}.`,
+      actionLabel: `Call on ${officer.name}`,
+      solve: { type: "employ", officerId: officer.id, cityId: city.id, fromCityId: city.id },
+      spoil: null,
+      failText: `${officer.name} leaves without an answer.`,
+      solveText: `${officer.name} hears the lord.`,
+      spoilText: "",
+      failFaction: null,
+      until: nextSeasonStart(state),
+    });
+  }
+  return out;
+}
+
+function recluseCases(state) {
+  const out = [];
+  for (const officer of Object.values(state.officers)) {
+    if (!officer || officer.status !== "hidden" || officer.alive === false || !officer.homeCity) continue;
+    const city = state.cities[officer.homeCity];
+    if (!city || city.faction !== state.player) continue;
+    out.push({
+      id: `search-${officer.id}`,
+      kind: "search",
+      score: officer.id === "zhugeliang" ? 65 : 60,
+      rumor: "A recluse near your walls will not come to the gate.",
+      hint: `Search the countryside of ${city.name}. A march will not find him.`,
+      lead: `Search ${city.name}. ${officer.name} can be found before the season turns.`,
+      actionLabel: `Search ${city.name}`,
+      solve: { type: "search", officerId: officer.id, cityId: city.id, fromCityId: city.id },
+      spoil: null,
+      failText: `${officer.name} hears the camps and goes deeper into the hills.`,
+      solveText: `${officer.name} will hear an offer, not yet take a seal.`,
+      spoilText: "",
+      failFaction: null,
+      until: nextSeasonStart(state),
+    });
+  }
+  return out;
+}
+
+function enemyDoubtCases(state) {
+  const groups = new Map();
+  const consider = (id, priority) => {
+    const officer = state.officers[id];
+    if (!officer?.alive || officer.status !== "active" || !officer.faction || officer.faction === state.player) return;
+    const prev = groups.get(officer.faction);
+    if (!prev || priority > prev.priority) groups.set(officer.faction, { officer, priority });
+  };
+  for (const pair of DOUBTS) {
+    const id = pair.find((item) => state.officers[item] && !isRuler(state, state.officers[item])) || pair[0];
+    consider(id, 2);
+  }
+  for (const id of THIN_LOYALTY) consider(id, 1);
+  const out = [];
+  for (const [faction, row] of groups) {
+    const from = spyCity(state, faction);
+    if (!from) continue;
+    const officer = row.officer;
+    const lord = FACTIONS[faction]?.name || "that lord";
+    const city = state.cities[officer.cityId];
+    if (!city) continue;
+    out.push({
+      id: `turn-${officer.id}`,
+      kind: "turn",
+      score: 50,
+      rumor: `A man in ${lord}'s camp doubts his lord.`,
+      hint: "Watching that camp may matter more than a march.",
+      lead: `Spy ${lord}. ${officer.name} will come over. March on his city and he burns the letter instead.`,
+      actionLabel: `Spy ${lord}`,
+      solve: { type: "spy", officerId: officer.id, faction, cityId: city.id, fromCityId: from },
+      spoil: { type: "march", to: city.id },
+      failText: `${officer.name} keeps his doubts to himself.`,
+      solveText: `${officer.name} comes over with what he knows.`,
+      spoilText: `${officer.name} sees the banners and burns the letter.`,
+      failFaction: faction,
+      until: nextSeasonStart(state),
+    });
+  }
+  return out;
+}
+
+function letterCase(state) {
+  const officer = state.officers.jiaxu;
+  if (!officer || officer.alive === false || officer.status === "dead" || officer.status === "gone") return null;
+  if (officer.faction === state.player && officer.status === "active") return null;
+  const city = state.cities[officer.cityId] || state.cities.changan;
+  if (!city) return null;
+  let solve;
+  if (city.faction === state.player) {
+    solve = { type: "search", officerId: "jiaxu", faction: officer.faction, cityId: city.id, fromCityId: city.id };
+  } else {
+    const faction = officer.faction || city.faction;
+    const from = faction ? spyCity(state, faction) : null;
+    if (!from) return null;
+    solve = { type: "spy", officerId: "jiaxu", faction, cityId: city.id, fromCityId: from };
+  }
+  const lord = FACTIONS[solve.faction]?.name || "that lord";
+  return {
+    id: "letter-jiaxu",
+    kind: "letter",
+    score: 40,
+    rumor: "A letter is moving that names a lord's weakness.",
+    hint: `A march on ${city.name} burns it. A quieter watch may not.`,
+    lead: solve.type === "search"
+      ? `Search ${city.name}. Jia Xu's letter is there. A march on ${city.name} burns it.`
+      : `Spy ${lord}. Jia Xu's letter will show their plans. March on ${city.name} and it burns.`,
+    actionLabel: solve.type === "search" ? `Search ${city.name}` : `Spy ${lord}`,
+    solve,
+    spoil: { type: "march", to: city.id },
+    failText: "The letter goes cold, and Jia Xu grows more careful.",
+    solveText: "Jia Xu's letter is read. Their plans for next month are known.",
+    spoilText: "The letter burns before it can be read.",
+    failFaction: solve.faction || null,
+    until: nextSeasonStart(state),
+  };
+}
+
+function openIntrigue(state) {
+  if (!state?.officers || !state?.cities || !state.player || !FACTIONS[state.player]) return null;
+  let list = [
+    ...rescueCases(state),
+    ...giftCases(state),
+    ...audienceCases(state),
+    ...recluseCases(state),
+    ...enemyDoubtCases(state),
+  ];
+  const letter = letterCase(state);
+  if (letter) list.push(letter);
+  if (state.intrigueLastId && list.some((item) => item.id !== state.intrigueLastId)) {
+    list = list.filter((item) => item.id !== state.intrigueLastId);
+  }
+  if (!list.length) {
+    state.intrigue = null;
+    return null;
+  }
+  list.sort((a, b) => b.score - a.score || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  const pick = list[0];
+  state.intrigue = pick;
+  state.intrigueLastId = pick.id;
+  return pick;
+}
+
+function closeIntrigue(state, how) {
+  state.intrigue = null;
+  state.intrigueQuietUntil = how === "failed"
+    ? { year: state.year, month: state.month }
+    : nextSeasonStart(state);
+}
+
+function orderMatchesCase(order, intrigue, cityId) {
+  const solve = intrigue.solve;
+  if (!order || !solve || order.type !== solve.type) return false;
+  if (solve.type === "reward" || solve.type === "employ") return order.officerId === solve.officerId;
+  if (solve.type === "spy") return (order.watch || order.faction) === solve.faction;
+  if (solve.type === "search") return cityId === solve.cityId || cityId === solve.fromCityId;
+  if (solve.type === "march") return order.to === solve.to;
+  return false;
+}
+
+function playerOrderEntries(state) {
+  return Object.entries(state.orders || {}).filter(([, order]) => order && order.faction === state.player);
+}
+
+function intrigueFollowed(state) {
+  const intrigue = state?.intrigue;
+  if (!intrigue?.solve) return false;
+  if (intrigue.kind === "rescue") {
+    const ruler = rulerOfficer(state, state.player);
+    return playerOrderEntries(state).some(([, order]) => (
+      order.type === "march"
+      && order.to === intrigue.solve.to
+      && ruler
+      && (order.officers || []).includes(ruler.id)
+    ));
+  }
+  return playerOrderEntries(state).some(([cityId, order]) => orderMatchesCase(order, intrigue, cityId));
+}
+
+function followIntrigue(state) {
+  const intrigue = state.intrigue;
+  if (!intrigue) return { ok: false, reason: "There is no case." };
+  if (clueLevel(state) === "rumor") return { ok: false, reason: "The rumor does not name the step." };
+  if (intrigueFollowed(state)) return { ok: true };
+  const solve = intrigue.solve;
+  if (intrigue.kind === "rescue") {
+    const city = state.cities[solve.fromCityId];
+    const ruler = rulerOfficer(state, state.player);
+    if (!city || !ruler || ruler.cityId !== city.id) return { ok: false, reason: "The lord is not at the gate." };
+    const others = (city.officerIds || []).filter((id) => id !== ruler.id && state.officers[id]?.alive && state.officers[id].status === "active");
+    const keep = city.soldiers > 600 ? Math.min(200, city.soldiers - 400) : 0;
+    const soldiers = city.soldiers - keep;
+    if (soldiers < 400) return { ok: false, reason: "Not enough men to ride." };
+    return issueOrder(state, city.id, {
+      type: "march",
+      to: solve.to,
+      officers: [ruler.id, ...others.slice(0, 2)],
+      soldiers,
+    });
+  }
+  const order = { type: solve.type };
+  if (solve.type === "reward" || solve.type === "employ") order.officerId = solve.officerId;
+  if (solve.type === "spy") order.faction = solve.faction;
+  return issueOrder(state, solve.fromCityId, order);
+}
+
+function spoilQueued(state, intrigue) {
+  if (!intrigue.spoil || intrigue.spoil.type !== "march") return false;
+  return playerOrderEntries(state).some(([, order]) => order.type === "march" && order.to === intrigue.spoil.to);
+}
+
+function lordStayed(state, intrigue) {
+  const ruler = rulerOfficer(state, state.player);
+  return !!(ruler && !ruler.field && ruler.cityId === intrigue.solve.cityId);
+}
+
+function solveMatched(state, intrigue, battles) {
+  const solve = intrigue.solve;
+  if (!solve) return false;
+  if (intrigue.kind === "rescue") {
+    const ruler = rulerOfficer(state, state.player);
+    return (battles || []).some((battle) => (
+      battle.attackerFaction === state.player
+      && battle.toId === solve.to
+      && ruler
+      && (battle.attackerIds || []).includes(ruler.id)
+    ));
+  }
+  const landed = playerOrderEntries(state).some(([cityId, order]) => order.landed && orderMatchesCase(order, intrigue, cityId));
+  if (!landed) return false;
+  if (intrigue.kind === "audience") return lordStayed(state, intrigue);
+  return true;
+}
+
+function defectOfficer(state, officer, prefer) {
+  const from = state.cities[officer.cityId];
+  let target = null;
+  if (prefer && prefer !== officer.faction && factionCities(state, prefer).length) {
+    target = from?.neighbors?.map((id) => state.cities[id]).find((city) => city?.faction === prefer)
+      || factionCities(state, prefer)[0];
+  }
+  if (!target && from?.neighbors) {
+    target = from.neighbors.map((id) => state.cities[id]).find((city) => city?.faction && city.faction !== officer.faction);
+  }
+  if (!target?.faction) return null;
+  officer.loyalty = 58;
+  officer.faction = target.faction;
+  place(state, officer.id, target.id);
+  return target;
+}
+
+function applySpoil(state, intrigue) {
+  const officer = state.officers[intrigue.solve?.officerId];
+  if (intrigue.kind === "turn" && officer?.alive) officer.loyalty = clamp(officer.loyalty + 12, 0, 100);
+  if (intrigue.kind === "letter" && officer?.alive) officer.loyalty = clamp(officer.loyalty + 8, 0, 100);
+}
+
+function applySolve(state, intrigue) {
+  const officer = state.officers[intrigue.solve?.officerId];
+  if (intrigue.kind === "gift") {
+    if (officer) officer.loyalty = Math.max(officer.loyalty, 72);
+    return;
+  }
+  if (intrigue.kind === "turn" && officer) {
+    officer.faction = state.player;
+    officer.loyalty = 64;
+    officer.status = "active";
+    place(state, officer.id, intrigue.solve.fromCityId);
+    return;
+  }
+  if (intrigue.kind === "letter") {
+    if (officer) officer.loyalty = clamp(officer.loyalty - 14, 0, 100);
+    state._intrigueReveal = intrigue.solve.faction || officer?.faction || null;
+    return;
+  }
+  if (intrigue.kind === "rescue") {
+    state.pendingRescue = { officerId: intrigue.solve.officerId, to: intrigue.solve.to };
+  }
+}
+
+function judgeIntrigue(state, logs, battles) {
+  const intrigue = state.intrigue;
+  if (!intrigue) return;
+  if (spoilQueued(state, intrigue)) {
+    applySpoil(state, intrigue);
+    if (intrigue.spoilText) logs.push(intrigue.spoilText);
+    closeIntrigue(state, "spoiled");
+    return;
+  }
+  if (!solveMatched(state, intrigue, battles)) return;
+  applySolve(state, intrigue);
+  if (intrigue.solveText) logs.push(intrigue.solveText);
+  closeIntrigue(state, "solved");
+}
+
+function failIntrigue(state) {
+  const intrigue = state.intrigue;
+  if (!intrigue) return [];
+  const officer = state.officers[intrigue.solve?.officerId];
+  if (intrigue.kind === "gift" && officer?.alive && officer.status === "active" && officer.faction === state.player) {
+    defectOfficer(state, officer, intrigue.failFaction);
+  } else if (intrigue.kind === "turn" && officer?.alive && officer.status === "active") {
+    officer.loyalty = clamp(officer.loyalty + 6, 0, 100);
+  } else if (intrigue.kind === "letter") {
+    if (officer?.alive) officer.loyalty = clamp(officer.loyalty + 8, 0, 100);
+    if (intrigue.solve?.faction && intrigue.solve.faction !== state.player) {
+      addRelation(state, state.player, intrigue.solve.faction, -8);
+    }
+  } else if (intrigue.kind === "search" && officer?.status === "hidden") {
+    officer.difficulty = (officer.difficulty || 70) + 12;
+  } else if (intrigue.kind === "audience" && officer?.status === "guest") {
+    officer.status = "hidden";
+    officer.visits = 0;
+    officer.cityId = officer.homeCity || null;
+  } else if (intrigue.kind === "rescue" && officer?.status === "prisoner" && officer.heldBy) {
+    const holder = officer.heldBy;
+    let cityId = officer.heldAt;
+    if (!state.cities[cityId] || state.cities[cityId].faction !== holder) {
+      cityId = factionCities(state, holder)[0]?.id;
+    }
+    if (cityId) {
+      officer.faction = holder;
+      officer.loyalty = 55;
+      officer.status = "active";
+      place(state, officer.id, cityId);
+    }
+  }
+  return intrigue.failText ? [intrigue.failText] : [];
+}
+
+function tickIntrigue(state) {
+  const logs = [];
+  if (state.intrigue && seasonReached(state, state.intrigue.until)) {
+    logs.push(...failIntrigue(state));
+    closeIntrigue(state, "failed");
+    openIntrigue(state);
+    logs.push(...intrigueBlurb(state));
+  } else if (!state.intrigue && seasonReached(state, state.intrigueQuietUntil)) {
+    openIntrigue(state);
+    logs.push(...intrigueBlurb(state));
+  }
+  return logs;
+}
+
+function settleRescue(state, battle, attWon) {
+  const pending = state.pendingRescue;
+  if (!pending || battle.toId !== pending.to || battle.attackerFaction !== state.player) return [];
+  state.pendingRescue = null;
+  const officer = state.officers[pending.officerId];
+  const city = state.cities[battle.toId];
+  if (attWon && officer?.status === "prisoner") {
+    officer.faction = state.player;
+    officer.loyalty = 78;
+    officer.status = "active";
+    place(state, officer.id, battle.toId);
+    return [`${officer.name} is brought out of ${city?.name || "the city"}.`];
+  }
+  return ["You did not bring him out."];
+}
+
 function normalizeSave(data) {
   if (!data || !data.cities || !data.officers) return null;
   if (data.version !== 1 && data.version !== 2) return null;
@@ -1914,8 +2490,18 @@ function normalizeSave(data) {
   data.aimsMet = data.aimsMet || {};
   data.duelWins = data.duelWins || {};
   data.orders = data.orders || {};
+  data.pendingRescue = data.pendingRescue ?? null;
+  data.intrigueLastId = data.intrigueLastId ?? null;
+  if (!("intrigue" in data)) data.intrigue = null;
+  if (!("intrigueQuietUntil" in data)) data.intrigueQuietUntil = null;
   if (data.phase === "planning" && !data.threats.length && !Object.keys(data.shadowOrders).length) {
     planShadow(data, Math.random);
+  }
+  if (data.phase === "planning" && !data.intrigue && !data.intrigueQuietUntil) {
+    openIntrigue(data);
+    if (Array.isArray(data.log)) {
+      for (const line of intrigueBlurb(data)) pushLog(data, line);
+    }
   }
   return data;
 }
