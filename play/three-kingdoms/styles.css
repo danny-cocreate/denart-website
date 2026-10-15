@@ -42,7 +42,12 @@ img { max-width: 100%; }
   min-height: 100%;
   padding: 36px 22px 64px;
   color: var(--paper-2);
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(166, 124, 61, 0.22), transparent 36%),
+    radial-gradient(ellipse at 88% 8%, rgba(141, 46, 42, 0.2), transparent 34%),
+    radial-gradient(ellipse at 50% 100%, rgba(28, 61, 52, 0.28), transparent 42%);
 }
+.mast > .seal { transform: rotate(-8deg); }
 .mast {
   max-width: 1080px;
   margin: 0 auto 28px;
@@ -110,6 +115,8 @@ img { max-width: 100%; }
   overflow: hidden;
   display: grid;
   place-items: center;
+  border: 1px solid rgba(230, 211, 161, 0.72);
+  box-shadow: inset 0 0 0 3px rgba(20, 14, 11, 0.55), 0 8px 16px rgba(0, 0, 0, 0.28);
 }
 .face img { width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block; }
 .face .seal {
@@ -181,10 +188,28 @@ img { max-width: 100%; }
 .city .hit { fill: transparent; }
 .city .ring { fill: none; stroke: var(--cinnabar); stroke-width: 2; }
 .city .ally-mark { fill: none; stroke: var(--pine); stroke-width: 1.6; stroke-dasharray: 3 2; }
-.city .walls { fill: #f6ead2; stroke: #3a2a1c; stroke-width: 1.15; }
-.city.is-mine .walls { stroke: var(--cinnabar); stroke-width: 1.7; }
-.city.is-mine .roof { stroke: #f3e4c0; stroke-width: 1; }
-.city .gate { fill: #3a2a1c; }
+.city .keep { fill: #f4e7cf; stroke: #3a2a1c; stroke-width: 0.95; stroke-linejoin: miter; }
+.city.is-mine .keep { stroke: var(--cinnabar); stroke-width: 1.45; }
+.city .roof { stroke: rgba(255, 248, 236, 0.45); stroke-width: 0.7; stroke-linejoin: round; }
+.city .gate { fill: #2a1c12; }
+.city .shade { fill: rgba(36, 23, 15, 0.28); }
+.city .banner-flag line { stroke: #2a1c12; stroke-width: 1.05; }
+.city .ridge { stroke: rgba(255, 244, 220, 0.8); stroke-width: 0.7; stroke-linecap: round; }
+.city .slit { fill: #2a1c12; }
+.city .threat-ring { fill: none; stroke: #8d2e2a; stroke-width: 1.8; }
+.city .taken-flash { fill: none; stroke: #a67c3d; stroke-width: 2.6; animation: taken 1s ease forwards; }
+.city .emperor-glow { fill: #e6c56a; opacity: 0.28; }
+.city .job-mark { fill: none; stroke: #3a2a1c; stroke-width: 0.85; stroke-linecap: round; }
+.city .job-mark.coin, .city .job-mark.patrol, .city .job-mark.levy { fill: #a67c3d; stroke: #3a2a1c; }
+.season-wash { opacity: 0.16; pointer-events: none; }
+.season-winter .season-wash { opacity: 0.28; }
+.mapwrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 58%, rgba(36, 23, 15, 0.2) 100%);
+}
 .city .placard rect { fill: rgba(246, 236, 214, 0.94); stroke: rgba(58, 42, 28, 0.35); stroke-width: 0.7; }
 .city text {
   fill: var(--ink);
@@ -196,20 +221,12 @@ img { max-width: 100%; }
 .banner-flag line { stroke: #3a2a1c; stroke-width: 0.9; }
 .idle-ring { fill: none; stroke: var(--cinnabar); stroke-width: 1.15; stroke-dasharray: 2.2 2; }
 .order-pip { fill: var(--cinnabar); stroke: #f6ead2; stroke-width: 0.8; }
-.river-flow {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.7);
-  stroke-width: 1.15;
-  stroke-linecap: round;
-  stroke-dasharray: 7 16;
-  pointer-events: none;
-  animation: flow 7s linear infinite;
-}
-.move-arrow { fill: none; stroke-width: 2.1; stroke-linecap: round; pointer-events: none; }
-.move-arrow.march { stroke: #8d2e2a; stroke-dasharray: 6 5; animation: march 0.7s linear infinite; }
-.move-arrow.shift { stroke: #1c3d34; stroke-dasharray: 2 3.5; }
-.move-arrow.threat { stroke: #8d2e2a; stroke-width: 2.4; stroke-dasharray: 2 3.2; }
-.move-arrow.spied { stroke: #1d4578; stroke-dasharray: 3 3; }
+.column { pointer-events: none; }
+.move-arrow { fill: none; stroke-width: 2.2; stroke-linecap: round; pointer-events: none; }
+.move-arrow.march { stroke: #8d2e2a; }
+.move-arrow.shift { stroke: #1c3d34; }
+.move-arrow.threat { stroke: #8d2e2a; stroke-width: 2.6; }
+.move-arrow.spied { stroke: #1d4578; stroke-dasharray: 4 3; }
 .emperor-mark { font-size: 13px; fill: #8d2e2a; font-weight: 700; }
 .compass circle { fill: rgba(246, 236, 214, 0.88); stroke: #3a2a1c; stroke-width: 0.8; }
 .compass .north { fill: #8d2e2a; }
@@ -342,6 +359,8 @@ img { max-width: 100%; }
 }
 .unit.on { outline: 2px solid var(--cinnabar); }
 .unit .meta { display: block; color: var(--ink-soft); font-size: 13px; }
+.spirit { display: block; height: 5px; margin-top: 5px; background: rgba(36, 23, 15, 0.12); }
+.spirit i { display: block; height: 100%; background: linear-gradient(90deg, #8d2e2a, #c47a32); transition: width 0.35s ease; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .dossier { display: grid; grid-template-columns: 200px 1fr; gap: 14px; }
@@ -486,16 +505,19 @@ img { max-width: 100%; }
 #screen.turning::after {
   content: "The month turns";
   position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(20, 14, 11, 0.72);
+  top: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 7;
+  padding: 8px 16px;
+  background: var(--lacquer);
   color: var(--gold-2);
-  font-size: clamp(28px, 5vw, 56px);
-  letter-spacing: 0.08em;
-  z-index: 6;
-  animation: fade 0.25s ease;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 14px;
+  animation: fade 0.2s ease;
 }
+#screen.turning.arriving::after { content: "The columns arrive"; }
 .clash {
   display: flex;
   align-items: center;
@@ -510,6 +532,7 @@ img { max-width: 100%; }
   text-align: center;
   letter-spacing: 0.06em;
 }
+.battle-log p.fresh { animation: ink 0.45s ease; }
 .clash .vs { letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; color: var(--ink-soft); }
 .clash.strike { animation: shake 0.35s ease; }
 .clash.duel { animation: shake 0.45s ease; }
@@ -524,8 +547,6 @@ img { max-width: 100%; }
   to { opacity: 1; }
 }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes flow { to { stroke-dashoffset: -92; } }
-@keyframes march { to { stroke-dashoffset: -22; } }
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   30% { transform: translateX(-4px); }
@@ -534,6 +555,10 @@ img { max-width: 100%; }
 @keyframes toast-in {
   from { opacity: 0; transform: translate(-50%, 12px); }
   to { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes taken {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

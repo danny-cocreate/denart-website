@@ -9,6 +9,7 @@ const session = {
   prisoners: [],
   prisonCity: null,
   draft: null,
+  changed: null,
 };
 
 let screen;
@@ -180,7 +181,7 @@ function gameHtml(state) {
     return `${FACTIONS[threat.faction].name} is on the road from ${from?.name || "a city"} toward ${to?.name || "you"}.`;
   }).join(" ");
   const tip = !state.dismissedTip && state.turn === 1
-    ? `<div class="tip"><b>First month.</b> ${esc(FACTIONS[state.player].blurb)} Cities already have a job. Leave them, or spend the month on one interruption. A march that is already on the road is marked.<div><button data-act="dismiss-tip">Understood</button></div></div>`
+    ? `<div class="tip"><b>First month.</b> ${esc(FACTIONS[state.player].blurb)} Cities already have a job. Leave them, or spend the month on one interruption. Your march waits at the gate. An enemy already coming sits partway along the road.<div><button data-act="dismiss-tip">Understood</button></div></div>`
     : "";
   return `<div class="game">
     <header class="topbar">
@@ -202,7 +203,7 @@ function gameHtml(state) {
         <button data-act="title" title="Return to the list of lords">Menu</button>
       </div>
     </header>
-    <div class="mapwrap">
+    <div class="mapwrap season-${seasonName(state.month)}">
       ${mapSvg(state)}
       <div class="legend" aria-hidden="true">
         <span><i class="dot you"></i>Your walls</span>
@@ -244,35 +245,56 @@ function peakMark(x, y, s) {
   return `<path class="peak" d="M${x - s},${y} l${s},${rnd(-s * 1.45)} l${rnd(s * 0.85)},${rnd(s * 1.45)} z"/>`;
 }
 
+function jobGlyph(job) {
+  if (job === "fields") return `<g class="job-mark wheat"><path d="M0,6 q1.1,-4.5 0,-6.4 M1.8,6 q1,-4 0,-5.4 M-1.8,6 q-1,-4 0,-5.2"/></g>`;
+  if (job === "dikes") return `<path class="job-mark dike" d="M-3,4 q1.6,-2.2 3.2,0 t3.2,0"/>`;
+  if (job === "markets") return `<circle class="job-mark coin" cx="0" cy="3" r="2.1"/>`;
+  if (job === "drill") return `<g class="job-mark spear"><line x1="0" y1="6" x2="0" y2="-2"/><path d="M0,-2 l1.3,2.1 h-2.6 z"/></g>`;
+  if (job === "patrol") return `<circle class="job-mark patrol" r="1.45" cx="0" cy="3"/>`;
+  if (job === "walls") return `<rect class="job-mark mason" x="-2.2" y="1.5" width="4.4" height="3.2"/>`;
+  if (job === "levy") return `<g class="job-mark levy"><circle cx="-1.6" cy="2.2" r="1.05"/><circle cx="1.6" cy="2.6" r="1.05"/></g>`;
+  return "";
+}
+
 function townMark(state, city) {
   const color = FACTIONS[city.faction].color;
   const mine = city.faction === state.player;
   const selected = city.id === state.selected;
   const ally = !mine && isAllied(state, state.player, city.faction);
   const ordered = !!state.orders[city.id];
-  const idle = false;
+  const threatened = (state.threats || []).some((threat) => threat.to === city.id);
+  const emperor = state.emperorAt === city.id;
+  const changed = session.changed?.has(city.id);
   const nudge = LABEL_AT[city.id] || [0, 16];
   const w = Math.max(48, Math.ceil(city.name.length * 7.2 + 14));
   const y = nudge[1];
-  const pulse = selected && motionOk()
-    ? `<animate attributeName="r" values="16;26;16" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.95;0.25;0.95" dur="1.8s" repeatCount="indefinite"/>`
-    : "";
   const men = city.soldiers >= 1000 ? `${Math.round(city.soldiers / 100) / 10}k` : String(city.soldiers);
-  return `<g class="city ${mine ? "is-mine" : ""} ${selected ? "is-selected" : ""} ${idle ? "is-idle" : ""} ${ally ? "is-ally" : ""}" data-act="select" data-id="${city.id}" data-testid="city-${city.id}" transform="translate(${city.x} ${city.y})">
+  const job = mine ? jobGlyph(city.job) : "";
+  return `<g class="city ${mine ? "is-mine" : ""} ${selected ? "is-selected" : ""} ${ally ? "is-ally" : ""} ${threatened ? "is-threatened" : ""} ${emperor ? "is-emperor" : ""} ${changed ? "just-changed" : ""}" data-act="select" data-id="${city.id}" data-testid="city-${city.id}" transform="translate(${city.x} ${city.y})">
     <title>${esc(city.name)} · ${esc(FACTIONS[city.faction].name)} · ${city.soldiers.toLocaleString()} troops</title>
     <circle class="hit" r="22"/>
-    ${idle ? `<circle class="idle-ring" r="18"/>` : ""}
-    ${selected ? `<circle class="ring" r="20">${pulse}</circle>` : ""}
+    ${selected ? `<circle class="ring" r="20"/>` : ""}
+    ${threatened ? `<circle class="threat-ring" r="18"/>` : ""}
+    ${changed ? `<circle class="taken-flash" r="16"/>` : ""}
     ${ally ? `<circle class="ally-mark" r="22"/>` : ""}
-    <polygon class="roof" points="-13,-3 0,-16 13,-3" fill="${color}"/>
-    <rect class="walls" x="-10" y="-3" width="20" height="13"/>
-    <rect class="gate" x="-2.2" y="4" width="4.4" height="6"/>
+    ${emperor ? `<circle class="emperor-glow" r="15"/>` : ""}
+    <ellipse class="shade" cx="0" cy="9.2" rx="15" ry="2.8"/>
+    <path class="keep" d="M-12,8 L-12,-1 L-9,-1 L-9,-5.2 L-5,-5.2 L-5,-1 L-1,-1 L-1,-5.2 L3,-5.2 L3,-1 L7,-1 L7,-5.2 L11,-5.2 L11,-1 L12,-1 L12,8 Z"/>
+    <polygon class="roof" points="-6.2,-5 0,-14 6.2,-5" fill="${color}"/>
+    <line class="ridge" x1="-5.6" y1="-5.4" x2="0" y2="-13.2"/>
+    <line class="ridge" x1="5.6" y1="-5.4" x2="0" y2="-13.2"/>
+    <rect class="slit" x="-7.6" y="0.4" width="1.4" height="3.5"/>
+    <rect class="slit" x="6.1" y="0.4" width="1.4" height="3.5"/>
+    <rect class="gate" x="-2.1" y="2.2" width="4.2" height="5.8"/>
     <g class="banner-flag">
-      <line x1="12" y1="-1" x2="12" y2="-19"/>
-      <path d="M12,-19 h11 l-2.4,3.4 2.4,3.4 h-11 z" fill="${color}"/>
+      <line x1="13" y1="2" x2="13" y2="-21"/>
+      <g transform="translate(13 -21)">
+        <path class="cloth" d="M0,0 h15 l-3.1,4.6 3.1,4.6 H0 z" fill="${color}" stroke="rgba(255,248,236,0.8)" stroke-width="0.6"/>
+      </g>
     </g>
+    ${job ? `<g class="job" transform="translate(-16 1)">${job}</g>` : ""}
     <text class="garrison" y="20">${men}</text>
-    ${state.emperorAt === city.id ? `<text class="emperor-mark" y="-24">帝</text>` : ""}
+    ${emperor ? `<text class="emperor-mark" y="-22">帝</text>` : ""}
     ${ordered ? `<circle class="order-pip" cx="-15" cy="-15" r="3.6"/>` : ""}
     <g class="placard" transform="translate(${nudge[0]} 0)">
       <rect x="${-w / 2}" y="${y}" width="${w}" height="16" rx="1.5"/>
@@ -281,36 +303,99 @@ function townMark(state, city) {
   </g>`;
 }
 
-function arrowLine(A, B, kind) {
-  if (!A || !B) return "";
+function roadSpan(A, B) {
+  if (!A || !B) return null;
   const dx = B.x - A.x;
   const dy = B.y - A.y;
   const len = Math.hypot(dx, dy) || 1;
-  const x1 = A.x + (dx / len) * 16;
-  const y1 = A.y + (dy / len) * 16;
-  const x2 = B.x - (dx / len) * 20;
-  const y2 = B.y - (dy / len) * 20;
-  const marker = kind === "shift" ? "shift" : "march";
-  return `<line class="move-arrow ${kind}" x1="${rnd(x1)}" y1="${rnd(y1)}" x2="${rnd(x2)}" y2="${rnd(y2)}" marker-end="url(#arrow-${marker})"/>`;
+  const inset = Math.min(16, Math.max(10, len * 0.16));
+  return {
+    x1: A.x + (dx / len) * inset,
+    y1: A.y + (dy / len) * inset,
+    x2: B.x - (dx / len) * inset,
+    y2: B.y - (dy / len) * inset,
+    len,
+  };
+}
+
+function columnBody(kind, color) {
+  if (kind === "shift") {
+    return `<rect x="-6.5" y="-4.2" width="13" height="8.4" rx="1.4" fill="${color}" stroke="#24170f" stroke-width="0.8"/>`;
+  }
+  return `<circle r="6.4" fill="${color}" stroke="#24170f" stroke-width="0.9"/><path d="M3.2,-2.4 h10.5 l-2.2,3.2 2.2,3.2 h-10.5 z" fill="${color}" stroke="#24170f" stroke-width="0.55"/>`;
+}
+
+function along(span, t) {
+  return {
+    x: span.x1 + (span.x2 - span.x1) * t,
+    y: span.y1 + (span.y2 - span.y1) * t,
+  };
+}
+
+function columnMark(A, B, kind) {
+  const span = roadSpan(A, B);
+  if (!span) return "";
+  const color = kind === "spied" ? "#1d4578" : kind === "shift" ? "#1c3d34" : (FACTIONS[A.faction]?.color || "#8d2e2a");
+  const body = columnBody(kind, color);
+  const label = kind === "threat" ? "Enemy column" : kind === "spied" ? "Reported march" : kind === "shift" ? "Men shifting" : "Your column";
+  const ang = Math.atan2(span.y2 - span.y1, span.x2 - span.x1) * 180 / Math.PI;
+  const face = `<g class="column-face" transform="rotate(${rnd(ang)})"><title>${label}</title>${body}</g>`;
+  const restT = kind === "threat" ? 0.7 : kind === "spied" ? 0.4 : 0;
+  const rest = along(span, restT);
+  const from = `${rnd(rest.x)} ${rnd(rest.y)}`;
+  const to = `${rnd(span.x2)} ${rnd(span.y2)}`;
+  if (!motionOk()) {
+    return `<g class="column ${kind}" transform="translate(${from})">${face}</g>`;
+  }
+  const remain = Math.hypot(span.x2 - rest.x, span.y2 - rest.y);
+  const dur = Math.max(0.55, Math.min(0.95, remain / 220)).toFixed(2);
+  return `<g class="column ${kind}" transform="translate(${from})">
+    <animateTransform attributeName="transform" type="translate" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.16 0.84 0.2 1" data-from="${from}" data-to="${to}" values="${from}; ${to}" dur="${dur}s"/>
+    ${face}
+  </g>`;
+}
+
+function arrowLine(A, B, kind) {
+  const span = roadSpan(A, B);
+  if (!span) return { line: "", column: "" };
+  const marker = kind === "shift" ? "shift" : kind === "spied" ? "spied" : "march";
+  return {
+    line: `<line class="move-arrow ${kind}" x1="${rnd(span.x1)}" y1="${rnd(span.y1)}" x2="${rnd(span.x2)}" y2="${rnd(span.y2)}" marker-end="url(#arrow-${marker})"/>`,
+    column: columnMark(A, B, kind),
+  };
 }
 
 function movementArrows(state) {
-  const own = Object.entries(state.orders).map(([fromId, order]) => {
-    if (!order?.to || !["march", "transfer", "move", "escort"].includes(order.type)) return "";
+  const pieces = [];
+  for (const [fromId, order] of Object.entries(state.orders)) {
+    if (!order?.to || !["march", "transfer", "move", "escort"].includes(order.type)) continue;
     const kind = order.type === "march" ? "march" : "shift";
-    return arrowLine(state.cities[fromId], state.cities[order.to], kind);
-  }).join("");
-  const threats = (state.threats || []).map((threat) => arrowLine(state.cities[threat.from], state.cities[threat.to], "threat")).join("");
-  let spied = "";
-  if (state.revealed) {
-    spied = Object.entries(state.shadowOrders || {}).map(([fromId, order]) => {
-      if (order?.type !== "march" || state.cities[fromId]?.faction !== state.revealed) return "";
-      if ((state.threats || []).some((threat) => threat.from === fromId)) return "";
-      return arrowLine(state.cities[fromId], state.cities[order.to], "spied");
-    }).join("");
+    pieces.push(arrowLine(state.cities[fromId], state.cities[order.to], kind));
   }
-  return own + threats + spied;
+  for (const threat of state.threats || []) {
+    pieces.push(arrowLine(state.cities[threat.from], state.cities[threat.to], "threat"));
+  }
+  if (state.revealed) {
+    for (const [fromId, order] of Object.entries(state.shadowOrders || {})) {
+      if (order?.type !== "march" || state.cities[fromId]?.faction !== state.revealed) continue;
+      if ((state.threats || []).some((threat) => threat.from === fromId)) continue;
+      pieces.push(arrowLine(state.cities[fromId], state.cities[order.to], "spied"));
+    }
+  }
+  return {
+    lines: pieces.map((piece) => piece.line).join(""),
+    columns: pieces.map((piece) => piece.column).join(""),
+  };
 }
+
+function seasonWash(month) {
+  const season = seasonName(month);
+  if (season === "summer") return "#e2a84a";
+  if (season === "autumn") return "#c4622a";
+  if (season === "winter") return "#d7e6f0";
+  return "#7f9a55";
+}
+
 
 function mapSvg(state) {
   for (const src of CITIES) {
@@ -336,9 +421,7 @@ function mapSvg(state) {
     return `<text class="${sea ? "seaname" : "watername"}" x="${n.x}" y="${n.y}" text-anchor="middle">${n.t}</text>`;
   }).join("");
   const nodes = Object.values(state.cities).map((c) => townMark(state, c)).join("");
-  const flow = motionOk()
-    ? RIVERS.filter((r) => r.rank === "major").map((r) => `<path class="river-flow" d="${r.d}"/>`).join("")
-    : "";
+  const moves = movementArrows(state);
   return `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="Map of the late Han, traced from the real coast and rivers">
     <defs>
       <linearGradient id="seaShade" x1="0" y1="0" x2="1" y2="1">
@@ -360,20 +443,23 @@ function mapSvg(state) {
       <marker id="arrow-shift" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M0,0 L10,5 L0,10 z" fill="#1c3d34"/>
       </marker>
+      <marker id="arrow-spied" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#1d4578"/>
+      </marker>
     </defs>
     <rect class="sea" width="${MAP_W}" height="${MAP_H}"/>
     <path class="grat" d="${GRATICULE}"/>
     <path class="land" fill="url(#landShade)" fill-rule="evenodd" d="${LAND}"/>
+    <path class="season-wash" fill="${seasonWash(state.month)}" fill-rule="evenodd" d="${LAND}"/>
     <path class="grain" filter="url(#grain)" fill-rule="evenodd" d="${LAND}"/>
     <path class="lake" d="${LAKES}"/>
     ${PEAKS.map(([x, y, s]) => peakMark(x, y, s)).join("")}
     <path class="wall" d="${WALL}"/>
     ${rivers}
-    ${flow}
     ${notes}
     ${GRAT_LABELS.map((g) => `<text class="grat-label" text-anchor="${g.anchor}" x="${g.x}" y="${g.y}">${g.t}</text>`).join("")}
     ${roads}
-    ${movementArrows(state)}
+    ${moves.lines}
     <g class="compass" transform="translate(868 688)" aria-hidden="true">
       <circle r="18" />
       <polygon class="north" points="0,-14 3.2,1 0,4 -3.2,1"/>
@@ -381,6 +467,7 @@ function mapSvg(state) {
       <text y="-20">N</text>
     </g>
     ${nodes}
+    ${moves.columns}
   </svg>`;
 }
 
@@ -995,10 +1082,20 @@ async function endMonth() {
   session.busy = true;
   closeModal();
   try {
+    const before = {};
+    for (const city of Object.values(state.cities)) before[city.id] = city.faction;
     if (motionOk()) {
+      const columns = [...document.querySelectorAll(".column animateTransform")];
       screen.classList.add("turning");
-      await wait(680);
-      screen.classList.remove("turning");
+      if (columns.length) screen.classList.add("arriving");
+      let waitMs = columns.length ? 0 : 380;
+      for (const node of columns) {
+        const dur = Math.round(parseFloat(node.getAttribute("dur")) * 1000) || 700;
+        waitMs = Math.max(waitMs, dur);
+        try { node.beginElement(); } catch (err) { /* the column is waiting at its mark */ }
+      }
+      await wait(waitMs + 60);
+      screen.classList.remove("turning", "arriving");
     }
     const rng = Math.random;
     const result = beginResolution(state, rng);
@@ -1037,8 +1134,10 @@ async function endMonth() {
     }
     const done = completeMonth(state, rng);
     noteAll(state, done.logs);
+    session.changed = new Set(Object.keys(before).filter((id) => state.cities[id] && state.cities[id].faction !== before[id]));
     save(state);
     render();
+    session.changed = null;
     if (done.outcome) outcomeModal(state, done.outcome);
   } finally {
     session.busy = false;
@@ -1123,9 +1222,10 @@ function paintBattle() {
     const name = o ? o.name : "City militia";
     const on = selected && u.officerId === selected;
     const fallen = u.slain || u.routed;
+    const spirit = Math.max(0, Math.min(100, Math.round(u.morale || 0)));
     return `<button class="unit ${on ? "on" : ""} ${u.slain ? "slain" : ""} ${u.routed ? "routed" : ""} ${fallen ? "fallen" : ""}" data-act="${pickAct}" data-id="${u.officerId || ""}">
       ${face(o, "sm")}
-      <span><b>${esc(name)}</b><span class="meta">${u.slain ? "Fallen" : u.routed ? "Routed" : `${u.soldiers.toLocaleString()} soldiers · spirit ${Math.round(u.morale)}`}</span></span>
+      <span><b>${esc(name)}</b><span class="meta">${u.slain ? "Fallen" : u.routed ? "Routed" : `${u.soldiers.toLocaleString()} soldiers`}</span>${fallen ? "" : `<span class="spirit" title="Spirit ${spirit}"><i style="width:${spirit}%"></i></span>`}</span>
     </button>`;
   }).join("");
   const withdrawLabel = side === "attacker" ? "Retreat" : "Abandon the city";
