@@ -255,6 +255,15 @@ img { max-width: 100%; }
   background: rgba(141, 46, 42, 0.08);
   border-left: 3px solid var(--cinnabar);
 }
+.intrigue {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  background: var(--paper-2);
+  border-left: 3px solid var(--cinnabar);
+}
+.intrigue h3 { margin-top: 0; }
+.intrigue p { margin: 0 0 6px; }
+.intrigue button { width: 100%; text-align: left; background: rgba(255, 248, 236, 0.7); }
 .end-row { display: flex; gap: 8px; margin-top: 12px; }
 .end-row .primary { flex: 1; }
 
