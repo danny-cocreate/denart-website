@@ -42,7 +42,12 @@ img { max-width: 100%; }
   min-height: 100%;
   padding: 36px 22px 64px;
   color: var(--paper-2);
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(166, 124, 61, 0.22), transparent 36%),
+    radial-gradient(ellipse at 88% 8%, rgba(141, 46, 42, 0.2), transparent 34%),
+    radial-gradient(ellipse at 50% 100%, rgba(28, 61, 52, 0.28), transparent 42%);
 }
+.mast > .seal { animation: seal-breathe 4.2s ease-in-out infinite; }
 .mast {
   max-width: 1080px;
   margin: 0 auto 28px;
@@ -110,8 +115,11 @@ img { max-width: 100%; }
   overflow: hidden;
   display: grid;
   place-items: center;
+  border: 1px solid rgba(230, 211, 161, 0.72);
+  box-shadow: inset 0 0 0 3px rgba(20, 14, 11, 0.55), 0 8px 16px rgba(0, 0, 0, 0.28);
 }
 .face img { width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block; }
+.topbar .face { animation: portrait-glow 5.5s ease-in-out infinite; }
 .face .seal {
   display: none;
   width: 100%;
@@ -181,10 +189,35 @@ img { max-width: 100%; }
 .city .hit { fill: transparent; }
 .city .ring { fill: none; stroke: var(--cinnabar); stroke-width: 2; }
 .city .ally-mark { fill: none; stroke: var(--pine); stroke-width: 1.6; stroke-dasharray: 3 2; }
-.city .walls { fill: #f6ead2; stroke: #3a2a1c; stroke-width: 1.15; }
-.city.is-mine .walls { stroke: var(--cinnabar); stroke-width: 1.7; }
-.city.is-mine .roof { stroke: #f3e4c0; stroke-width: 1; }
-.city .gate { fill: #3a2a1c; }
+.city .keep { fill: #f4e7cf; stroke: #3a2a1c; stroke-width: 0.95; stroke-linejoin: miter; }
+.city.is-mine .keep { stroke: var(--cinnabar); stroke-width: 1.45; }
+.city .roof { stroke: rgba(255, 248, 236, 0.45); stroke-width: 0.7; stroke-linejoin: round; }
+.city .gate { fill: #2a1c12; }
+.city .shade { fill: rgba(36, 23, 15, 0.28); }
+.city .banner-flag line { stroke: #2a1c12; stroke-width: 0.9; }
+.city .cloth { transform-box: fill-box; transform-origin: left center; animation: cloth 2.2s ease-in-out infinite; }
+.city .ember { fill: #e07a3d; animation: flicker 1.15s ease-in-out infinite; }
+.city .threat-ring { fill: none; stroke: #8d2e2a; stroke-width: 1.25; transform-box: fill-box; transform-origin: center; animation: threaten 1.6s ease-out infinite; }
+.city .emperor-glow { fill: #e6c56a; opacity: 0.34; animation: halo 2.6s ease-in-out infinite; }
+.city .job-mark { fill: none; stroke: #3a2a1c; stroke-width: 0.85; stroke-linecap: round; }
+.city .job-mark.coin, .city .job-mark.patrol, .city .job-mark.levy { fill: #a67c3d; stroke: #3a2a1c; }
+.city .job-mark.wheat { transform-box: fill-box; transform-origin: center bottom; animation: sway 2.3s ease-in-out infinite; }
+.city .job-mark.patrol { transform-box: fill-box; transform-origin: center; animation: pace 1.8s ease-in-out infinite; }
+.season-wash { opacity: 0.16; pointer-events: none; }
+.season-winter .season-wash { opacity: 0.28; }
+.sky { pointer-events: none; }
+.cloud { fill: rgba(255, 252, 246, 0.55); }
+.flake { fill: #f7fbff; }
+.leaf { fill: #a85a28; opacity: 0.8; }
+.bird path { fill: none; stroke: #3a2a1c; stroke-width: 1.1; stroke-linecap: round; }
+.sun circle { fill: #f0c14a; stroke: #a67c3d; stroke-width: 1; }
+.mapwrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 58%, rgba(36, 23, 15, 0.2) 100%);
+}
 .city .placard rect { fill: rgba(246, 236, 214, 0.94); stroke: rgba(58, 42, 28, 0.35); stroke-width: 0.7; }
 .city text {
   fill: var(--ink);
@@ -260,6 +293,7 @@ img { max-width: 100%; }
   padding: 8px 10px;
   background: var(--paper-2);
   border-left: 3px solid var(--cinnabar);
+  animation: case-glow 3s ease-in-out infinite;
 }
 .intrigue h3 { margin-top: 0; }
 .intrigue p { margin: 0 0 6px; }
@@ -342,6 +376,8 @@ img { max-width: 100%; }
 }
 .unit.on { outline: 2px solid var(--cinnabar); }
 .unit .meta { display: block; color: var(--ink-soft); font-size: 13px; }
+.spirit { display: block; height: 5px; margin-top: 5px; background: rgba(36, 23, 15, 0.12); }
+.spirit i { display: block; height: 100%; background: linear-gradient(90deg, #8d2e2a, #c47a32); }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .dossier { display: grid; grid-template-columns: 200px 1fr; gap: 14px; }
@@ -483,12 +519,30 @@ img { max-width: 100%; }
 #toast.show { animation: toast-in 0.25s ease forwards; }
 .modal-back { animation: fade 0.2s ease; }
 .modal { animation: rise 0.28s ease; }
+#screen.turning::before {
+  content: "漢";
+  position: fixed;
+  left: 50%;
+  top: 42%;
+  z-index: 7;
+  width: 132px;
+  height: 132px;
+  display: grid;
+  place-items: center;
+  border: 6px solid var(--cinnabar);
+  color: var(--cinnabar);
+  background: rgba(246, 234, 210, 0.92);
+  font-size: 72px;
+  line-height: 1;
+  animation: stamp 0.55s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
 #screen.turning::after {
   content: "The month turns";
   position: fixed;
   inset: 0;
   display: grid;
   place-items: center;
+  padding-top: 180px;
   background: rgba(20, 14, 11, 0.72);
   color: var(--gold-2);
   font-size: clamp(28px, 5vw, 56px);
@@ -509,7 +563,11 @@ img { max-width: 100%; }
   min-width: 120px;
   text-align: center;
   letter-spacing: 0.06em;
+  transform-origin: center top;
+  animation: banner-sway 1.8s ease-in-out infinite;
 }
+.clash .banner:last-child { animation-delay: -0.6s; }
+.battle-log p.fresh { animation: ink 0.45s ease; }
 .clash .vs { letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; color: var(--ink-soft); }
 .clash.strike { animation: shake 0.35s ease; }
 .clash.duel { animation: shake 0.45s ease; }
@@ -534,6 +592,50 @@ img { max-width: 100%; }
 @keyframes toast-in {
   from { opacity: 0; transform: translate(-50%, 12px); }
   to { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes seal-breathe {
+  0%, 100% { transform: rotate(-8deg) scale(1); }
+  50% { transform: rotate(-8deg) scale(1.06); }
+}
+@keyframes portrait-glow {
+  0%, 100% { box-shadow: inset 0 0 0 3px rgba(20, 14, 11, 0.55), 0 0 0 0 rgba(230, 211, 161, 0.2); }
+  50% { box-shadow: inset 0 0 0 3px rgba(20, 14, 11, 0.55), 0 0 0 3px rgba(230, 211, 161, 0.45); }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+@keyframes threaten {
+  0% { transform: scale(0.82); opacity: 0.85; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+@keyframes halo {
+  0%, 100% { opacity: 0.22; }
+  50% { opacity: 0.5; }
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(7deg); }
+}
+@keyframes pace {
+  0%, 100% { transform: translateX(-2px); }
+  50% { transform: translateX(3px); }
+}
+@keyframes case-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(141, 46, 42, 0); }
+  50% { box-shadow: 0 0 0 3px rgba(141, 46, 42, 0.16); }
+}
+@keyframes banner-sway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(2deg); }
+}
+@keyframes cloth {
+  0%, 100% { transform: skewX(0deg) scaleX(1); }
+  50% { transform: skewX(10deg) scaleX(0.9); }
+}
+@keyframes stamp {
+  from { transform: translate(-50%, -50%) scale(1.35) rotate(-14deg); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1) rotate(-8deg); opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
