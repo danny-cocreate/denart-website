@@ -174,7 +174,7 @@ img { max-width: 100%; }
 .realm { cursor: pointer; stroke-width: 1.6; stroke-linejoin: round; }
 .realm.is-selected { stroke: #f4e6c4; stroke-width: 3.2; }
 .realm.just-taken { animation: taken-land 1s ease; }
-.realm-border { stroke: #24170f; stroke-width: 2.4; stroke-linecap: round; }
+.realm-border { fill: none; stroke: #24170f; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
 .grain { fill: #cbb892; opacity: 0.22; pointer-events: none; }
 .lake { fill: #6d92a0; stroke: #4d7280; stroke-width: 0.6; }
 .peak { fill: #c6a56e; stroke: #6e5438; stroke-width: 0.6; stroke-linejoin: round; opacity: 0.85; }
