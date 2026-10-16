@@ -206,6 +206,7 @@ function gameHtml(state) {
     <div class="mapwrap season-${seasonName(state.month)}">
       ${mapSvg(state)}
       <div class="legend" aria-hidden="true">
+        <span><i class="dot hold"></i>A lord's land</span>
         <span><i class="dot you"></i>Your walls</span>
         <span><i class="dot march"></i>Your order</span>
         <span><i class="dot threat"></i>Enemy on the road</span>
@@ -396,6 +397,559 @@ function seasonWash(month) {
   return "#7f9a55";
 }
 
+let realmCells = null;
+let landLoops = null;
+
+function realmFill(hex) {
+  const n = parseInt(String(hex).slice(1), 16);
+  const mix = (channel, paper) => Math.round(channel * 0.78 + paper * 0.22);
+  return `rgb(${mix((n >> 16) & 255, 246)},${mix((n >> 8) & 255, 236)},${mix(n & 255, 214)})`;
+}
+
+function unitHash(text) {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+  return (h >>> 0) / 4294967296;
+}
+
+function valueNoise(x, y, salt) {
+  const g = 96;
+  const x0 = Math.floor(x / g);
+  const y0 = Math.floor(y / g);
+  const fx = x / g - x0;
+  const fy = y / g - y0;
+  const u = fx * fx * (3 - 2 * fx);
+  const v = fy * fy * (3 - 2 * fy);
+  const h = (ix, iy) => unitHash(`${salt}:${ix}:${iy}`) * 2 - 1;
+  return h(x0, y0) * (1 - u) * (1 - v)
+    + h(x0 + 1, y0) * u * (1 - v)
+    + h(x0, y0 + 1) * (1 - u) * v
+    + h(x0 + 1, y0 + 1) * u * v;
+}
+
+function parseDrawPath(d) {
+  const tokens = d.match(/[ML]|-?\d+(?:\.\d+)?/g) || [];
+  const parts = [];
+  let cur = [];
+  for (let i = 0; i < tokens.length;) {
+    const token = tokens[i];
+    if (token === "M" || token === "L") {
+      if (token === "M" && cur.length) parts.push(cur);
+      if (token === "M") cur = [];
+      i += 1;
+      continue;
+    }
+    cur.push({ x: parseFloat(token), y: parseFloat(tokens[i + 1]) });
+    i += 2;
+  }
+  if (cur.length) parts.push(cur);
+  return parts;
+}
+
+let landMask = null;
+
+function buildLandMask() {
+  if (typeof document === "undefined" || typeof document.createElement !== "function" || typeof Path2D !== "function") return false;
+  try {
+    const w = Math.ceil(MAP_W);
+    const h = Math.ceil(MAP_H);
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.fill(new Path2D(LAND), "evenodd");
+    return { data: ctx.getImageData(0, 0, w, h).data, w, h };
+  } catch (err) {
+    return false;
+  }
+}
+
+function insideLand(x, y) {
+  if (landMask === null) landMask = buildLandMask();
+  if (landMask && landMask.data) {
+    const ix = Math.max(0, Math.min(landMask.w - 1, x | 0));
+    const iy = Math.max(0, Math.min(landMask.h - 1, y | 0));
+    return landMask.data[(iy * landMask.w + ix) * 4 + 3] > 10;
+  }
+  if (!landLoops) landLoops = parseDrawPath(LAND);
+  let hits = 0;
+  for (const loop of landLoops) {
+    for (let i = 0, j = loop.length - 1; i < loop.length; j = i++) {
+      const a = loop[i];
+      const b = loop[j];
+      if ((a.y > y) !== (b.y > y) && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x) hits += 1;
+    }
+  }
+  return hits % 2 === 1;
+}
+
+function pointInPoly(poly, x, y) {
+  let hit = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const a = poly[i];
+    const b = poly[j];
+    if ((a.y > y) !== (b.y > y) && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x) hit = !hit;
+  }
+  return hit;
+}
+
+function influence(x, y, id) {
+  const site = PLACES[id];
+  const warp = valueNoise(x, y, "warp") * 28 + valueNoise(x * 2.2 + 14, y * 2.2, "warp2") * 14;
+  const warpY = valueNoise(x + 44, y - 18, "warpY") * 28 + valueNoise(y * 2.2 + 9, x * 2.2, "warpY2") * 14;
+  return Math.hypot(x + warp - site.x, y + warpY - site.y);
+}
+
+function smoothEndsFixed(pts, passes) {
+  let cur = pts;
+  for (let pass = 0; pass < passes; pass++) {
+    if (cur.length < 3) break;
+    const out = [cur[0]];
+    for (let i = 0; i < cur.length - 1; i++) {
+      const a = cur[i];
+      const b = cur[i + 1];
+      if (i > 0) out.push({ x: a.x * 0.75 + b.x * 0.25, y: a.y * 0.75 + b.y * 0.25 });
+      if (i < cur.length - 2) out.push({ x: a.x * 0.25 + b.x * 0.75, y: a.y * 0.25 + b.y * 0.75 });
+    }
+    out.push(cur[cur.length - 1]);
+    cur = out;
+  }
+  return cur;
+}
+
+function resampleLine(pts, spacing) {
+  if (pts.length < 2) return pts.map((point) => ({ x: point.x, y: point.y }));
+  const out = [{ x: pts[0].x, y: pts[0].y }];
+  let acc = 0;
+  for (let i = 1; i < pts.length; i++) {
+    let x = pts[i - 1].x;
+    let y = pts[i - 1].y;
+    const destX = pts[i].x;
+    const destY = pts[i].y;
+    let remain = Math.hypot(destX - x, destY - y);
+    if (remain < 0.01) continue;
+    const ux = (destX - x) / remain;
+    const uy = (destY - y) / remain;
+    while (acc + remain >= spacing) {
+      const step = spacing - acc;
+      x += ux * step;
+      y += uy * step;
+      remain -= step;
+      out.push({ x, y });
+      acc = 0;
+    }
+    acc += remain;
+  }
+  const tail = pts[pts.length - 1];
+  const last = out[out.length - 1];
+  if (Math.hypot(last.x - tail.x, last.y - tail.y) > 0.6) out.push({ x: tail.x, y: tail.y });
+  else {
+    last.x = tail.x;
+    last.y = tail.y;
+  }
+  return out;
+}
+
+function pullOffTowns(origin, x, y) {
+  let px = x;
+  let py = y;
+  for (let n = 0; n < 5; n++) {
+    let nearest = null;
+    let nearestD = 16;
+    for (const site of Object.values(PLACES)) {
+      const d = Math.hypot(px - site.x, py - site.y);
+      if (d < nearestD) {
+        nearest = site;
+        nearestD = d;
+      }
+    }
+    if (!nearest) return { x: px, y: py };
+    const ox = origin.x - px;
+    const oy = origin.y - py;
+    const span = Math.hypot(ox, oy);
+    if (span < 0.5) return { x: origin.x, y: origin.y };
+    const step = Math.min(span, 16 - nearestD + 0.8);
+    px += (ox / span) * step;
+    py += (oy / span) * step;
+  }
+  return { x: px, y: py };
+}
+
+function roundCorner(points) {
+  let pts = smoothEndsFixed(points.map((point) => ({ x: point.x, y: point.y })), 4);
+  pts = resampleLine(pts, 7);
+  const head = pts[0];
+  const tail = pts[pts.length - 1];
+  const dx = tail.x - head.x;
+  const dy = tail.y - head.y;
+  const len = Math.hypot(dx, dy) || 1;
+  if (len < 32 || pts.length < 4) return pts;
+  const nx = -dy / len;
+  const ny = dx / len;
+  const salt = [head.x, head.y, tail.x, tail.y].map((value) => Math.round(value)).join(":");
+  const amp = len < 88 ? Math.min(12, Math.max(7, len * 0.14)) : Math.min(22, Math.max(16, len * 0.05));
+  let field = pts.map((point, index) => {
+    const dist = (index / (pts.length - 1)) * len;
+    return valueNoise(dist * 0.95, 6, salt) + valueNoise(dist * 1.7 + 19, 28, `${salt}#`) * 0.4;
+  });
+  const pinA = field[0];
+  const pinB = field[field.length - 1];
+  field = field.map((value, index) => {
+    const t = index / (field.length - 1);
+    return value - (pinA * (1 - t) + pinB * t);
+  });
+  let peak = 0;
+  for (const value of field) peak = Math.max(peak, Math.abs(value));
+  if (peak < 0.12) {
+    const lean = unitHash(salt) > 0.5 ? 1 : -1;
+    const phase = unitHash(`${salt}~`) * Math.PI;
+    field = field.map((value, index) => {
+      const t = index / (field.length - 1);
+      return lean * Math.sin(Math.PI * t) + 0.32 * Math.sin(2 * Math.PI * t + phase);
+    });
+    peak = 0;
+    for (const value of field) peak = Math.max(peak, Math.abs(value));
+  }
+  const gain = amp / peak;
+  let prevNx = nx;
+  let prevNy = ny;
+  pts = pts.map((point, index) => {
+    if (index === 0 || index === pts.length - 1) return point;
+    const prev = pts[index - 1];
+    const next = pts[Math.min(pts.length - 1, index + 1)];
+    let lx = -(next.y - prev.y);
+    let ly = next.x - prev.x;
+    const span = Math.hypot(lx, ly) || 1;
+    lx /= span;
+    ly /= span;
+    if (lx * prevNx + ly * prevNy < 0) {
+      lx = -lx;
+      ly = -ly;
+    }
+    prevNx = lx;
+    prevNy = ly;
+    const bow = Math.max(-amp, Math.min(amp, field[index] * gain));
+    return pullOffTowns(point, point.x + lx * bow, point.y + ly * bow);
+  });
+  return roundTurns(smoothEndsFixed(pts, 1), 18);
+}
+
+function roundTurns(pts, radius) {
+  if (pts.length < 4) return pts;
+  const out = [{ x: pts[0].x, y: pts[0].y }];
+  for (let i = 1; i < pts.length - 1; i++) {
+    const prev = out[out.length - 1];
+    const cur = pts[i];
+    const next = pts[i + 1];
+    const inX = cur.x - prev.x;
+    const inY = cur.y - prev.y;
+    const outX = next.x - cur.x;
+    const outY = next.y - cur.y;
+    const inLen = Math.hypot(inX, inY) || 1;
+    const outLen = Math.hypot(outX, outY) || 1;
+    const dot = (inX * outX + inY * outY) / (inLen * outLen);
+    const turn = Math.acos(Math.max(-1, Math.min(1, dot)));
+    if (turn < 0.55 || inLen < 6 || outLen < 6) {
+      out.push({ x: cur.x, y: cur.y });
+      continue;
+    }
+    const setback = Math.min(radius, inLen * 0.45, outLen * 0.45);
+    const a = { x: cur.x - (inX / inLen) * setback, y: cur.y - (inY / inLen) * setback };
+    const b = { x: cur.x + (outX / outLen) * setback, y: cur.y + (outY / outLen) * setback };
+    if (Math.hypot(a.x - prev.x, a.y - prev.y) > 1.2) out.push(a);
+    for (let step = 1; step <= 3; step++) {
+      const t = step / 4;
+      const u = 1 - t;
+      out.push({
+        x: u * u * a.x + 2 * u * t * cur.x + t * t * b.x,
+        y: u * u * a.y + 2 * u * t * cur.y + t * t * b.y,
+      });
+    }
+    out.push(b);
+  }
+  out.push({ x: pts[pts.length - 1].x, y: pts[pts.length - 1].y });
+  return out;
+}
+
+function territoryCells() {
+  if (realmCells) return realmCells;
+  const ids = Object.keys(PLACES);
+  const step = 6;
+  const cols = Math.ceil(MAP_W / step);
+  const rows = Math.ceil(MAP_H / step);
+  const label = new Array(cols * rows).fill("");
+  const at = (i, j) => (i < 0 || j < 0 || i >= cols || j >= rows) ? "" : label[j * cols + i];
+  for (let j = 0; j < rows; j++) {
+    for (let i = 0; i < cols; i++) {
+      const x = i * step + step / 2;
+      const y = j * step + step / 2;
+      if (!insideLand(x, y)) continue;
+      let lock = "";
+      let lockDist = 18;
+      let best = "";
+      let bestScore = Infinity;
+      for (const id of ids) {
+        const site = PLACES[id];
+        const raw = Math.hypot(x - site.x, y - site.y);
+        if (raw < lockDist) {
+          lock = id;
+          lockDist = raw;
+        }
+        const score = influence(x, y, id);
+        if (score < bestScore) {
+          bestScore = score;
+          best = id;
+        }
+      }
+      label[j * cols + i] = lock || best;
+    }
+  }
+  const keep = new Uint8Array(cols * rows);
+  const stack = [];
+  for (const id of ids) {
+    const site = PLACES[id];
+    let bi = Math.max(0, Math.min(cols - 1, Math.round((site.x - step / 2) / step)));
+    let bj = Math.max(0, Math.min(rows - 1, Math.round((site.y - step / 2) / step)));
+    if (label[bj * cols + bi] !== id) {
+      let found = false;
+      for (let radius = 1; radius <= 5 && !found; radius++) {
+        for (let dj = -radius; dj <= radius && !found; dj++) {
+          for (let di = -radius; di <= radius; di++) {
+            const ii = bi + di;
+            const jj = bj + dj;
+            if (ii < 0 || jj < 0 || ii >= cols || jj >= rows) continue;
+            if (label[jj * cols + ii] !== id) continue;
+            bi = ii;
+            bj = jj;
+            found = true;
+            break;
+          }
+        }
+      }
+    }
+    if (label[bj * cols + bi] !== id) continue;
+    stack.push(bi, bj);
+    keep[bj * cols + bi] = 1;
+    while (stack.length) {
+      const y = stack.pop();
+      const x = stack.pop();
+      for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const ii = x + di;
+        const jj = y + dj;
+        if (ii < 0 || jj < 0 || ii >= cols || jj >= rows) continue;
+        const index = jj * cols + ii;
+        if (keep[index] || label[index] !== id) continue;
+        keep[index] = 1;
+        stack.push(ii, jj);
+      }
+    }
+  }
+  let growing = true;
+  while (growing) {
+    growing = false;
+    for (let j = 0; j < rows; j++) {
+      for (let i = 0; i < cols; i++) {
+        const index = j * cols + i;
+        if (!label[index] || keep[index]) continue;
+        const around = [];
+        for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const ii = i + di;
+          const jj = j + dj;
+          if (ii < 0 || jj < 0 || ii >= cols || jj >= rows) continue;
+          const near = jj * cols + ii;
+          if (keep[near] && label[near]) around.push(label[near]);
+        }
+        if (!around.length) continue;
+        label[index] = around.sort((a, b) => around.filter((item) => item === b).length - around.filter((item) => item === a).length)[0];
+        keep[index] = 1;
+        growing = true;
+      }
+    }
+  }
+  const shield = new Uint8Array(cols * rows);
+  for (const id of ids) {
+    const site = PLACES[id];
+    const reach = 3;
+    const ci = Math.round((site.x - step / 2) / step);
+    const cj = Math.round((site.y - step / 2) / step);
+    for (let dj = -reach; dj <= reach; dj++) {
+      for (let di = -reach; di <= reach; di++) {
+        const ii = ci + di;
+        const jj = cj + dj;
+        if (ii < 0 || jj < 0 || ii >= cols || jj >= rows) continue;
+        if (Math.hypot(ii * step + step / 2 - site.x, jj * step + step / 2 - site.y) > 14) continue;
+        shield[jj * cols + ii] = 1;
+      }
+    }
+  }
+  for (let pass = 0; pass < 3; pass++) {
+    const next = label.slice();
+    for (let j = 2; j < rows - 2; j++) {
+      for (let i = 2; i < cols - 2; i++) {
+        const index = j * cols + i;
+        if (!label[index] || shield[index]) continue;
+        const votes = new Map();
+        for (let dj = -2; dj <= 2; dj++) {
+          for (let di = -2; di <= 2; di++) {
+            if (!di && !dj) continue;
+            const other = label[(j + dj) * cols + (i + di)];
+            if (!other) continue;
+            votes.set(other, (votes.get(other) || 0) + 1);
+          }
+        }
+        let best = label[index];
+        let bestN = votes.get(best) || 0;
+        for (const [name, count] of votes) {
+          if (count > bestN) {
+            best = name;
+            bestN = count;
+          }
+        }
+        if (best !== label[index] && bestN >= 14) next[index] = best;
+      }
+    }
+    for (let i = 0; i < label.length; i++) label[i] = next[i];
+  }
+  const buckets = new Map();
+  const addSeg = (a, b, x1, y1, x2, y2) => {
+    if (a === b) return;
+    const key = a < b ? `${a}|${b}` : `${b}|${a}`;
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push({ x1, y1, x2, y2 });
+  };
+  for (let j = 0; j < rows; j++) {
+    for (let i = 0; i < cols; i++) {
+      const here = at(i, j);
+      const east = at(i + 1, j);
+      const south = at(i, j + 1);
+      if (here !== east) addSeg(here, east, (i + 1) * step, j * step, (i + 1) * step, (j + 1) * step);
+      if (here !== south) addSeg(here, south, i * step, (j + 1) * step, (i + 1) * step, (j + 1) * step);
+    }
+  }
+  for (let j = 0; j < rows; j++) addSeg(at(0, j), "", 0, j * step, 0, (j + 1) * step);
+  for (let i = 0; i < cols; i++) addSeg(at(i, 0), "", i * step, 0, (i + 1) * step, 0);
+  const nameOf = (key) => key.split("|");
+  const frontiers = [];
+  const joins = new Map();
+  for (const [key, list] of buckets) {
+    const [ownerA, ownerB] = nameOf(key);
+    const adj = new Map();
+    const knot = (x, y) => `${x},${y}`;
+    for (const seg of list) {
+      const left = knot(seg.x1, seg.y1);
+      const right = knot(seg.x2, seg.y2);
+      if (!adj.has(left)) adj.set(left, []);
+      if (!adj.has(right)) adj.set(right, []);
+      adj.get(left).push(right);
+      adj.get(right).push(left);
+    }
+    const used = new Set();
+    const mark = (p, q) => (p < q ? `${p}~${q}` : `${q}~${p}`);
+    const seeds = [...adj.keys()].sort((p, q) => (adj.get(p).length - adj.get(q).length));
+    for (const seed of seeds) {
+      const open = (adj.get(seed) || []).find((next) => !used.has(mark(seed, next)));
+      if (!open) continue;
+      const raw = [];
+      let prev = null;
+      let cur = seed;
+      let guard = 0;
+      while (cur && guard++ < adj.size + 2) {
+        const [x, y] = cur.split(",").map(Number);
+        raw.push({ x, y });
+        const nxt = (adj.get(cur) || []).find((cand) => cand !== prev && !used.has(mark(cur, cand)));
+        if (!nxt) break;
+        used.add(mark(cur, nxt));
+        prev = cur;
+        cur = nxt;
+        if (cur === seed) {
+          raw.push({ x: raw[0].x, y: raw[0].y });
+          break;
+        }
+      }
+      if (raw.length < 2) continue;
+      const points = roundCorner(raw);
+      const frontier = { a: ownerA, b: ownerB, points };
+      frontiers.push(frontier);
+      for (const end of [points[0], points[points.length - 1]]) {
+        const atEnd = `${end.x},${end.y}`;
+        if (!joins.has(atEnd)) joins.set(atEnd, []);
+        joins.get(atEnd).push(frontier);
+      }
+    }
+  }
+  const cells = {};
+  for (const id of ids) {
+    const mine = frontiers.filter((frontier) => frontier.a === id || frontier.b === id);
+    const used = new Set();
+    const loops = [];
+    for (const seed of mine) {
+      if (used.has(seed)) continue;
+      const poly = [];
+      let frontier = seed;
+      let guard = 0;
+      while (frontier && guard++ < mine.length + 2) {
+        used.add(frontier);
+        const other = frontier.a === id ? frontier.b : frontier.a;
+        let line = frontier.points;
+        const head = poly.length ? poly[poly.length - 1] : null;
+        if (head) {
+          const tail = line[line.length - 1];
+          const start = line[0];
+          if (Math.hypot(start.x - head.x, start.y - head.y) > Math.hypot(tail.x - head.x, tail.y - head.y)) line = line.slice().reverse();
+        }
+        for (let i = head ? 1 : 0; i < line.length - 1; i++) poly.push({ x: line[i].x, y: line[i].y, via: other || null });
+        const end = line[line.length - 1];
+        poly.push({ x: end.x, y: end.y, via: other || null });
+        const next = (joins.get(`${end.x},${end.y}`) || []).find((cand) => cand !== frontier && !used.has(cand) && (cand.a === id || cand.b === id));
+        if (!next || (poly.length > 2 && Math.hypot(end.x - poly[0].x, end.y - poly[0].y) < 0.5)) break;
+        frontier = next;
+      }
+      if (poly.length > 3) loops.push(poly);
+    }
+    const site = PLACES[id];
+    cells[id] = loops.find((ring) => pointInPoly(ring, site.x, site.y)) || loops.sort((a, b) => b.length - a.length)[0] || [];
+  }
+  realmCells = cells;
+  return realmCells;
+}
+
+function polyPath(poly) {
+  return `${poly.map((point, index) => `${index ? "L" : "M"}${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join("")}Z`;
+}
+
+function territoryMarkup(state) {
+  const cells = territoryCells();
+  const fills = [];
+  const borders = [];
+  for (const [id, poly] of Object.entries(cells)) {
+    if (!poly || poly.length < 3) continue;
+    const city = state.cities[id];
+    const faction = city?.faction;
+    if (!faction || !FACTIONS[faction]) continue;
+    const color = realmFill(FACTIONS[faction].color);
+    const selected = state.selected === id ? " is-selected" : "";
+    const taken = session.changed?.has(id) ? " just-taken" : "";
+    fills.push(`<path class="realm${selected}${taken}" data-act="select" data-id="${id}" fill="${color}" stroke="${color}" d="${polyPath(poly)}"><title>${esc(city.name)} · ${esc(FACTIONS[faction].name)}</title></path>`);
+    for (let i = 0; i < poly.length; i++) {
+      const start = poly[i];
+      const end = poly[(i + 1) % poly.length];
+      const neighbor = end.via;
+      if (!neighbor || id >= neighbor || start.via === neighbor) continue;
+      const otherFaction = state.cities[neighbor]?.faction;
+      if (!otherFaction || otherFaction === faction) continue;
+      const pts = [start];
+      let k = i;
+      while (poly[(k + 1) % poly.length].via === neighbor) {
+        pts.push(poly[(k + 1) % poly.length]);
+        k = (k + 1) % poly.length;
+        if (k === i) break;
+      }
+      borders.push(`<path class="realm-border" d="${pts.map((point, index) => `${index ? "L" : "M"}${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join("")}"/>`);
+    }
+  }
+  return `<g class="realms" clip-path="url(#landClip)">${fills.join("")}${borders.join("")}</g>`;
+}
+
 
 function mapSvg(state) {
   for (const src of CITIES) {
@@ -437,6 +991,9 @@ function mapSvg(state) {
         <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4"/>
         <feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.3  0 0 0 0 0.14  0 0 0 0.22 0"/>
       </filter>
+      <clipPath id="landClip" clipPathUnits="userSpaceOnUse">
+        <path fill-rule="evenodd" d="${LAND}"/>
+      </clipPath>
       <marker id="arrow-march" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M0,0 L10,5 L0,10 z" fill="#8d2e2a"/>
       </marker>
@@ -452,6 +1009,8 @@ function mapSvg(state) {
     <path class="land" fill="url(#landShade)" fill-rule="evenodd" d="${LAND}"/>
     <path class="season-wash" fill="${seasonWash(state.month)}" fill-rule="evenodd" d="${LAND}"/>
     <path class="grain" filter="url(#grain)" fill-rule="evenodd" d="${LAND}"/>
+    ${territoryMarkup(state)}
+    <path class="coast" fill="none" fill-rule="evenodd" d="${LAND}"/>
     <path class="lake" d="${LAKES}"/>
     ${PEAKS.map(([x, y, s]) => peakMark(x, y, s)).join("")}
     <path class="wall" d="${WALL}"/>
@@ -1027,7 +1586,7 @@ function helpModal() {
     <h3>The case</h3>
     <p>One intrigue a season. Some lords hear only a rumor. A named lead is rarer. A quiet order solves it: spy, reward, search, a visit, or the lord riding out himself. Marching on that city can burn the chance. Ignore it until the season turns and it is lost. A solved case waits until the next season before another begins.</p>
     <h3>What you can see</h3>
-    <p>Enemy marches aimed at you are on the map before the month resolves. Their other orders stay hidden unless you spied them last month. A weaker army moves first.</p>
+    <p>The land is dyed the color of the lord who holds it. Cities of the same house form one country, and the dark line is the frontier between two lords. Click the land to open that city. Enemy marches aimed at you are on the map before the month resolves. Their other orders stay hidden unless you spied them last month. A weaker army moves first.</p>
     <h3>The court</h3>
     <p>Advice is two or three officers speaking in character. Fund one. Zhang Fei asks for a road or a drill. Xun Yu asks for dikes and markets. Chen Gong doubts Lü Bu. Zhang Liao's loyalty is thin.</p>
     <h3>Battle</h3>
