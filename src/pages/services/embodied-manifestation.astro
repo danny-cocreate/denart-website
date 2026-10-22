@@ -6,7 +6,7 @@ import FAQ from '../../components/FAQ.astro';
 export const prerender = true;
 
 const title = "Unblock What's Holding You Back | Embodied Manifestation, Brooklyn | DenArt";
-const description = "Manifestation fails when you can't picture it clearly or hold the feeling. The Wish-Fulfilled Session is a private 2-3 hour embodied manifestation session in Brooklyn: guided visualization to unblock it, UV body art to claim the new identity, photos to anchor the shift. $499.";
+const description = "Manifestation fails when you can't picture it clearly or hold the feeling. The Wish-Fulfilled Session is a private 2-3 hour embodied manifestation session in Brooklyn: guided visualization to unblock it, UV body art to claim the new identity, photos to anchor the shift. $499 through Dec 31, 2026 (regularly $799).";
 const ogTitle = "Unblock what's holding you back, the Wish-Fulfilled Session in Brooklyn";
 const ogDescription = 'See your future self vividly in trance. Keep a physical anchor to hold that state. A private session that works on the block through the body: guided visualization, UV body art of your new identity, and photos that bring the feeling back.';
 
@@ -198,6 +198,7 @@ const serviceSchema = {
     '@type': 'Offer',
     'price': '499',
     'priceCurrency': 'USD',
+    'priceValidUntil': '2026-12-31',
     'url': 'https://denartny.com/services/embodied-manifestation',
   },
 };
@@ -339,7 +340,8 @@ const serviceSchema = {
       <div class="md:col-span-2">
         <div class="bg-void-light border border-zinc-800 rounded-2xl p-8 text-center sticky top-24">
           <p class="text-xs uppercase tracking-widest text-sand-muted mb-2">Price</p>
-          <p class="text-4xl font-display font-bold text-sand mb-1">$499</p>
+          <p class="text-4xl font-display font-bold text-sand mb-1"><span class="text-2xl text-sand-muted line-through align-middle mr-2">$799</span>$499</p>
+          <p class="text-sand-muted text-sm mb-2">Special pricing through Dec 31, 2026 (regularly $799).</p>
           <p class="text-sand-muted text-sm mb-2">Private sessions go deepest.</p>
           <p class="text-sand-muted text-sm mb-6">Many clients continue with The Becoming Series, six themed sessions over nine months. <a href="/contact" class="text-brand-red hover:underline">Ask us about it</a>.</p>
           <CTAButton href={bookingHref} variant="primary" showArrow={true}>Book your session</CTAButton>
