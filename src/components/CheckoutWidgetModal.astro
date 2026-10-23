@@ -23,7 +23,7 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
         id="checkout-widget-iframe"
         src={checkoutUrl}
         class="w-full h-full border-none"
-        allow="clipboard-write"
+        allow="payment; clipboard-write"
         title="Checkout"
       ></iframe>
     </div>
@@ -31,8 +31,8 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
 </div>
 
 <script is:inline define:vars={{ checkoutUrl, eventKey }}>
-  function metaAttributionParams() {
-    var metaParams = '';
+  function metaAttribution() {
+    var out = { fbp: '', fbc: '' };
     try {
       var readCookie = function(name) {
         var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
@@ -44,11 +44,25 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
         var fbclid = new URLSearchParams(window.location.search).get('fbclid');
         if (fbclid) fbc = 'fb.1.' + Date.now() + '.' + fbclid;
       }
-      if (fbp) metaParams += '&fbp=' + encodeURIComponent(fbp);
-      if (fbc) metaParams += '&fbc=' + encodeURIComponent(fbc);
+      out.fbp = fbp || '';
+      out.fbc = fbc || '';
     } catch (e) { /* attribution is best-effort, never block booking */ }
+    return out;
+  }
+
+  function metaAttributionParams() {
+    var meta = metaAttribution();
+    var metaParams = '';
+    if (meta.fbp) metaParams += '&fbp=' + encodeURIComponent(meta.fbp);
+    if (meta.fbc) metaParams += '&fbc=' + encodeURIComponent(meta.fbc);
     return metaParams;
   }
+
+  // The iframe starts loading with the page. Once the widget says it is ready,
+  // "Book" hands it the date and Meta ids in a message instead of reloading it,
+  // so the checkout opens instantly. Until then (or with an older widget that
+  // never sends "ready") it falls back to reloading the iframe as before.
+  var checkoutWidgetReady = false;
 
   window.startClassCheckout = function(subeventId) {
     window.openCheckoutWidgetModal(subeventId);
@@ -92,7 +106,16 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
       }
 
       var extra = '&qty=1&ticket=1&of=1';
-      if (iframe) {
+      if (iframe && checkoutWidgetReady && iframe.contentWindow) {
+        var meta = metaAttribution();
+        iframe.contentWindow.postMessage({
+          type: 'denart-checkout-open',
+          subevent: subeventId || null,
+          fbc: meta.fbc,
+          fbp: meta.fbp
+        }, window.location.origin);
+      } else if (iframe) {
+        checkoutWidgetReady = false;
         iframe.src = (subeventId ? checkoutUrl + '&subevent=' + subeventId : checkoutUrl) + extra + metaAttributionParams();
       }
     }
@@ -108,6 +131,10 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
   
   window.addEventListener('message', function(e) {
     if (!e.data) return;
+    if (e.data.type === 'denart-checkout-ready' && e.origin === window.location.origin) {
+      checkoutWidgetReady = true;
+      return;
+    }
     if (e.data.type === 'denart-checkout-close') {
       closeCheckoutWidgetModal();
     }
