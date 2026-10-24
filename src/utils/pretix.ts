@@ -12,6 +12,10 @@
 import { isUpcomingPretixDate } from './pretix-events';
 
 const PRETIX_API_BASE = 'https://tickets.denartny.com/api/v1/organizers/denart-studio';
+// Build-time fetches give up after this, so an unreachable host can't stall
+// every page (scripts/check-pretix-dates.mjs stops the build before that).
+const FETCH_TIMEOUT_MS = 15000;
+
 const DEFAULT_EVENT_SLUGS = [
   'uc-class-couples-2',
   'speed-friending',
@@ -48,6 +52,7 @@ export async function fetchSubeventsForSlug(slug: string): Promise<PretixEvent[]
       headers: {
         'Authorization': `Token ${token}`,
       },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
 
     if (!response.ok) {
@@ -134,6 +139,7 @@ async function fetchSubeventsFromCheckout(slug: string): Promise<PretixEvent[]> 
   try {
     const response = await fetch(
       `https://checkout.denartny.com/api/sessions?event=${encodeURIComponent(eventKey)}`,
+      { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) },
     );
     if (!response.ok) return [];
     const data = await response.json();
@@ -194,7 +200,18 @@ export interface PretixEvent {
  * Fetch all events from all configured event slugs
  * Returns sorted list of upcoming events
  */
+// Every page's layout calls fetchAllPretixEvents, so a build would repeat the
+// same requests ~250 times. Fetch once per build; dev keeps fetching live.
+let buildEventsPromise: Promise<PretixEvent[]> | null = null;
+
 export async function fetchAllPretixEvents(): Promise<PretixEvent[]> {
+  if (import.meta.env.DEV || isE2ETestMode()) return fetchAllPretixEventsUncached();
+  if (!buildEventsPromise) buildEventsPromise = fetchAllPretixEventsUncached();
+  // A copy per caller, so one page sorting or filtering can't affect the next.
+  return buildEventsPromise.then((events) => [...events]);
+}
+
+async function fetchAllPretixEventsUncached(): Promise<PretixEvent[]> {
   const slugs = getEventSlugs();
   const allEvents: PretixEvent[] = [];
   
