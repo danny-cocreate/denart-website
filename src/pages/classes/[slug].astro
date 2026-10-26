@@ -258,6 +258,79 @@ if (classItem.slug === 'redrawn') {
 		</div>
 	</section>
 
+	<!-- Where / Price / Schedule Info Bar -->
+	{classItem.data.price && (
+		<section class="bg-void-light border-y border-zinc-800 py-10">
+			<div class="max-w-5xl mx-auto px-6">
+				<div class="grid md:grid-cols-3 gap-8">
+					<!-- Schedule -->
+					<div class={`text-center group ${isSinglesEvent ? 'order-2 md:order-none' : ''}`}>
+						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
+							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+							</svg>
+						</div>
+						<p class="text-xs uppercase tracking-widest text-gray-500 mb-3">Schedule</p>
+						<PretixSchedule eventSlug={pretixEventSlug} openCheckout={true} />
+					</div>
+					
+					<!-- Price & Ticket -->
+					<div class={`text-center group ${isSinglesEvent ? 'order-1 md:order-none' : ''}`}>
+						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
+							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+							</svg>
+						</div>
+						<p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Price</p>
+						{classItem.data.earlyBird ? (
+							<p class="text-3xl font-bold text-white mb-3">
+								{classItem.data.price} <span class="text-lg opacity-70">({classItem.data.earlyBird} Early Bird{earlyBirdDeadline})</span>
+							</p>
+						) : (
+							<p class="text-3xl font-bold text-white mb-3">{classItem.data.price}</p>
+						)}
+						<CTAButton
+							onclick="startClassCheckout()"
+							variant="primary"
+							size="sm"
+							bookingCta
+							disabled={!hasUpcomingEvents}
+						>
+							Book Now
+						</CTAButton>
+						<div class="mt-4 text-sm text-gray-400">
+							🎁 &nbsp;Gift Certificate Available <a href={classItem.data.ticketLink} target="_blank" class="text-brand-red hover:underline ml-1">Buy Now</a>
+						</div>
+					</div>
+					
+					<!-- Where -->
+					<div class={`text-center group ${isSinglesEvent ? 'order-3 md:order-none' : ''}`}>
+						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
+							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+							</svg>
+						</div>
+						<p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Where</p>
+						<p class="text-white font-medium">CoCreate Space</p>
+						<p class="text-gray-400 text-sm">99 Kingsland Ave #102</p>
+						<p class="text-gray-400 text-sm">Brooklyn, NY 11222</p>
+						<a 
+							href="https://maps.app.goo.gl/uBkAyZiVJTNQCMdz5"
+							target="_blank"
+							class="text-white hover:text-brand-red text-sm mt-2 inline-block"
+						>
+							Get directions
+						</a>
+					</div>
+				</div>
+				{showPrivateNote && privateNote && (
+					<p class="text-gray-300 text-sm mt-6 text-center" set:html={privateNote} />
+				)}
+			</div>
+		</section>
+	)}
+
 	<!-- Intro / Hook Section -->
 	<section class="bg-deepest py-8 md:py-12">
 		<div class="max-w-4xl mx-auto px-6 text-center">
@@ -329,79 +402,6 @@ if (classItem.slug === 'redrawn') {
 						</li>
 					))}
 				</ul>
-			</div>
-		</section>
-	)}
-
-	<!-- Where / Price / Schedule Info Bar -->
-	{classItem.data.price && (
-		<section class="bg-void-light border-y border-zinc-800 py-10">
-			<div class="max-w-5xl mx-auto px-6">
-				<div class="grid md:grid-cols-3 gap-8">
-					<!-- Schedule -->
-					<div class={`text-center group ${isSinglesEvent ? 'order-2 md:order-none' : ''}`}>
-						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
-							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-							</svg>
-						</div>
-						<p class="text-xs uppercase tracking-widest text-gray-500 mb-3">Schedule</p>
-						<PretixSchedule eventSlug={pretixEventSlug} openCheckout={true} />
-					</div>
-					
-					<!-- Price & Ticket -->
-					<div class={`text-center group ${isSinglesEvent ? 'order-1 md:order-none' : ''}`}>
-						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
-							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-							</svg>
-						</div>
-						<p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Price</p>
-						{classItem.data.earlyBird ? (
-							<p class="text-3xl font-bold text-white mb-3">
-								{classItem.data.price} <span class="text-lg opacity-70">({classItem.data.earlyBird} Early Bird{earlyBirdDeadline})</span>
-							</p>
-						) : (
-							<p class="text-3xl font-bold text-white mb-3">{classItem.data.price}</p>
-						)}
-						<CTAButton
-							onclick="startClassCheckout()"
-							variant="primary"
-							size="sm"
-							bookingCta
-							disabled={!hasUpcomingEvents}
-						>
-							Book Now
-						</CTAButton>
-						<div class="mt-4 text-sm text-gray-400">
-							🎁 &nbsp;Gift Certificate Available <a href={classItem.data.ticketLink} target="_blank" class="text-brand-red hover:underline ml-1">Buy Now</a>
-						</div>
-					</div>
-					
-					<!-- Where -->
-					<div class={`text-center group ${isSinglesEvent ? 'order-3 md:order-none' : ''}`}>
-						<div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-red/20 flex items-center justify-center">
-							<svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-							</svg>
-						</div>
-						<p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Where</p>
-						<p class="text-white font-medium">CoCreate Space</p>
-						<p class="text-gray-400 text-sm">99 Kingsland Ave #102</p>
-						<p class="text-gray-400 text-sm">Brooklyn, NY 11222</p>
-						<a 
-							href="https://maps.app.goo.gl/uBkAyZiVJTNQCMdz5"
-							target="_blank"
-							class="text-white hover:text-brand-red text-sm mt-2 inline-block"
-						>
-							Get directions
-						</a>
-					</div>
-				</div>
-				{showPrivateNote && privateNote && (
-					<p class="text-gray-300 text-sm mt-6 text-center" set:html={privateNote} />
-				)}
 			</div>
 		</section>
 	)}
