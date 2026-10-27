@@ -226,7 +226,7 @@ if (classItem.slug === 'redrawn') {
 				</>
 			)}
 			{classItem.data.earlyBird ? (
-				<p class="text-white text-base md:text-xl font-semibold mb-0.5">
+				<p class="text-white text-base md:text-xl font-semibold mb-0.5" data-live-price="hero">
 					<span class="line-through text-white/45 mr-2">{classItem.data.price}</span>
 					<span>{classItem.data.earlyBird} early bird{earlyBirdDeadline}</span>
 				</p>
@@ -283,7 +283,7 @@ if (classItem.slug === 'redrawn') {
 						</div>
 						<p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Price</p>
 						{classItem.data.earlyBird ? (
-							<p class="text-3xl font-bold text-white mb-3">
+							<p class="text-3xl font-bold text-white mb-3" data-live-price="bar">
 								{classItem.data.price} <span class="text-lg opacity-70">({classItem.data.earlyBird} Early Bird{earlyBirdDeadline})</span>
 							</p>
 						) : (
@@ -554,7 +554,7 @@ if (classItem.slug === 'redrawn') {
 	>
 			<div class="flex items-center gap-3 max-w-lg mx-auto">
 				<div class="min-w-0 flex-1">
-					<p class="text-white text-sm font-semibold truncate">
+					<p class="text-white text-sm font-semibold truncate" data-live-price="sticky">
 						{classItem.data.earlyBird
 							? `${classItem.data.earlyBird} early bird${earlyBirdDeadline}`
 							: classItem.data.price}
@@ -595,6 +595,27 @@ if (classItem.slug === 'redrawn') {
 	  }
 
 	  document.addEventListener('denart-booking-availability-ready', maybeAutoOpenCheckout);
+	</script>
+	<!-- Live price: if the next bookable session no longer has early bird
+		 (its quota sold out), replace the static early-bird copy with the
+		 regular price. Static content stays as the fallback if the lookup fails. -->
+	<script is:inline define:vars={{ checkoutEventKey, regularPrice: classItem.data.price }}>
+	  (function () {
+	    var priceEls = document.querySelectorAll('[data-live-price]');
+	    if (!priceEls.length) return;
+	    fetch('/checkout-api/sessions?event=' + encodeURIComponent(checkoutEventKey))
+	      .then(function (res) { return res.json(); })
+	      .then(function (data) {
+	        if (!data || data.status !== 'success' || !Array.isArray(data.sessions)) return;
+	        var next = null;
+	        for (var i = 0; i < data.sessions.length; i++) {
+	          if (!data.sessions[i].isSoldOut) { next = data.sessions[i]; break; }
+	        }
+	        if (!next || next.isEarlyBird) return;
+	        priceEls.forEach(function (el) { el.textContent = regularPrice; });
+	      })
+	      .catch(function () { /* keep static early-bird copy on any failure */ });
+	  })();
 	</script>
 	<!-- Video Lightbox Modal -->
 	<div id="video-lightbox" class="fixed inset-0 z-50 hidden bg-black/95 flex items-center justify-center p-4" onclick="closeVideoLightbox(event)">
