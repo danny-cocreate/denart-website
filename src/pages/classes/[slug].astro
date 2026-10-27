@@ -167,15 +167,19 @@ if (classItem.slug === 'redrawn') {
 		disabled: !hasUpcomingEvents,
 	}}
 >
-	<!-- Event Schema for Classes -->
-	<script type="application/ld+json" set:html={JSON.stringify({
+	<!-- Event Schema for Classes: one Event per upcoming Pretix subevent.
+	     Previously this hardcoded the build date as "today"; scheduleEvents
+	     already holds the real dates (rawDate, ISO). No script is emitted
+	     when there are no upcoming dates, rather than a stale one. -->
+	{hasUpcomingEvents && (
+	<script type="application/ld+json" set:html={JSON.stringify(scheduleEvents.map((session) => ({
 		"@context": "https://schema.org",
 		"@type": "Event",
 		"name": classItem.data.title,
 		"description": classItem.data.description,
 		"image": classItem.data.heroImage,
-		"startDate": new Date().toISOString().split('T')[0] + 'T19:00:00',
-		"endDate": new Date().toISOString().split('T')[0] + 'T22:00:00',
+		"startDate": session.rawDate,
+		"endDate": new Date(new Date(session.rawDate).getTime() + 2 * 60 * 60 * 1000).toISOString(),
 		"eventStatus": "https://schema.org/EventScheduled",
 		"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
 		"location": {
@@ -202,7 +206,8 @@ if (classItem.slug === 'redrawn') {
 			"name": "DenArt Body Painting Studio",
 			"url": "https://denartny.com"
 		}
-	})} />
+	})))} />
+	)}
 	<!-- Hero with Background Image -->
 	<section id="class-hero" class={`relative flex items-center justify-center overflow-hidden ${isSinglesEvent ? 'min-h-0 py-6 md:min-h-[50vh] md:py-16' : 'min-h-0 py-14 md:min-h-[50vh] md:py-0'}`}>
 		{classItem.data.heroImage && (
