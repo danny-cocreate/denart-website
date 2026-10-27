@@ -21,7 +21,7 @@ includes:
   - "Intimate body painting session where you and your partner paint each other under UV lights"
   - "Assistance by professional artist"
   - "UV bodypaint supply"
-  - "Group class: 2-10 couples"
+  - "Group class: 2-8 couples"
 galleryImages:
   - "/images/classes/uv-couples/uv-couple-1.jpg"
   - "/images/classes/uv-couples/uv-couple-2.jpg"
@@ -43,4 +43,4 @@ In this class, you have the creative freedom to paint anything you want. If you'
 - Intimate body painting session where you and your partner paint each other at the studio under UV lights
 - Assistance for your painting by professional artist (don't worry if you're not comfortable with your artistic skill ;))
 - UV bodypaint supply
-- Group class: Minimum 2 couples (4 people), maximum 10 couples
+- Group class: Minimum 2 couples (4 people), maximum 8 couples
