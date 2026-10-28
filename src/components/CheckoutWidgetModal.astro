@@ -7,17 +7,12 @@ interface Props {
 }
 
 const { eventKey } = Astro.props;
-// Forward allowlisted tracking params from the class page URL into the widget
-// iframe src. The widget reads ?promo= from its own URL on mount, so without
-// this a ?promo= on the class page never reaches checkout. UTMs ride along
-// for attribution debugging; GA4 session source carries via the same-origin
-// cookie regardless.
-const forwardKeys = ['promo', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
-const forwarded = forwardKeys
-  .filter((k) => Astro.url.searchParams.get(k))
-  .map((k) => k + '=' + encodeURIComponent(Astro.url.searchParams.get(k)!))
-  .join('&');
-const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}` + (forwarded ? '&' + forwarded : '');
+// NOTE: promo/UTM forwarding is NOT done here. The site is statically built
+// (output: 'static'), so frontmatter runs at build time and never sees the
+// visitor's query string; a build-time Astro.url.searchParams read always
+// yields nothing. Forwarding happens in the inline script below, from
+// window.location.search, at page load and on the fallback reload path.
+const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
 ---
 
 <!-- Checkout Widget Modal -->
@@ -74,6 +69,25 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}` + (forwarded
   // never sends "ready") it falls back to reloading the iframe as before.
   var checkoutWidgetReady = false;
 
+  // Forward allowlisted tracking params from the visitor's live page URL
+  // into the widget iframe. The widget reads ?promo= from its own URL on
+  // mount, so without this a ?promo= on the class page never reaches
+  // checkout. UTMs ride along for attribution debugging; GA4 session source
+  // carries via the same-origin cookie regardless.
+  var forwardKeys = ['promo', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  var pageParams = new URLSearchParams(window.location.search);
+  var forwardedParams = forwardKeys
+    .filter(function(k) { return pageParams.get(k); })
+    .map(function(k) { return k + '=' + encodeURIComponent(pageParams.get(k)); })
+    .join('&');
+  // The iframe starts loading with the page, so rewrite its src now, before
+  // the modal ever opens; the fallback reload path below rebuilds from
+  // checkoutUrl and must include these too.
+  var earlyIframe = document.getElementById('checkout-widget-iframe');
+  if (earlyIframe && forwardedParams) {
+    earlyIframe.src = checkoutUrl + '&' + forwardedParams;
+  }
+
   window.startClassCheckout = function(subeventId) {
     window.openCheckoutWidgetModal(subeventId);
   };
@@ -126,7 +140,8 @@ const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}` + (forwarded
         }, window.location.origin);
       } else if (iframe) {
         checkoutWidgetReady = false;
-        iframe.src = (subeventId ? checkoutUrl + '&subevent=' + subeventId : checkoutUrl) + extra + metaAttributionParams();
+        var base = subeventId ? checkoutUrl + '&subevent=' + subeventId : checkoutUrl;
+        iframe.src = base + (forwardedParams ? '&' + forwardedParams : '') + extra + metaAttributionParams();
       }
     }
   };
