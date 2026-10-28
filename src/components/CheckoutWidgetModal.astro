@@ -7,7 +7,17 @@ interface Props {
 }
 
 const { eventKey } = Astro.props;
-const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}`;
+// Forward allowlisted tracking params from the class page URL into the widget
+// iframe src. The widget reads ?promo= from its own URL on mount, so without
+// this a ?promo= on the class page never reaches checkout. UTMs ride along
+// for attribution debugging; GA4 session source carries via the same-origin
+// cookie regardless.
+const forwardKeys = ['promo', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+const forwarded = forwardKeys
+  .filter((k) => Astro.url.searchParams.get(k))
+  .map((k) => k + '=' + encodeURIComponent(Astro.url.searchParams.get(k)!))
+  .join('&');
+const checkoutUrl = `/checkout-widget/index.html?event=${eventKey}` + (forwarded ? '&' + forwarded : '');
 ---
 
 <!-- Checkout Widget Modal -->
